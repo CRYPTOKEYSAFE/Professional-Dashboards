@@ -21,10 +21,10 @@
   --accent-bright:#69C7DE;
 
   /* Background system */
-  --bg:           #0D1E30;
-  --bg-card:      #1A2E44;
-  --bg-panel:     #1E3350;
-  --bg-section:   #101E2E;
+  --bg:           #162A42;
+  --bg-card:      #223D58;
+  --bg-panel:     #2A466A;
+  --bg-section:   #1C344F;
 
   /* Text */
   --text:         #E2EAF4;
@@ -878,7 +878,42 @@ body.drawer-open #edit-mode-btn {
   .main-header, .hdr { position: static !important; top: auto !important; }
   .hdr-right .clock-row, .hdr-right .mini-cal { display: none; }
   .hdr-right .frf-countdown { font-size: 11px; }
-  @page { size: 17in 11in landscape; margin: 0.35in; }
+
+  /* Strip table sort arrows (the triangles) from print so they don't
+     overlap the column header text. Sort arrows are purely interactive. */
+  .tbl th[aria-sort]::after,
+  .tbl th[data-sort]::after { content: "" !important; }
+  /* Any visible APEX OMEGA version string must not print. */
+  .logo-sub, .sb-footer-row.sb-footer-text, #edit-toast,
+  .map-btn, .map-status, .kb-hint, .phase-indicator,
+  .map-controls { display: none !important; }
+  .map-header { background: #fff !important; color: #000 !important;
+    border-bottom: 2px solid #8C2B0B !important; }
+  .map-title { color: #1E4D8C !important; font-weight: 800 !important; }
+  .org-footer { text-align: center; font-size: 10px; color: #333; padding-top: 10px;
+    border-top: 1px solid #999; margin-top: 14px; }
+  /* Editor tab input borders show for print so cells are readable on paper */
+  .ed-table input, .ed-table select {
+    border: 1px solid #bbb !important; background: #fff !important; color: #000 !important; }
+  /* Swim-lane prints well - keep state colors, lighten cell background */
+  .swim-cell { background: #fff !important; }
+  .swim-row-lbl { background: #fafafa !important; color: #000 !important; }
+  .swim-hdr { background: #e8ecf2 !important; color: #000 !important; }
+  /* Running footer on every printed page with org + classification */
+  @page {
+    size: 17in 11in landscape;
+    margin: 0.5in 0.35in 0.6in 0.35in;
+    @bottom-center {
+      content: "UNCLASSIFIED // FOR INTERNAL PLANNING PURPOSES ONLY   \2022   MCIPAC G-F \2022 PPE \2022 Camp Schwab Consolidation   \2022   Page " counter(page) " of " counter(pages);
+      font-family: 'Segoe UI', sans-serif; font-size: 8.5pt; color: #555;
+    }
+    @top-center {
+      content: "UNCLASSIFIED // FOR INTERNAL PLANNING PURPOSES ONLY";
+      font-family: 'Segoe UI', sans-serif; font-size: 8.5pt;
+      color: #fff; background: #7A0D0D; padding: 2pt 0;
+      font-weight: 800; letter-spacing: 0.2em;
+    }
+  }
 }
 
 /* ============================================================
@@ -2427,7 +2462,8 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           <li><strong>Inline cells.</strong> The Editor tab cells accept text input directly without Edit Mode.</li>
         </ol>
         <p style="margin-top:10px;"><strong>Tabs:</strong> Overview (<kbd>1</kbd>), Interactive Map (<kbd>2</kbd>), Phase Grid (<kbd>3</kbd>), Unit Roster (<kbd>4</kbd>), Building Schedule (<kbd>5</kbd>), Projects &amp; Cost (<kbd>6</kbd>), Timeline (<kbd>7</kbd>), Charts (<kbd>8</kbd>), Data Editor (<kbd>9</kbd>). Help is available from the sidebar any time.</p>
-        <p style="margin-top:10px;"><strong>Projects &amp; Cost:</strong> Ten-row editable table of the 4th Marines Camp Schwab consolidation projects. Every cell (PAX ID, Building, Cost, Scope, Supported Unit, Completion, Delivery, FRF marker) is editable. The total at the top and in the footer recalculates live as you type. Add Project appends a blank row; each row has a Delete button. FRF marker <code>*</code> = HN-funded DEMO, <code>**</code> = HN-funded renovation. Export CSV or JSON from the tab header.</p>
+        <p style="margin-top:10px;"><strong>Projects &amp; Cost:</strong> Ten-row editable table of the 4th Marines Camp Schwab consolidation projects. Every cell (PAX ID, FIWEB ID, Building, Cost, Scope, Supported Unit, Completion, Delivery, Note) is editable free-text. The Note column takes any string; the conventions <code>*</code> (HN-funded FRF DEMO) and <code>**</code> (HN-funded renovation) tint the row for quick scanning but are not enforced - write anything you want there. The Total at the top, in the footer, and on the Overview card recalculates live as you type any Cost value. Add Project appends a blank row; each row has a Delete button. Export CSV or JSON from the tab header.</p>
+        <p style="margin-top:10px;"><strong>Map demolition choreography:</strong> When a building is vacated (Phase 2 for Bldg 3446, Phase 4 for Bldg 3509) the building first takes a VACATED state (amber dashed border, line-through, "VACATED" label) for five seconds, then transitions to DEMOLISHED (red diagonal stripe pattern, "DEMOLISHED" label). Reset returns the buildings to active.</p>
         <p style="margin-top:10px;"><strong>Timeline (Building Lifecycle):</strong> One row per building, five columns (one per phase). Each cell shows that building's state (Active / Final / Swing / Vacated / Demolished / Pending) plus the unit chips occupying it during that phase. Click any cell or row label to open the building detail drawer.</p>
         <p style="margin-top:10px;"><strong>Interactive Map:</strong> Open the Map tab, press <kbd>Space</kbd> or <kbd>&rarr;</kbd> to advance through relocation phases, <kbd>R</kbd> to reset. The phase grid at the top highlights the active phase and pulses the matching card when a tile lands. FY tags pop up on moving tiles when they arrive. The Consolidated Armory tile does not exist before Phase 3 - it materializes at Bldg 1024 when consolidation happens. Bldg 3446 slides into the FRF demo zone when Phase 2 demolishes it.</p>
         <p style="margin-top:10px;"><strong>Search / Filter:</strong> Toolbar search + Type / Phase / Status selects filter across Roster, Buildings, Timeline, and Editor tables. Reset clears all filters.</p>
@@ -4323,6 +4359,26 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   A.openBuildingDetail = openBuildingDetail;
   A.closeDetail = closeDetail;
   A.wireDetail = wireDetail;
+
+  /* Wire the generic modal + confirmation dialogs so their Cancel / OK
+     buttons close the overlay. Specific flows that open these dialogs
+     also swap in their own OK handler before opening. */
+  function wireGenericDialogs() {
+    function closeModal(){
+      var o = document.getElementById('modal-overlay'); if (o) o.classList.remove('open');
+    }
+    function closeConf(){
+      var o = document.getElementById('conf-overlay'); if (o) o.classList.remove('open');
+    }
+    var mc = document.getElementById('modal-cancel'); if (mc) mc.addEventListener('click', closeModal);
+    var mo = document.getElementById('modal-ok');     if (mo) mo.addEventListener('click', closeModal);
+    var cc = document.getElementById('conf-cancel');  if (cc) cc.addEventListener('click', closeConf);
+    var co = document.getElementById('conf-ok');      if (co) co.addEventListener('click', closeConf);
+    // Backdrop click also closes
+    var mov = document.getElementById('modal-overlay'); if (mov) mov.addEventListener('click', function(e){ if (e.target === mov) closeModal(); });
+    var cov = document.getElementById('conf-overlay');  if (cov) cov.addEventListener('click', function(e){ if (e.target === cov) closeConf(); });
+  }
+  A.wireGenericDialogs = wireGenericDialogs;
   A.statusPill = statusPill;
   A.bldgPill = bldgPill;
 
@@ -5332,6 +5388,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     if (A.wireNav) A.wireNav();
     if (A.wireCmd) A.wireCmd();
     if (A.wireDetail) A.wireDetail();
+    if (A.wireGenericDialogs) A.wireGenericDialogs();
     if (A.wireTables) A.wireTables();
     wireEditor();
     wireKeys();

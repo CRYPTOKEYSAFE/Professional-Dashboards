@@ -2078,8 +2078,8 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
          title="Bldg 3446 - UDP-W Supply (starts on FRF demo line, vacated and demolished after UDP-W Supply moves to 3237 Q3 FY27)">
       3446<span>UDP-W SUPPLY</span>
     </div>
-    <div id="b-3413" class="m-bldg" data-editable-bldg="true" style="top:175px;left:28px;width:100px;height:100px;"
-         title="Bldg 3413 - Safety/Env (source), later CLB-4 A&amp;B destination">
+    <div id="b-3413" class="m-bldg" data-editable-bldg="true" style="top:50px;left:28px;width:100px;height:100px;"
+         title="Bldg 3413 - Safety/Fire/Env (source in Phase 0), vacated Phase 1 when SAF moves to 3335, backfilled Phase 2 by CLB-4 A&amp;B">
       3413<span>Safety/Fire/Env</span>
     </div>
     <div id="b-3213" class="m-bldg final-dest" data-editable-bldg="true" style="top:315px;left:28px;width:200px;height:150px;"
@@ -2141,7 +2141,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
          ==================================================== -->
 
     <!-- Safety/Fire/Env - starts at 3413 -->
-    <div id="t-saf" class="tile t-div" data-editable-tile="true" style="top:211px;left:30px;"
+    <div id="t-saf" class="tile t-div" data-editable-tile="true" style="top:86px;left:30px;"
          title="Safety/Fire/Env - starts at Bldg 3413, moves to 3335 Q3 FY26">
       <div class="logo-div"></div>SAF/FIRE/ENV<div class="fy-tag">Q3 FY26</div>
     </div>
@@ -2323,21 +2323,22 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           <thead>
             <tr>
               <th style="width:70px;">PAX ID</th>
-              <th style="width:140px;">FIWEB ID</th>
-              <th style="width:100px;">Building</th>
+              <th style="width:75px;">Proj ID</th>
+              <th style="width:120px;">FIWEB ID</th>
+              <th style="width:95px;">Building</th>
               <th style="width:130px;">Cost</th>
               <th>Scope</th>
               <th style="width:130px;">Supported Unit</th>
               <th style="width:90px;">Completion</th>
               <th style="width:110px;">Delivery</th>
-              <th style="width:150px;">Note</th>
+              <th style="width:140px;">Note</th>
               <th style="width:58px;">Actions</th>
             </tr>
           </thead>
           <tbody id="tbody-projects"></tbody>
           <tfoot>
             <tr>
-              <td colspan="3" style="text-align:right;font-weight:800;">TOTAL</td>
+              <td colspan="4" style="text-align:right;font-weight:800;">TOTAL</td>
               <td id="pj-total-cell" class="num" style="font-weight:800;font-family:var(--font-mono);color:var(--accent-bright);">$0</td>
               <td colspan="6"></td>
             </tr>
@@ -2591,7 +2592,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
 
   var BUILDINGS = [
     { id:'b-3446', num:'3446', label:'UDP-W Supply (starts on FRF demo line)', zone:'FRF', status:'Demolish', phaseIn:0, phaseOut:2, occupants:['t-udp-sup'] },
-    { id:'b-3413', num:'3413', label:'Safety/Env -> CLB-4 A&B',    zone:'Source', status:'Converted', phaseIn:0, phaseOut:2, occupants:['t-saf','t-clb-ab'] },
+    { id:'b-3413', num:'3413', label:'Safety/Fire/Env -> CLB-4 A&B CO', zone:'Source', status:'Converted', phaseIn:0, phaseOut:2, occupants:['t-saf','t-clb-ab'] },
     { id:'b-3213', num:'3213', label:'CLB-4 HQ (dest)',            zone:'Source', status:'Active',    phaseIn:3, phaseOut:0, occupants:['t-lar','t-clb-com','t-clb-hq'] },
     { id:'b-3335', num:'3335', label:'Theater -> Safety/Fire/Env', zone:'Final',  status:'Active',    phaseIn:1, phaseOut:0, occupants:['t-saf'] },
     { id:'b-1024', num:'1024', label:'BEQ / SWING -> Armory',      zone:'Swing',  status:'Swing',     phaseIn:1, phaseOut:0, occupants:['t-clb-com','t-arm'] },
@@ -3061,7 +3062,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
 
     // Reset tile positions - initial posture
     // Safety/Fire/Env at 3413
-    move('t-saf', 211, 30);
+    move('t-saf', 86, 30);
     // UDP-W Supply at 3446
     move('t-udp-sup', 206, 1076);
     // LAR CO at 3213
@@ -3123,7 +3124,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       showTag('t-hq-co');
 
       // CLB-4 A&B -> 3413 (top:211, left:30)
-      move('t-clb-ab', 213, 30);
+      move('t-clb-ab', 88, 30);
       showTag('t-clb-ab');
 
       // 3446: VACATED stage after UDP-W Supply leaves (line-through, amber dashed)
@@ -3266,7 +3267,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   /* --- SEQUENCE DATA (mirrors JS animation engine, editable) --- */
   var SEQ = {
     phase0: {
-      't-saf':     { top: 211, left: 30  },
+      't-saf':     { top: 86,  left: 30  },
       't-udp-sup': { top: 206, left: 1076},
       't-lar':     { top: 370, left: 36  },
       't-clb-com': { top: 402, left: 36  },
@@ -3284,7 +3285,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       't-udp-sup':{ top: 152, left: 634 },
       't-lar':    { top: 468, left: 634 },
       't-hq-co':  { top: 391, left: 332 },
-      't-clb-ab': { top: 213, left: 30  }
+      't-clb-ab': { top: 88,  left: 30  }
     },
     phase3: {
       't-clb-com':{ top: 310, left: 634 },
@@ -4841,16 +4842,16 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   // fiweb: Fire Web project ID (e.g. BU26PPE...). Top 5 buildings have a
   //        FIWEB ID; fill in the exact number from the source slide.
   var PROJECTS = [
-    { paxId:'387356', fiweb:'BU26PPE', bldg:'SCH-1024', cost:10413140.40, scope:'Construct armory, secured storage, telecomm room, exterior overhang and OSS Vault', supported:'4th MAR Regt, CLB-4', completion:'Q3 FY27', delivery:'DB to FEAD', note:'' },
-    { paxId:'387624', fiweb:'BU26PPE', bldg:'SCH-3213', cost:5397927.60, scope:'Convert to CLB-4 HQ', supported:'CLB-4', completion:'Q2 FY28', delivery:'DB to FEAD', note:'' },
-    { paxId:'387568', fiweb:'BU26PPE', bldg:'SCH-3270', cost:3537573.00, scope:'HVAC Upgrade and Telecommunications', supported:'4th MAR Regt, CLB-4', completion:'Q4 FY27', delivery:'DB to FEAD', note:'' },
-    { paxId:'387433', fiweb:'BU26PPE', bldg:'SCH-3314', cost:1949383.28, scope:'Convert to 4th MAR HQ / UDP West', supported:'4th MAR Regt', completion:'Q3 FY28', delivery:'DB to FEAD', note:'' },
-    { paxId:'387622', fiweb:'BU26PPE', bldg:'SCH-3237', cost:1452485.00, scope:'Re-partition WHSE for three units; Telecomm Room w/ Fire Suppression Design', supported:'4th MAR Regt, CLB-4', completion:'Q2 FY27', delivery:'DB to FEAD', note:'**' },
-    { paxId:'N/A',    fiweb:'',        bldg:'SCH-3235', cost:388000,     scope:'Add IT / Comms', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', note:'' },
-    { paxId:'N/A',    fiweb:'',        bldg:'SCH-3410', cost:180000,     scope:'Add IT / Comms', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', note:'*' },
-    { paxId:'N/A',    fiweb:'',        bldg:'SCH-3413', cost:178000,     scope:'Convert to A & B Co, CLB-4', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', note:'*' },
-    { paxId:'N/A',    fiweb:'',        bldg:'SCH-3210', cost:14000,      scope:'Upgrade Female Head', supported:'4th MAR Regt', completion:'Q4 FY26', delivery:'DOW to P&E', note:'**' },
-    { paxId:'N/A',    fiweb:'',        bldg:'SCH-3335', cost:0,          scope:'G-6 Coordination MCEN switch install', supported:'MCB Butler', completion:'Q3 FY26', delivery:'N/A', note:'' }
+    { paxId:'387356', projId:'200542', fiweb:'BU26PPE70M', bldg:'SCH-1024', cost:10413140.40, scope:'Repair Bldg 1024, Armory Expansion & Admin Conversion (construct armory, secured storage, telecomm room, exterior overhang, OSS Vault)', supported:'4th MAR Regt, CLB-4', completion:'Q3 FY27', delivery:'DB to FEAD', note:'' },
+    { paxId:'387624', projId:'200712', fiweb:'BU26PPE72M', bldg:'SCH-3213', cost:5428425.00, scope:'Repair Bldg 3213, Convert to CLB-4 Headquarters', supported:'CLB-4', completion:'Q2 FY28', delivery:'DB to FEAD', note:'' },
+    { paxId:'387568', projId:'200679', fiweb:'BU26PPE74R', bldg:'SCH-3270', cost:3527753.00, scope:'Repair Bldg 3270, HVAC Upgrade and Telecommunications', supported:'4th MAR Regt, CLB-4', completion:'Q4 FY27', delivery:'DB to FEAD', note:'' },
+    { paxId:'387433', projId:'200594', fiweb:'BU26PPE71M', bldg:'SCH-3314', cost:1949382.00, scope:'Repair Bldg 3314, Convert to 4th MAR Regt Regimental HQ / UDP West', supported:'4th MAR Regt', completion:'Q3 FY28', delivery:'DB to FEAD', note:'' },
+    { paxId:'387622', projId:'200710', fiweb:'BU26PPE73M', bldg:'SCH-3237', cost:1486818.00, scope:'Repair Bldg 3237, Warehouse Partition Multi-Unit Storage (re-partition for three units; Telecomm Room w/ Fire Suppression Design)', supported:'4th MAR Regt, CLB-4', completion:'Q2 FY27', delivery:'DB to FEAD', note:'**' },
+    { paxId:'N/A',    projId:'',       fiweb:'',           bldg:'SCH-3235', cost:388000,     scope:'Add IT / Comms', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', note:'' },
+    { paxId:'N/A',    projId:'',       fiweb:'',           bldg:'SCH-3410', cost:180000,     scope:'Add IT / Comms', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', note:'*' },
+    { paxId:'N/A',    projId:'',       fiweb:'',           bldg:'SCH-3413', cost:178000,     scope:'Convert to A & B Co, CLB-4', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', note:'*' },
+    { paxId:'N/A',    projId:'',       fiweb:'',           bldg:'SCH-3210', cost:14000,      scope:'Upgrade Female Head', supported:'4th MAR Regt', completion:'Q4 FY26', delivery:'DOW to P&E', note:'**' },
+    { paxId:'N/A',    projId:'',       fiweb:'',           bldg:'SCH-3335', cost:0,          scope:'G-6 Coordination MCEN switch install', supported:'MCB Butler', completion:'Q3 FY26', delivery:'N/A', note:'' }
   ];
   A.PROJECTS = PROJECTS;
 
@@ -4876,6 +4877,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       else if (noteTrim === '**' || /renov/i.test(noteTrim)) rowStyle = 'style="background:rgba(212,144,10,0.05);"';
       return '<tr data-idx="' + idx + '" ' + rowStyle + '>' +
         '<td><input data-k="paxId" value="' + A.esc(p.paxId) + '" style="font-family:var(--font-mono);"></td>' +
+        '<td><input data-k="projId" value="' + A.esc(p.projId || '') + '" style="font-family:var(--font-mono);"></td>' +
         '<td><input data-k="fiweb" value="' + A.esc(p.fiweb || '') + '" style="font-family:var(--font-mono);font-size:11px;"></td>' +
         '<td><input data-k="bldg"  value="' + A.esc(p.bldg)  + '" style="font-family:var(--font-mono);font-weight:700;"></td>' +
         '<td><input data-k="cost"  value="' + p.cost + '" type="number" step="0.01" class="pj-cost" style="text-align:right;font-family:var(--font-mono);"></td>' +
@@ -4938,11 +4940,11 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   }
 
   function persistProjects() {
-    try { localStorage.setItem('4thMAR_projects_v1', JSON.stringify(PROJECTS)); } catch(e) {}
+    try { localStorage.setItem('4thMAR_projects_v2', JSON.stringify(PROJECTS)); } catch(e) {}
   }
   function loadProjects() {
     try {
-      var raw = localStorage.getItem('4thMAR_projects_v1');
+      var raw = localStorage.getItem('4thMAR_projects_v2');
       if (!raw) return;
       var arr = JSON.parse(raw);
       if (Array.isArray(arr) && arr.length) {
@@ -4955,19 +4957,19 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   function wireProjects() {
     var add = document.getElementById('pj-add');
     if (add) add.addEventListener('click', function(){
-      PROJECTS.push({ paxId:'N/A', fiweb:'', bldg:'SCH-XXXX', cost:0, scope:'New project',
+      PROJECTS.push({ paxId:'N/A', projId:'', fiweb:'', bldg:'SCH-XXXX', cost:0, scope:'New project',
         supported:'', completion:'', delivery:'', note:'' });
       renderProjects(); persistProjects(); A.toast('Project row added', 'success');
     });
     var csv = document.getElementById('pj-export-csv');
     if (csv) csv.addEventListener('click', function(){
-      var cols = ['paxId','fiweb','bldg','cost','scope','supported','completion','delivery','note'];
+      var cols = ['paxId','projId','fiweb','bldg','cost','scope','supported','completion','delivery','note'];
       function esc(v) { var s = String(v==null?'':v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s; }
       var rows = [cols.join(',')].concat(PROJECTS.map(function(p){
         return cols.map(function(c){ return esc(c === 'note' ? (p.note || p.frf || '') : p[c]); }).join(',');
       }));
       var total = PROJECTS.reduce(function(s,p){ return s + (Number(p.cost)||0); }, 0);
-      rows.push('TOTAL,,,' + total.toFixed(2) + ',,,,,');
+      rows.push('TOTAL,,,,' + total.toFixed(2) + ',,,,,');
       var blob = new Blob([rows.join('\n')], { type: 'text/csv' });
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a'); a.href = url;

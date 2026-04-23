@@ -725,6 +725,40 @@ kbd {
   box-shadow: 0 0 0 2px var(--accent-bright), 0 6px 18px rgba(105,199,222,0.5);
   z-index: 50 !important;
 }
+/* Tiles that don't exist until a later phase (e.g. consolidated armory) */
+.tile.hidden-until-phase {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.8);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.tile.hidden-until-phase.revealed {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+/* FRF-relocated demolished buildings - slide into the FRF zone */
+.m-bldg.frf-relocated {
+  top: 180px !important;
+  left: 1070px !important;
+  width: 130px !important;
+  height: 80px !important;
+  transition: top 1.2s cubic-bezier(.4,0,.2,1),
+              left 1.2s cubic-bezier(.4,0,.2,1),
+              width .8s ease, height .8s ease,
+              background .6s, border-color .6s, opacity .6s;
+}
+.m-bldg { transition: top 1.2s cubic-bezier(.4,0,.2,1),
+                      left 1.2s cubic-bezier(.4,0,.2,1),
+                      background .6s, border-color .6s, opacity .6s; }
+
+/* FAB shifts left when detail drawer is open so it never covers drawer actions */
+body.drawer-open #edit-mode-btn {
+  right: 580px;
+  transition: right .3s cubic-bezier(.4,0,.2,1);
+}
+#edit-mode-btn { transition: right .3s cubic-bezier(.4,0,.2,1); }
 .fy-tag.inline {
   position: static; top: auto; right: auto;
   display: inline-block; margin-left: auto;
@@ -2021,9 +2055,11 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       <div class="logo-div"></div>4TH MAR COMM
     </div>
 
-    <!-- Consolidated Armory - starts in FRF zone (existing armory location) -->
-    <div id="t-arm" class="tile t-arm" data-editable-tile="true" style="top:218px;left:1084px;"
-         title="Consolidated Armory - starts in FRF zone, moves to Bldg 1024 1st floor Q3 FY28">
+    <!-- Consolidated Armory - does NOT exist until Phase 3 when it consolidates at 1024.
+         Starts hidden, fades in at Phase 3 at its destination (1024 1st floor). -->
+    <div id="t-arm" class="tile t-arm hidden-until-phase" data-appear-phase="3"
+         data-editable-tile="true" style="top:211px;left:344px;"
+         title="Consolidated Armory - consolidates at Bldg 1024 (1st floor) Q3 FY28. Does not exist as a unit prior to consolidation.">
       <div class="logo-div"></div><div class="logo-mlg"></div>CONSOL ARM<div class="fy-tag">Q3 FY28</div>
     </div>
 
@@ -2036,7 +2072,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     <!-- Med/ATC - stays at 3510 throughout -->
     <div id="t-med" class="tile t-med" data-editable-tile="true" style="top:456px;left:1084px;"
          title="Med/ATC - remains at Bldg 3510 pending GOJ replacement construction">
-      <div class="logo-div"></div>MED / ATC
+      <div class="logo-div"></div>MED / ATC<div class="fy-tag pending" style="opacity:1;">GOJ</div>
     </div>
 
     <!-- 4th MAR Motor T - resident at 3270, stays -->
@@ -2767,13 +2803,22 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     phase = 0;
     updatePips();
 
-    // Reset demolished buildings
+    // Reset demolished buildings (also clear frf-relocated class)
     ['b-3509', 'b-3446'].forEach(function(bid) {
       var b = document.getElementById(bid);
-      if (b) b.classList.remove('demolished');
+      if (b) { b.classList.remove('demolished'); b.classList.remove('frf-relocated'); }
     });
     var lbl3509 = document.getElementById('lbl-3509');
     if (lbl3509) lbl3509.textContent = '4TH MAR HQ';
+
+    // Hide armory (doesn't exist until Phase 3 consolidation at 1024)
+    var arm = document.getElementById('t-arm');
+    if (arm) {
+      arm.classList.add('hidden-until-phase');
+      arm.classList.remove('revealed');
+      var armTag = arm.querySelector('.fy-tag');
+      if (armTag) armTag.classList.remove('visible');
+    }
 
     // Reset 1024 label
     var lbl1024 = document.getElementById('lbl-1024');
@@ -2811,8 +2856,9 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     move('t-clb-hq', 92, 834);
     // CLB-4 A&B at 3314
     move('t-clb-ab', 124, 834);
-    // Armory in FRF zone
-    move('t-arm', 218, 1084);
+    // Armory is hidden at reset - it doesn't exist until Phase 3 consolidation.
+    // Position it at its destination (1024) so reveal is in-place, no travel.
+    move('t-arm', 211, 344);
     // 4th MAR HQ at 3509 FRF
     move('t-reg', 356, 1074);
 
@@ -2862,10 +2908,11 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       move('t-clb-ab', 213, 30);
       showTag('t-clb-ab');
 
-      // 3446 fades to demolished look after UDP-W Supply leaves
+      // 3446 fades to demolished and slides into the FRF demo zone
+      // (UDP-W Supply has vacated, so the building is struck and joins 3509 as FRF-line demo)
       safeTimeout(function() {
         var b = document.getElementById('b-3446');
-        if (b) b.classList.add('demolished');
+        if (b) { b.classList.add('demolished'); b.classList.add('frf-relocated'); }
       }, 1200);
     }
     else if (phase === 3) {
@@ -2881,8 +2928,13 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
         }, 1600);
       }
 
-      // Consolidated Armory -> 1024 1st floor (top:208, left:344)
-      move('t-arm', 211, 344);
+      // Consolidated Armory materializes at 1024 1st floor (doesn't exist before Phase 3)
+      var arm = document.getElementById('t-arm');
+      if (arm) {
+        arm.style.top = '211px'; arm.style.left = '344px';
+        // Fade in after slight delay so user sees it appear
+        safeTimeout(function(){ arm.classList.add('revealed'); }, 400);
+      }
       showTag('t-arm');
 
       // Update 1024 label to CONSOL ARMORY
@@ -3863,6 +3915,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     document.getElementById('dp-sub').textContent = u.id + ' - ' + (u.startBldg === u.endBldg ? 'Resident at ' + u.endBldg : u.startBldg + ' -> ' + u.endBldg);
     document.getElementById('dp-body').innerHTML = body;
     document.getElementById('detail-overlay').classList.add('open');
+    document.body.classList.add('drawer-open');
   }
 
   function openBuildingDetail(bldgId) {
@@ -3888,6 +3941,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     document.getElementById('dp-sub').textContent = b.label;
     document.getElementById('dp-body').innerHTML = body;
     document.getElementById('detail-overlay').classList.add('open');
+    document.body.classList.add('drawer-open');
   }
 
   function statusPill(s) {
@@ -3913,6 +3967,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
 
   function closeDetail() {
     document.getElementById('detail-overlay').classList.remove('open');
+    document.body.classList.remove('drawer-open');
     currentDetail = null;
   }
 

@@ -35,7 +35,7 @@ window.Shell = (function () {
     { id: "admin", label: "Admin", icon: "settings" },
   ];
 
-  let rootEl = null, mainEl = null, ttEl = null, lastSection = "overview";
+  let rootEl = null, mainEl = null, ttEl = null, lastSection = "overview", layoutEl = null;
 
   function dispatchFilter() {
     document.dispatchEvent(new CustomEvent("filter-change", { detail: Object.assign({}, window.FilterState) }));
@@ -89,8 +89,8 @@ window.Shell = (function () {
       $("div", { class: "hdr-center" }, [chips, installSel, searchInp]),
       actions
     ]);
-    const old = rootEl.querySelector(".app-header");
-    if (old) old.replaceWith(header); else rootEl.appendChild(header);
+    const old = layoutEl.querySelector(".app-header");
+    if (old) old.replaceWith(header); else layoutEl.appendChild(header);
   }
 
   function renderSidebar() {
@@ -100,14 +100,14 @@ window.Shell = (function () {
       "data-tip": s.label,
       onclick: () => go(s.id)
     }, [icon(s.icon), $("span", { class: "nav-lbl", text: s.label })])));
-    const old = rootEl.querySelector(".sidebar");
-    if (old) old.replaceWith(nav); else rootEl.appendChild(nav);
+    const old = layoutEl.querySelector(".sidebar");
+    if (old) old.replaceWith(nav); else layoutEl.appendChild(nav);
   }
 
   function renderMain() {
     mainEl = $("main", { class: "main", id: "main" });
-    const old = rootEl.querySelector("main");
-    if (old) old.replaceWith(mainEl); else rootEl.appendChild(mainEl);
+    const old = layoutEl.querySelector("main");
+    if (old) old.replaceWith(mainEl); else layoutEl.appendChild(mainEl);
   }
 
   function ensureTooltip() {
@@ -177,8 +177,8 @@ window.Shell = (function () {
   function mount(el) {
     rootEl = el;
     rootEl.innerHTML = "";
-    const layout = $("div", { class: "shell-root" });
-    rootEl.appendChild(layout);
+    layoutEl = $("div", { class: "shell-root" });
+    rootEl.appendChild(layoutEl);
     renderHeader(); renderSidebar(); renderMain();
     ensureTooltip();
     keyboardShortcuts();

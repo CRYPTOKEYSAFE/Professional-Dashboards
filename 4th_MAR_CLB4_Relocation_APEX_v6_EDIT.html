@@ -679,6 +679,52 @@ kbd {
   opacity: 0; transition: opacity 0.5s ease-in;
 }
 .fy-tag.visible { opacity: 1; }
+/* Resident/Pending variants - always visible from load, muted styling */
+.fy-tag.resident {
+  opacity: 1; background: var(--status-green-bg); color: var(--status-green);
+  border-color: var(--status-green);
+}
+.fy-tag.pending {
+  opacity: 1; background: var(--swing-bg); color: var(--swing-amber);
+  border-color: var(--swing-amber);
+}
+.fy-tag.phase-1 { background: var(--ph1); color:#fff; border-color: var(--accent-light); }
+.fy-tag.phase-2 { background: var(--ph2); color:#fff; border-color: var(--accent-light); }
+.fy-tag.phase-3 { background: var(--ph3); color:#C8E6C9; border-color: var(--status-green); }
+.fy-tag.phase-4 { background: var(--ph4); color:#FFCDD2; border-color: var(--status-red); }
+
+/* Phase grid sync highlighting - when map animation is at a phase */
+.phase-col.phase-active {
+  box-shadow: 0 0 0 2px var(--accent), 0 8px 32px rgba(46,155,181,0.25);
+  transform: translateY(-2px);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.phase-col.phase-active .p-head {
+  filter: brightness(1.2);
+}
+.phase-col.phase-dim {
+  opacity: 0.55;
+  transition: opacity .3s ease;
+}
+.card.card-active {
+  box-shadow: 0 0 0 2px var(--accent-bright), 0 6px 20px rgba(105,199,222,0.35);
+  transform: translateX(3px);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.card.card-pulse {
+  animation: card-pulse-anim 1.5s ease-out 1;
+}
+@keyframes card-pulse-anim {
+  0%   { box-shadow: 0 0 0 0 rgba(105,199,222,0.6); }
+  50%  { box-shadow: 0 0 0 8px rgba(105,199,222,0.25); }
+  100% { box-shadow: 0 0 0 0 rgba(105,199,222,0); }
+}
+
+/* Tile moving indicator during animation */
+.tile.tile-moving {
+  box-shadow: 0 0 0 2px var(--accent-bright), 0 6px 18px rgba(105,199,222,0.5);
+  z-index: 50 !important;
+}
 .fy-tag.inline {
   position: static; top: auto; right: auto;
   display: inline-block; margin-left: auto;
@@ -1609,20 +1655,20 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   <div class="phase-grid" role="region" aria-label="Five-phase relocation timeline">
 
     <!-- Phase 1: FY26 Start -->
-    <div class="phase-col">
+    <div class="phase-col" data-phase="1" id="pc-1">
       <div class="p-head" style="background:var(--ph1);">
         FY26 (Start)<small>Planning &amp; Swing Operations</small>
       </div>
       <div class="p-body">
-        <div class="card s-move">
+        <div class="card s-move" data-unit="t-saf" data-phase="1">
           <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3413 &rarr; 3335</span>
           <div class="u-row">
-            <span>SAFETY/ENV/FIR <span class="arr">&rarr;</span> 3335</span>
+            <span>SAFETY/FIRE/ENV <span class="arr">&rarr;</span> 3335</span>
             <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">Q3 FY26</span>
           </div>
           <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Moves to converted Base Theater offices. Bldg 3413 vacated for CLB-4 A&amp;B backfill.</div>
         </div>
-        <div class="card s-swing">
+        <div class="card s-swing" data-unit="t-clb-com" data-phase="1">
           <span class="badge" style="background:var(--swing-amber);color:#000;" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">1024 SWING</span>
           <div class="u-row">
             <span>CLB-4 COMM <span class="arr">&rarr;</span> 1024</span>
@@ -1630,7 +1676,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           </div>
           <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Interim swing during Bldg 3235 renovation. Gym: NIPR/Phones. Court: Server Racks.</div>
         </div>
-        <div class="card s-plan">
+        <div class="card s-plan" data-phase="1">
           <span class="badge" style="background:var(--text-light);color:#000;" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">CONTRACT</span>
           <div class="u-row">CONTRACT AWARDS BEGIN</div>
           <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Design-Build contract awards begin to enable phased facility renovation and unit consolidation across Camp Schwab.</div>
@@ -1642,12 +1688,12 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     </div>
 
     <!-- Phase 2: FY27 Moves -->
-    <div class="phase-col">
+    <div class="phase-col" data-phase="2" id="pc-2">
       <div class="p-head" style="background:var(--ph2);">
         FY27 (Moves)<small>Enabling &amp; Consolidation</small>
       </div>
       <div class="p-body">
-        <div class="card s-move">
+        <div class="card s-move" data-unit="t-udp-sup" data-phase="2">
           <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3446 &rarr; 3237</span>
           <div class="u-row">
             <span>UDP-W SUPPLY <span class="arr">&rarr;</span> 3237</span>
@@ -1655,7 +1701,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           </div>
           <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Consolidates into Bldg 3237 with 4th MAR Regt Supply and CLB-4 Supply already resident.</div>
         </div>
-        <div class="card s-move">
+        <div class="card s-move" data-unit="t-lar" data-phase="2">
           <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3213 VACATES</span>
           <div class="u-row">
             <span>LAR CO <span class="arr">&rarr;</span> 3210</span>
@@ -1663,7 +1709,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           </div>
           <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Co-locates with ACV CO at Bldg 3210.</div>
         </div>
-        <div class="card s-frf">
+        <div class="card s-frf" data-unit="t-hq-co" data-phase="2">
           <span class="badge" style="background:var(--status-red);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3509 &rarr; 3410</span>
           <div class="u-row">
             <span>HQ CO 4TH MAR REGT <span class="arr">&rarr;</span> 3410</span>
@@ -1671,7 +1717,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           </div>
           <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Vacates FRF demolition line. Relocates to renovated Bldg 3410.</div>
         </div>
-        <div class="card s-move">
+        <div class="card s-move" data-unit="t-clb-ab" data-phase="2">
           <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3314 &rarr; 3413</span>
           <div class="u-row">
             <span>CLB-4 A&amp;B CO <span class="arr">&rarr;</span> 3413</span>
@@ -1683,12 +1729,12 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     </div>
 
     <!-- Phase 3: FY28 Finals -->
-    <div class="phase-col">
+    <div class="phase-col" data-phase="3" id="pc-3">
       <div class="p-head" style="background:var(--ph3);">
         FY28 (Finals)<small>Backfill &amp; Consolidation</small>
       </div>
       <div class="p-body">
-        <div class="card s-move">
+        <div class="card s-move" data-unit="t-clb-com" data-phase="3">
           <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">1024 &rarr; 3235</span>
           <div class="u-row">
             <span>CLB-4 COMM <span class="arr">&rarr;</span> 3235</span>
@@ -1696,7 +1742,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           </div>
           <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Exits Bldg 1024 swing space. Joins 4th MAR COMM in final configuration at Bldg 3235.</div>
         </div>
-        <div class="card s-armory">
+        <div class="card s-armory" data-unit="t-arm" data-phase="3">
           <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">ARMORY &rarr; 1024</span>
           <div class="u-row">
             <span>CONSOL ARMORY <span class="arr">&rarr;</span> 1024</span>
@@ -1704,7 +1750,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           </div>
           <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Consolidated Armory (4th MAR Regt / CLB-4) occupies renovated 1st floor of Bldg 1024.</div>
         </div>
-        <div class="card s-move">
+        <div class="card s-move" data-unit="t-clb-hq" data-phase="3">
           <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3314 &rarr; 3213</span>
           <div class="u-row">
             <span>CLB-4 HQ <span class="arr">&rarr;</span> 3213</span>
@@ -1717,12 +1763,12 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     </div>
 
     <!-- Phase 4: 1 June 2028 FRF -->
-    <div class="phase-col">
+    <div class="phase-col" data-phase="4" id="pc-4">
       <div class="p-head" style="background:var(--ph4);">
         1 June 2028<small>FRF Vacation Deadline</small>
       </div>
       <div class="p-body">
-        <div class="card s-frf">
+        <div class="card s-frf" data-unit="t-reg" data-phase="4">
           <span class="badge" style="background:var(--status-purple);border:1px solid gold;" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">4TH MAR HQ</span>
           <div class="u-row">
             <span>3509 <span class="arr">&rarr;</span> 3314</span>
@@ -1731,7 +1777,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Occupies renovated 2nd Deck of Bldg 3314. 1st Deck: 1st Bn, 4th MAR (UDP).</div>
           <div class="impact" data-editable="text" data-label="Impact Note" title="Click to edit in Edit Mode">FRF Bldg 3509 vacated. Demolition follows.</div>
         </div>
-        <div class="card s-frf">
+        <div class="card s-frf" data-unit="t-med" data-phase="4">
           <span class="badge" style="background:var(--status-red);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3510 (MED)</span>
           <div class="u-row">RETAINED - PENDING GOJ CONSTRUCTION</div>
           <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Facility remains active until GOJ completes replacement Medical/Dental clinic.</div>
@@ -1751,7 +1797,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     </div>
 
     <!-- Phase 5: Final Configuration -->
-    <div class="phase-col">
+    <div class="phase-col" data-phase="5" id="pc-5">
       <div class="p-head" style="background:var(--ph5);border-left:3px solid var(--accent);">
         Post-FRF<small>Final Configuration</small>
       </div>
@@ -1856,7 +1902,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     </div>
     <div id="b-3413" class="m-bldg" data-editable-bldg="true" style="top:175px;left:28px;width:100px;height:100px;"
          title="Bldg 3413 - Safety/Env (source), later CLB-4 A&amp;B destination">
-      3413<span>Safety/Env</span>
+      3413<span>Safety/Fire/Env</span>
     </div>
     <div id="b-3213" class="m-bldg final-dest" data-editable-bldg="true" style="top:315px;left:28px;width:200px;height:150px;"
          title="Bldg 3213 - CLB-4 HQ destination after renovation">
@@ -1961,19 +2007,19 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     <!-- 4th MAR Supply - resident in 3237 at init, stays -->
     <div id="t-4th-sup" class="tile t-div" data-editable-tile="true" style="top:88px;left:634px;"
          title="4th MAR Supply - resident in Bldg 3237, remains throughout all phases">
-      <div class="logo-div"></div>4TH MAR SUP
+      <div class="logo-div"></div>4TH MAR SUP<div class="fy-tag resident">RES</div>
     </div>
 
     <!-- CLB-4 Supply - resident in 3237 at init, stays -->
     <div id="t-clb-sup" class="tile t-mlg" data-editable-tile="true" style="top:120px;left:634px;"
          title="CLB-4 Supply - resident in Bldg 3237, remains throughout all phases">
-      <div class="logo-mlg"></div>CLB-4 SUP
+      <div class="logo-mlg"></div>CLB-4 SUP<div class="fy-tag resident">RES</div>
     </div>
 
     <!-- 4th MAR COMM - resident in 3235 at init, stays -->
     <div id="t-4th-com" class="tile t-div" data-editable-tile="true" style="top:278px;left:634px;"
          title="4th MAR COMM - resident in Bldg 3235, remains throughout all phases">
-      <div class="logo-div"></div>4TH COMM
+      <div class="logo-div"></div>4TH MAR COMM<div class="fy-tag resident">RES</div>
     </div>
 
     <!-- Consolidated Armory - starts in FRF zone (existing armory location) -->
@@ -1991,19 +2037,19 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     <!-- Med/ATC - stays at 3510 throughout -->
     <div id="t-med" class="tile t-med" data-editable-tile="true" style="top:456px;left:1084px;"
          title="Med/ATC - remains at Bldg 3510 pending GOJ replacement construction">
-      <div class="logo-div"></div>MED / ATC
+      <div class="logo-div"></div>MED / ATC<div class="fy-tag pending">PEND GOJ</div>
     </div>
 
     <!-- 4th MAR Motor T - resident at 3270, stays -->
     <div id="t-4th-mtr" class="tile t-mtr" data-editable-tile="true" style="top:583px;left:634px;"
          title="4th MAR Motor T - resident at Bldg 3270, remains in place throughout all phases">
-      <div class="logo-div"></div>4TH MTR-T
+      <div class="logo-div"></div>4TH MAR MTR-T<div class="fy-tag resident">RES</div>
     </div>
 
     <!-- CLB-4 Motor T - resident at 3270, stays -->
     <div id="t-clb-mtr" class="tile t-mtr" data-editable-tile="true" style="top:611px;left:634px;"
          title="CLB-4 Motor T - resident at Bldg 3270, remains in place throughout all phases">
-      <div class="logo-mlg"></div>CLB-4 MTR-T
+      <div class="logo-mlg"></div>CLB-4 MTR-T<div class="fy-tag resident">RES</div>
     </div>
 
   </div><!-- /map-stage -->
@@ -2656,12 +2702,17 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   }
 
   function showTag(tileId) {
+    // Mark tile as moving immediately
+    var src = document.getElementById(tileId);
+    if (src) src.classList.add('tile-moving');
     safeTimeout(function() {
       var el = document.getElementById(tileId);
       if (el) {
         var tag = el.querySelector('.fy-tag');
         if (tag) tag.classList.add('visible');
+        el.classList.remove('tile-moving');
       }
+      if (window.__APEX_pulse) window.__APEX_pulse(tileId);
     }, 1500);
   }
 
@@ -2682,7 +2733,32 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     if (bar) bar.setAttribute('aria-valuenow', String(phase));
     var lbl = document.getElementById('phase-label');
     if (lbl) lbl.textContent = phase === 0 ? 'INITIAL POSTURE' : 'PHASE ' + phase + ' OF 4';
+    // Phase grid sync: highlight active column, dim others
+    var cols = document.querySelectorAll('.phase-col[data-phase]');
+    Array.prototype.forEach.call(cols, function(col){
+      col.classList.remove('phase-active','phase-dim');
+      if (phase === 0) return;
+      var p = parseInt(col.getAttribute('data-phase'), 10);
+      if (p === phase) col.classList.add('phase-active');
+      else if (p < phase) col.classList.add('phase-dim');
+    });
+    var cards = document.querySelectorAll('.card[data-phase]');
+    Array.prototype.forEach.call(cards, function(c){
+      c.classList.remove('card-active');
+      var p = parseInt(c.getAttribute('data-phase'), 10);
+      if (p === phase) c.classList.add('card-active');
+    });
   }
+  // Pulse the card matching a tile that just moved
+  function pulseCardFor(tileId) {
+    var c = document.querySelector('.card[data-unit="' + tileId + '"][data-phase="' + phase + '"]');
+    if (!c) return;
+    c.classList.remove('card-pulse');
+    void c.offsetWidth; // restart animation
+    c.classList.add('card-pulse');
+  }
+  // Expose for patch below
+  window.__APEX_pulse = pulseCardFor;
 
   /* ============================================================
      RESET

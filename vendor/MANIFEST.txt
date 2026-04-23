@@ -1,0 +1,8 @@
+# Vendored library manifest
+# Format: <sha256>  <filename>  <upstream_url>  <license_spdx>
+# Generated: 2026-04-23
+86df9b98a7cde1098d8cbc0f1916b6989971507984299bc0b4d289a63ed520a0  tabulator-6.4.0.min.js  https://cdn.jsdelivr.net/npm/tabulator-tables@6.4.0/dist/js/tabulator.min.js  MIT
+93ab046ce80d8c1933b06b30d530b5835796047aff2e057a1ec458287ba5515b  tabulator-6.4.0.min.css  https://cdn.jsdelivr.net/npm/tabulator-tables@6.4.0/dist/css/tabulator.min.css  MIT
+f2094bbf6141b359722c4fe454eb6c4b0f0e42cc10cc7af921fc158fceb86539  d3-7.9.0.min.js  https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js  ISC
+3553fb8bdf5b8004ce5531e6827e81c8b34e7b3992677967754544064e97b016  papaparse-5.5.3.min.js  https://cdn.jsdelivr.net/npm/papaparse@5.5.3/papaparse.min.js  MIT
+7743d00e0c22fa5d713938faaa5f4dbe6eb7d6b745c0a86828a95e8834d00ba4  icons.svg  https://cdn.jsdelivr.net/npm/lucide-static@1.8.0/icons/  ISC

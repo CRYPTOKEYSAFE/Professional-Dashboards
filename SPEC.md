@@ -139,9 +139,13 @@ One-page app with a thin left sidebar for section nav. Top banner + bottom banne
 2. **Projects** — editable Tabulator grid with all canonical columns. Row expand → detail panel with full field list + CCN sub-grid. Add/edit/delete rows. Add/remove/rename columns. Column visibility toggle. Filters persist per session.
 3. **CCN Catalog** — searchable/filterable table of all 1,059 CCNs. Users can edit or add rows (e.g., local sub-codes). Category pills color-coded by 100/200/300 series.
 4. **CCN Assignment** — picker UI: select a project, add CCNs with qty and scheduledFY (defaults to project BOD). Validates CCN code against catalog. Bulk-paste helper for "I have a list of 20 CCNs for this project."
-5. **Heatmap** — time-phased view. Axes: installations (columns) × CCN category (rows), with an Installation↔CCN toggle. Cell color = sqft landing in year Y (or cumulative-through-Y toggle). Year slider at bottom with play/pause and step controls. Click cell → drill-down list of contributing projects.
+5. **Heatmap** — time-phased view. Axes: installations (columns) × CCN category (rows), with an Installation↔CCN axis toggle. **Two independent toggles:**
+   - **Mode**: `annual` (sqft delivered in year Y) vs `cumulative` (total sqft available at end of year Y).
+   - **Basis**: `gross` (everything adds) vs `net` (DEMO subtracts; REPLACEMENT swaps old→new via the `replaces` field). Default = `net` + `cumulative` — the "what will be available in FY X" view the client actually wants.
+   Year slider at bottom with play/pause and step controls. Click cell → drill-down list of contributing projects. Net/gross and annual/cumulative states persist in localStorage.
 6. **Crosswalk** — two-column view: pick a project on the left; right panel shows all other projects on the same installation, grouped by program umbrella, so the planner can see adjacent work. No auto-merging.
 7. **Schema / Admin** — add custom columns, rename fields, change units, add new programs/installations. Every schema change persisted to JSON export.
+8. **Brief (client layout)** — toggled from the header (icon: slideshow). Single-page, no sidebar, chrome minimized. One section at a time (KPIs → Program summary → Heatmap → Crosswalk → Notes). Big print-friendly typography, FOUO banner still required top+bottom. Same underlying data + modules; just a thinner chrome. Dedicated `?brief` URL hash to boot directly into brief mode for screen-share.
 
 **Color system (derived from the existing DPRI HTML — preserve look-and-feel):**
 
@@ -266,6 +270,12 @@ All additions and deletions must:
 - Trigger live re-aggregation everywhere (§8).
 
 **Deletion confirmations**: show a confirm dialog when the delete will cascade (e.g., deleting an installation that has 91 projects). Never silently drop referenced data.
+
+**Undo / redo**: every DataStore mutation pushes a snapshot onto a ring buffer (last 20 states) kept in memory and mirrored to `localStorage` key `dashboard.v1.history`. Ctrl+Z / Ctrl+Shift+Z and header buttons. Cheap insurance against accidental bulk-delete.
+
+**Bulk CSV paste for projects**: on the Projects page, a "Paste from spreadsheet" action opens a modal. User pastes TSV/CSV. UI autodetects columns and shows a mapping step (spreadsheet column → canonical field). User confirms; rows are added (or updated by `id` if it matches). Same affordance on the CCN Assignment panel for adding many CCNs at once.
+
+**User watermark on exports**: on first run, a one-time prompt asks for the viewer's name. Stored in `localStorage` key `dashboard.v1.viewer`. Every JSON / CSV / print view carries a `"FOUO — Prepared by [name] on [YYYY-MM-DD]"` header. A "change name" affordance in Admin for when the file is re-shared.
 
 ## 8. Live roll-ups — everything must add up and make sense
 

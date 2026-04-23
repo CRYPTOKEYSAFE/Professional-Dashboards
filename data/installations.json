@@ -1,0 +1,37 @@
+[
+  {
+    "id": "camp-schwab",
+    "name": "Camp Schwab",
+    "service": "USMC",
+    "country": "JPN",
+    "color": "#1E3F5C"
+  },
+  {
+    "id": "camp-hansen",
+    "name": "Camp Hansen",
+    "service": "USMC",
+    "country": "JPN",
+    "color": "#0B6E4F"
+  },
+  {
+    "id": "camp-foster",
+    "name": "Camp Foster",
+    "service": "USMC",
+    "country": "JPN",
+    "color": "#7A5900"
+  },
+  {
+    "id": "camp-courtney",
+    "name": "Camp Courtney",
+    "service": "USMC",
+    "country": "JPN",
+    "color": "#3A3A9E"
+  },
+  {
+    "id": "unknown",
+    "name": "Unknown",
+    "service": "USMC",
+    "country": "JPN",
+    "color": "#8A98A8"
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "dpri-frf",
+    "umbrella": "DPRI",
+    "label": "DPRI / FRF",
+    "color": "#1E3F5C",
+    "description": "Futenma Replacement Facility"
+  },
+  {
+    "id": "dpri-okicon",
+    "umbrella": "DPRI",
+    "label": "DPRI / OKICON",
+    "color": "#2A5678",
+    "description": "Okinawa Consolidation"
+  },
+  {
+    "id": "dpri-saco",
+    "umbrella": "DPRI",
+    "label": "DPRI / SACO",
+    "color": "#8C2B0B",
+    "description": "Special Action Committee on Okinawa"
+  },
+  {
+    "id": "12-mlr",
+    "umbrella": "12th MLR",
+    "label": "12th MLR",
+    "color": "#2E91AE",
+    "description": "12th Marine Littoral Regiment"
+  },
+  {
+    "id": "3-12",
+    "umbrella": "3/12",
+    "label": "3/12",
+    "color": "#7A5900",
+    "description": "3rd Battalion, 12th Marines"
+  },
+  {
+    "id": "3d-mardiv",
+    "umbrella": "Other",
+    "label": "3rd MarDiv",
+    "color": "#3A3A9E",
+    "description": "3rd Marine Division"
+  },
+  {
+    "id": "mcipac",
+    "umbrella": "Other",
+    "label": "MCIPAC",
+    "color": "#0B6E4F",
+    "description": "Marine Corps Installations Pacific"
+  },
+  {
+    "id": "maw",
+    "umbrella": "Other",
+    "label": "MAW",
+    "color": "#5A0B8C",
+    "description": "Marine Aircraft Wing"
+  },
+  {
+    "id": "iii-mef",
+    "umbrella": "Other",
+    "label": "III MEF",
+    "color": "#8A5900",
+    "description": "III Marine Expeditionary Force"
+  },
+  {
+    "id": "other",
+    "umbrella": "Other",
+    "label": "Other",
+    "color": "#546270",
+    "description": "Unclassified / miscellaneous"
+  }
+]

@@ -1535,27 +1535,27 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   <div class="kpi-bar" role="region" aria-label="Summary metrics">
     <div class="kpi-card">
       <div class="kpi-label" data-editable="text" data-label="KPI Label" title="Click to edit in Edit Mode">Total Units Moving</div>
-      <div class="kpi-value" data-editable="text" data-label="KPI Value" title="Click to edit in Edit Mode">9</div>
+      <div class="kpi-value" data-kpi="units-moving" data-editable="text" data-label="KPI Value" title="Auto-calculated from UNITS data">9</div>
       <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">Unit elements relocating FY26-FY28</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label" data-editable="text" data-label="KPI Label" title="Click to edit in Edit Mode">Phases</div>
-      <div class="kpi-value" data-editable="text" data-label="KPI Value" title="Click to edit in Edit Mode">4</div>
+      <div class="kpi-value" data-kpi="phases" data-editable="text" data-label="KPI Value" title="Auto-calculated from UNITS data">4</div>
       <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">Q3 FY26 through Q3 FY28</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label" data-editable="text" data-label="KPI Label" title="Click to edit in Edit Mode">FRF Bldgs</div>
-      <div class="kpi-value" data-editable="text" data-label="KPI Value" title="Click to edit in Edit Mode">2</div>
+      <div class="kpi-value" data-kpi="frf-bldgs" data-editable="text" data-label="KPI Value" title="Auto-calculated from BUILDINGS data">2</div>
       <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">3509 demo / 3510 pending GOJ</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label" data-editable="text" data-label="KPI Label" title="Click to edit in Edit Mode">Swing Spaces</div>
-      <div class="kpi-value" data-editable="text" data-label="KPI Value" title="Click to edit in Edit Mode">1</div>
+      <div class="kpi-value" data-kpi="swing" data-editable="text" data-label="KPI Value" title="Auto-calculated from BUILDINGS data">1</div>
       <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">Bldg 1024 interim use</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label" data-editable="text" data-label="KPI Label" title="Click to edit in Edit Mode">Consol Buildings</div>
-      <div class="kpi-value" data-editable="text" data-label="KPI Value" title="Click to edit in Edit Mode">4</div>
+      <div class="kpi-value" data-kpi="consol" data-editable="text" data-label="KPI Value" title="Auto-calculated from BUILDINGS data">4</div>
       <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">3213, 3235, 3237, 3314</div>
     </div>
     <div class="kpi-card">
@@ -3610,6 +3610,17 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           tile.appendChild(nt);
         }
 
+        // Write tile edits back to the UNITS data model so every dependent
+        // display (roster, drawer, charts, tooltips, gantt) stays in sync.
+        if (window.__APEX && window.__APEX.UNITS) {
+          var u = window.__APEX.UNITS.filter(function(x){ return x.id === tid; })[0];
+          if (u) {
+            if (echSel && echSel.value) u.type = echSel.value.replace(/^t-/, '');
+            if (typeof fyVal !== 'undefined' && fyVal) u.date = fyVal;
+          }
+        }
+        if (window.__APEX && window.__APEX.propagateAll) window.__APEX.propagateAll();
+
         toast('Tile updated');
 
       } else if (pendingData.type === 'building') {
@@ -3624,14 +3635,22 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
         }
 
         // Label
+        var newLbl = document.getElementById('ep-bldg-label').value.trim();
         var span = bldg.querySelector('span');
-        if (span) span.textContent = document.getElementById('ep-bldg-label').value.trim();
+        if (span) span.textContent = newLbl;
 
         // Position and size
         bldg.style.top    = (parseInt(document.getElementById('ep-bldg-top').value)||0) + 'px';
         bldg.style.left   = (parseInt(document.getElementById('ep-bldg-left').value)||0) + 'px';
         bldg.style.width  = (parseInt(document.getElementById('ep-bldg-w').value)||100) + 'px';
         bldg.style.height = (parseInt(document.getElementById('ep-bldg-h').value)||80) + 'px';
+
+        // Write building edits back to BUILDINGS data model
+        if (window.__APEX && window.__APEX.BUILDINGS) {
+          var b = window.__APEX.BUILDINGS.filter(function(x){ return x.id === pendingData.bid; })[0];
+          if (b) { b.num = newNum; b.label = newLbl; }
+        }
+        if (window.__APEX && window.__APEX.propagateAll) window.__APEX.propagateAll();
 
         toast('Building updated');
       }
@@ -3842,7 +3861,12 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     { id:'edit',          cat:'Edit',     label:'Toggle Edit Mode',      key:'E', run:function(){ var b=document.getElementById('edit-mode-btn'); if (b) b.click(); } },
     { id:'exec',          cat:'Map',      label:'Execute Next Phase',    key:'Space', run:function(){ A.switchTab('map'); var b=document.getElementById('btn-exec'); if (b) b.click(); } },
     { id:'reset',         cat:'Map',      label:'Reset Map',             key:'R', run:function(){ var b=document.getElementById('btn-reset'); if (b) b.click(); } },
-    { id:'print',         cat:'Output',   label:'Print Dashboard',       key:'P', run:function(){ window.print(); } },
+    { id:'print',         cat:'Output',   label:'Print Current View',    key:'P', run:function(){ window.print(); } },
+    { id:'print-p0',      cat:'Output',   label:'Print Map - Phase 0 (Initial Posture)',             run:function(){ A.printAtPhase(0); } },
+    { id:'print-p1',      cat:'Output',   label:'Print Map - Phase 1 (FY26 Swing)',                  run:function(){ A.printAtPhase(1); } },
+    { id:'print-p2',      cat:'Output',   label:'Print Map - Phase 2 (FY27 Moves)',                  run:function(){ A.printAtPhase(2); } },
+    { id:'print-p3',      cat:'Output',   label:'Print Map - Phase 3 (FY28 Consolidation)',          run:function(){ A.printAtPhase(3); } },
+    { id:'print-p4',      cat:'Output',   label:'Print Map - Phase 4 (FRF Complete)',                run:function(){ A.printAtPhase(4); } },
     { id:'csv-units',     cat:'Export',   label:'Export Unit Roster CSV', run:function(){ if (A.exportCSV) A.exportCSV('units'); } },
     { id:'csv-bldgs',     cat:'Export',   label:'Export Building Schedule CSV', run:function(){ if (A.exportCSV) A.exportCSV('buildings'); } },
     { id:'json-all',      cat:'Export',   label:'Export All Data JSON',  run:function(){ if (A.exportJSON) A.exportJSON(); } },
@@ -4107,12 +4131,9 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       changes[k] = v;
     });
     Object.keys(changes).forEach(function(k){ origRef[k] = changes[k]; });
-    // Persist and propagate
-    if (A.persistEditedData) A.persistEditedData();
-    if (A.propagateToMap) A.propagateToMap();
-    A.renderRoster(); A.renderBuildings(); A.renderGantt(); A.renderCharts(); A.renderOverview();
-    if (A.renderEditor) A.renderEditor();
-    A.toast(kind === 'unit' ? 'Unit saved' : 'Building saved', 'success');
+    // Persist and propagate everywhere (single unified call)
+    if (A.propagateAll) A.propagateAll();
+    A.toast(kind === 'unit' ? 'Unit saved & propagated' : 'Building saved & propagated', 'success');
     // Re-open read-only detail view with updated values
     if (kind === 'unit') A.openUnitDetail(origRef.id); else A.openBuildingDetail(origRef.id);
   }
@@ -4126,9 +4147,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       var j = A.BUILDINGS.indexOf(ref); if (j >= 0) A.BUILDINGS.splice(j, 1);
       var bl = document.getElementById(ref.id); if (bl && bl.parentNode) bl.parentNode.removeChild(bl);
     }
-    if (A.persistEditedData) A.persistEditedData();
-    A.renderRoster(); A.renderBuildings(); A.renderGantt(); A.renderCharts(); A.renderOverview();
-    if (A.renderEditor) A.renderEditor();
+    if (A.propagateAll) A.propagateAll();
     closeDetail();
     A.toast((kind === 'unit' ? 'Unit' : 'Building') + ' deleted', 'warning');
   }
@@ -4580,17 +4599,15 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     });
     var saveU = document.getElementById('ed-save-units');
     if (saveU) saveU.addEventListener('click', function(){
-      commitEditor('u'); persistData();
-      if (A.propagateToMap) A.propagateToMap();
-      A.renderRoster(); A.renderGantt(); A.renderCharts(); A.renderOverview();
-      A.toast('Units saved and propagated to map', 'success');
+      commitEditor('u');
+      if (A.propagateAll) A.propagateAll();
+      A.toast('Units saved & propagated', 'success');
     });
     var saveB = document.getElementById('ed-save-bldgs');
     if (saveB) saveB.addEventListener('click', function(){
-      commitEditor('b'); persistData();
-      if (A.propagateToMap) A.propagateToMap();
-      A.renderBuildings(); A.renderCharts(); A.renderOverview();
-      A.toast('Buildings saved and propagated to map', 'success');
+      commitEditor('b');
+      if (A.propagateAll) A.propagateAll();
+      A.toast('Buildings saved & propagated', 'success');
     });
     var resU = document.getElementById('ed-reset-units');
     if (resU) resU.addEventListener('click', function(){
@@ -4734,6 +4751,73 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   }
   A.propagateToMap = propagateToMap;
 
+  /* KPI bar computed values - update from current UNITS / BUILDINGS data.
+     The KPI labels are still user-editable (narrative). Only the numeric
+     values tied to computed counts are refreshed. Labels marked
+     data-kpi="<key>" are the targets. */
+  function refreshKpiCounts() {
+    var movers = A.UNITS.filter(function(u){ return u.phase > 0; }).length;
+    var phases = Array.from(new Set(A.UNITS.filter(function(u){return u.phase>0;}).map(function(u){return u.phase;}))).length;
+    var frfBldgs = A.BUILDINGS.filter(function(b){ return b.zone === 'FRF'; }).length;
+    var swing = A.BUILDINGS.filter(function(b){ return b.zone === 'Swing' || b.status === 'Swing'; }).length;
+    var consol = A.BUILDINGS.filter(function(b){
+      var occ = b.occupants || [];
+      return b.zone === 'Final' && occ.length > 1;
+    }).length;
+    var q = document.querySelectorAll('[data-kpi]');
+    Array.prototype.forEach.call(q, function(el){
+      var k = el.getAttribute('data-kpi');
+      if (k === 'units-moving') el.textContent = movers;
+      else if (k === 'phases') el.textContent = phases;
+      else if (k === 'frf-bldgs') el.textContent = frfBldgs;
+      else if (k === 'swing') el.textContent = swing;
+      else if (k === 'consol') el.textContent = consol;
+    });
+  }
+  A.refreshKpiCounts = refreshKpiCounts;
+
+  /* Unified propagation. Called after EVERY edit (drawer Save, data editor
+     Save, map tile edit, map building edit, tile drag). Keeps every derived
+     display in sync with UNITS / BUILDINGS. */
+  function propagateAll() {
+    propagateToMap();
+    refreshKpiCounts();
+    A.renderRoster();
+    A.renderBuildings();
+    A.renderGantt();
+    A.renderCharts();
+    A.renderOverview();
+    if (A.renderEditor) A.renderEditor();
+    try {
+      localStorage.setItem('4thMAR_data_v1', JSON.stringify({ UNITS: A.UNITS, BUILDINGS: A.BUILDINGS }));
+    } catch(e) {}
+  }
+  A.propagateAll = propagateAll;
+
+  /* Print Map at a specific phase. Advances the map to phase N, waits for
+     the animation + delayed demolition steps to settle, prints, then resets.
+     Works by driving the existing Execute / Reset buttons so animation-engine
+     side effects (demolished class, label swaps, armory reveal, 3446 slide,
+     fy-tag pop-up, phase-grid sync) are all honored. */
+  function printAtPhase(n) {
+    n = Math.max(0, Math.min(4, n|0));
+    // Ensure the Map tab is active so the map section is visible for print
+    if (A.switchTab) A.switchTab('map');
+    var reset = document.getElementById('btn-reset');
+    var exec  = document.getElementById('btn-exec');
+    if (!reset || !exec) { window.print(); return; }
+    reset.click();
+    // Advance to target
+    for (var i = 0; i < n; i++) exec.click();
+    // Let the phase engine's longest safeTimeout (1800ms for 1024 label)
+    // plus tile transition (1500ms) finish. Also tag visible delay is 1500ms.
+    // Use 2200ms for phases 1-4, immediate for 0.
+    setTimeout(function(){
+      window.print();
+    }, n === 0 ? 200 : 2200);
+  }
+  A.printAtPhase = printAtPhase;
+
   /* --- GLOBAL KEYBOARD SHORTCUTS --- */
   function wireKeys() {
     document.addEventListener('keydown', function(e){
@@ -4818,8 +4902,9 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       });
     });
 
-    // Initial renders
+    // Initial renders + seed KPI counts from data
     A.renderOverview();
+    if (A.refreshKpiCounts) A.refreshKpiCounts();
 
     // Pause clocks when tab hidden (perf)
     document.addEventListener('visibilitychange', function(){});

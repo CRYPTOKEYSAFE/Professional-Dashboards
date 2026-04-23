@@ -39,7 +39,7 @@ window.Sections = window.Sections || {};
         list.appendChild($("button", { class: "asgn-item", onclick: () => select(p.id) }, [
           $("span", { class: "chip chip-small", style: `background:${color}1a;color:${color}`, text: progs[p.program]?.umbrella || "Other" }),
           $("span", { class: "asgn-item-title", text: p.title || p.id }),
-          $("span", { class: "u-muted", text: ` · ${p.installation || "Unknown"}` })
+          $("span", { class: "u-muted", text: ` · ${p.installation || "SACO"}` })
         ]));
       });
     }
@@ -49,12 +49,12 @@ window.Sections = window.Sections || {};
       right.innerHTML = "";
       if (!p) return;
       right.appendChild($("h3", { class: "section-h3", text: p.title || p.id }));
-      right.appendChild($("div", { class: "u-muted", text: `${p.installation || "Unknown"} · ${progs[p.program]?.label || p.program} · A Finish FY${p.activationFYOverride ?? p.activationFY ?? "-"}` }));
+      right.appendChild($("div", { class: "u-muted", text: `${p.installation || "SACO"} · ${progs[p.program]?.label || p.program} · A Finish FY${p.activationFYOverride ?? p.activationFY ?? "-"}` }));
 
       // Related on same installation grouped by umbrella
       const peers = store.getProjects().filter(x => x.id !== pid && x.installation === p.installation);
       const groups = {}; peers.forEach(x => { const u = progs[x.program]?.umbrella || "Other"; groups[u] = groups[u] || []; groups[u].push(x); });
-      right.appendChild($("h4", { class: "section-h4", text: `Other projects on ${p.installation || "Unknown"}` }));
+      right.appendChild($("h4", { class: "section-h4", text: `Other projects on ${p.installation || "SACO"}` }));
       if (!peers.length) right.appendChild($("div", { class: "u-muted", text: "None." }));
       ["DPRI","12th MLR","3/12","Other"].forEach(u => {
         if (!groups[u] || !groups[u].length) return;
@@ -91,7 +91,7 @@ window.Sections = window.Sections || {};
     }
 
     function buildBrief(p, peers, progs) {
-      let md = `# ${p.installation || "Unknown"} - Installation Brief (FOUO)\n\n`;
+      let md = `# ${p.installation || "SACO"} - Installation Brief (FOUO)\n\n`;
       md += `**Focal project:** ${p.title} (${p.id})  \n`;
       md += `Program: ${progs[p.program]?.label} · A Finish FY${p.activationFYOverride ?? p.activationFY ?? "-"}\n\n`;
       md += `## Adjacent projects\n\n`;

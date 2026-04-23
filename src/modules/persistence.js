@@ -33,7 +33,7 @@ window.Persistence = (function () {
     return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
   };
 
-  const viewerName = () => (window.DataStore && window.DataStore.getViewer && window.DataStore.getViewer()) || 'Unknown Viewer';
+  const viewerName = () => (window.DataStore && window.DataStore.getViewer && window.DataStore.getViewer()) || 'Not Set';
 
   const fouoHeaderLine = () => 'FOUO - Prepared by ' + viewerName() + ' on ' + isoDate();
 

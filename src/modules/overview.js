@@ -35,7 +35,12 @@ window.Sections = window.Sections || {};
   const fmtInt = (n) => Number(n || 0).toLocaleString("en-US");
 
   function aggregate(store) {
-    const projects = store.getProjects();
+    const filter = window.FilterState || {};
+    const projects = store.getProjects({
+      umbrella: filter.umbrella || undefined,
+      installation: filter.installation || undefined,
+      search: filter.search || undefined
+    });
     const catalog = {}; (store.listCCNs?.() || []).forEach(c => { catalog[c.codeNormalized || c.code] = c; });
     const umbrellas = { DPRI: 0, "12th MLR": 0, "3/12": 0, Other: 0 };
     const phaseCounts = { 0:0, 1:0, 2:0, 3:0, 4:0, 5:0 };
@@ -47,7 +52,7 @@ window.Sections = window.Sections || {};
       const u = progMeta[p.program]?.umbrella || "Other";
       umbrellas[u] = (umbrellas[u] || 0) + 1;
       if (p.phase != null && phaseCounts[p.phase] != null) phaseCounts[p.phase]++;
-      const inst = p.installation || "Unknown";
+      const inst = p.installation || "SACO";
       installCounts[inst] = (installCounts[inst] || 0) + 1;
       if (p.totalCost) totalCost += p.totalCost;
       else if (p.fyPlan) totalCost += Object.values(p.fyPlan).reduce((a, b) => a + (b || 0), 0);
@@ -107,17 +112,31 @@ window.Sections = window.Sections || {};
       const pi0 = [cx + Math.cos(a0) * rInner, cy + Math.sin(a0) * rInner];
       const d = `M${p0[0]} ${p0[1]} A${r} ${r} 0 ${large} 1 ${p1[0]} ${p1[1]} L${pi1[0]} ${pi1[1]} A${rInner} ${rInner} 0 ${large} 0 ${pi0[0]} ${pi0[1]} Z`;
       const path = svg("path", { d, fill: color || "#546270" });
-      path.setAttribute("data-tip", `${name}: ${v}`);
+      path.setAttribute("data-tip", `${name}: ${v} (click to filter)`);
+      path.style.cursor = "pointer";
+      path.addEventListener("click", () => {
+        const f = window.FilterState || (window.FilterState = {});
+        f.installation = f.installation === name ? null : name;
+        document.dispatchEvent(new CustomEvent("filter-change", { detail: Object.assign({}, f) }));
+      });
       s.appendChild(path);
       acc += v;
     });
     const legend = $("div", { class: "ov-burst-legend" },
-      ordered.filter(([,v]) => v).map(([name, v, color]) =>
-        $("div", { class: "ov-burst-leg" }, [
+      ordered.filter(([,v]) => v).map(([name, v, color]) => {
+        const row = $("div", { class: "ov-burst-leg", "data-tip": `Click to filter to ${name}` }, [
           $("span", { class: "ov-burst-dot", style: `background:${color}` }),
           $("span", { class: "ov-burst-name", text: name.replace("Camp ", "") }),
           $("span", { class: "ov-burst-ct", text: String(v) })
-        ])));
+        ]);
+        row.style.cursor = "pointer";
+        row.addEventListener("click", () => {
+          const f = window.FilterState || (window.FilterState = {});
+          f.installation = f.installation === name ? null : name;
+          document.dispatchEvent(new CustomEvent("filter-change", { detail: Object.assign({}, f) }));
+        });
+        return row;
+      }));
     const row = $("div", { class: "ov-burst-row" }, [s, legend]);
     wrap.appendChild(row);
     return wrap;
@@ -235,7 +254,7 @@ window.Sections = window.Sections || {};
       const matrix = {};
       agg.projects.forEach(p => {
         const u = agg.progMeta[p.program]?.umbrella || "Other";
-        const i = p.installation || "Unknown";
+        const i = p.installation || "SACO";
         matrix[u] = matrix[u] || {};
         matrix[u][i] = (matrix[u][i] || 0) + 1;
       });
@@ -281,7 +300,7 @@ window.Sections = window.Sections || {};
       const unk = agg.projects.filter(p => p.unknownInstallation).length;
       if (unk) openList.appendChild($("li", {}, [
         $("span", { class: "ov-open-ct", text: String(unk) }),
-        document.createTextNode(" projects on Unknown installation (SACO orphans). Reassign in Projects view.")
+        document.createTextNode(" projects tagged SACO (program level, site pending). Reassign in Projects view.")
       ]));
       if (!openList.children.length) openList.appendChild($("li", { class: "u-muted", text: "No open items." }));
       container.appendChild($("section", { class: "ov-section" }, [
@@ -292,7 +311,8 @@ window.Sections = window.Sections || {};
     render();
     const onChange = () => render();
     store.on("change", onChange);
-    const mo = new MutationObserver(() => { if (!document.body.contains(container)) { store.off("change", onChange); mo.disconnect(); } });
+    document.addEventListener("filter-change", onChange);
+    const mo = new MutationObserver(() => { if (!document.body.contains(container)) { store.off("change", onChange); document.removeEventListener("filter-change", onChange); mo.disconnect(); } });
     mo.observe(container.parentNode || document.body, { childList: true });
   };
 })();

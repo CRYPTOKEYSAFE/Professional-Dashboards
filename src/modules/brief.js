@@ -24,8 +24,8 @@ window.Sections = window.Sections || {};
     // Slide 1: Title
     const s1 = $("section", { class: "brief-slide brief-title" }, [
       $("div", { class: "foumark", text: "FOR OFFICIAL USE ONLY" }),
-      $("h1", { text: "DPRI / 12th MLR / 3/12" }),
-      $("h2", { text: "Long-Range Facility Plan" }),
+      $("h1", { text: "DPRI / MCIPAC Integrated Facilities" }),
+      $("h2", { text: "Integrated Facilities Plan" }),
       $("div", { class: "brief-meta u-muted", text: `Prepared by ${store.getViewer?.() || "-"} · ${new Date().toLocaleDateString()}` }),
       $("button", { class: "btn", text: "Exit Brief (Esc)", onclick: () => { document.body.classList.remove("layout-brief"); window.Shell && window.Shell.go("overview"); } }),
       $("button", { class: "btn", text: "Print / PDF", onclick: () => window.print() })

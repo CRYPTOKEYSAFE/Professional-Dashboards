@@ -41,7 +41,7 @@ INSTALLATION_ID = {
     "Camp Foster": "camp-foster",
     "Camp Schwab": "camp-schwab",
     "Camp Courtney": "camp-courtney",
-    "Unknown": "unknown",
+    "SACO": "saco",
 }
 
 INSTALLATION_COLOR = {
@@ -49,22 +49,27 @@ INSTALLATION_COLOR = {
     "Camp Hansen": "#0B6E4F",
     "Camp Foster": "#7A5900",
     "Camp Courtney": "#3A3A9E",
-    "Unknown": "#8A98A8",
+    "SACO": "#8C2B0B",
 }
 
 
 def canon_installation(raw: str) -> tuple[str, bool, str | None]:
-    """Return (canonical_name, unknownInstallation_flag, original_if_unknown)."""
+    """Return (canonical_name, pending_site_flag, original_if_flagged).
+
+    pending_site_flag=True means the row is tagged to a program label
+    (SACO) but has not yet been assigned to a specific camp; planners
+    reassign as site decisions firm up.
+    """
     if raw is None:
-        return ("Unknown", True, None)
+        return ("SACO", True, None)
     up = raw.strip().upper()
     if up in INSTALLATION_ALIASES:
         return (INSTALLATION_ALIASES[up], False, None)
-    # SPEC §3.5: SACO Program -> Unknown with original preserved
+    # SACO Program in the installation field means program-level, site pending
     if "SACO" in up and "PROGRAM" in up:
-        return ("Unknown", True, raw)
-    # Unknown installation — preserve original in notes
-    return ("Unknown", True, raw)
+        return ("SACO", True, raw)
+    # Any other unrecognized value: park in SACO bucket with original preserved
+    return ("SACO", True, raw)
 
 
 # ---------- Program derivation (SPEC §3.4) ----------
@@ -210,6 +215,9 @@ def normalize_dpri(rec: dict) -> dict:
         "dates": dates,
         "activationFY": bod_fy,
         "activationFYOverride": None,
+        "iocDate": None,
+        "focDate": None,
+        "milestoneChecks": {"f": False, "b": False, "d": False, "c": False, "a": False},
         "foc": None,
         "focTierRaw": None,
         "replaces": rec.get("replaces"),
@@ -251,6 +259,9 @@ def normalize_mlr(rec: dict) -> dict:
         "dates": None,
         "activationFY": None,
         "activationFYOverride": None,
+        "iocDate": None,
+        "focDate": None,
+        "milestoneChecks": {"ioc": False, "foc": False},
         "foc": foc_stripped,
         "focTierRaw": foc_raw,
         "replaces": None,
@@ -274,7 +285,7 @@ def main() -> None:
     installations = [
         {"id": INSTALLATION_ID[name], "name": name, "service": "USMC",
          "country": "JPN", "color": INSTALLATION_COLOR[name]}
-        for name in ["Camp Schwab", "Camp Hansen", "Camp Foster", "Camp Courtney", "Unknown"]
+        for name in ["Camp Schwab", "Camp Hansen", "Camp Foster", "Camp Courtney", "SACO"]
     ]
 
     # ---- Report stats ----

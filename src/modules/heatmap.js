@@ -19,17 +19,28 @@ window.Sections = window.Sections || {};
     return el;
   };
 
-  const CATEGORIES = ["100","200","300","400","500","600","700","800","900"];
-  const CATEGORY_LABEL = {
-    "100":"Operational / Training","200":"Maintenance / Production","300":"RDT&E",
-    "400":"Supply","500":"Hospital / Medical","600":"Administrative",
-    "700":"Housing / Personnel","800":"Utilities / Ground","900":"Real Estate"
-  };
+  const FY_MIN_DEFAULT = 2010;
+  const FY_MAX_DEFAULT = 2055;
 
-  function catOf(ccnEntry) {
-    if (!ccnEntry) return null;
-    const code = String(ccnEntry.codeNormalized || ccnEntry.code || "");
-    return CATEGORIES.find(c => code.startsWith(c[0])) || null;
+  // Derive unique 5-digit CCN codes in use across all projects (SF-measured only),
+  // returned sorted numerically with their catalog title attached.
+  function ccnsInUse(store) {
+    const catalog = {};
+    (store.listCCNs?.() || []).forEach(c => { catalog[c.codeNormalized || c.code] = c; });
+    const inUse = new Set();
+    store.getProjects().forEach(p => {
+      (p.ccns || []).forEach(a => {
+        const entry = catalog[a.ccn] || catalog[(a.ccn || "").replace(/\s/g, "")];
+        if (entry && entry.um === "SF") inUse.add(entry.codeNormalized || entry.code);
+      });
+    });
+    const rows = Array.from(inUse).map(code => ({
+      code,
+      title: (catalog[code]?.title || ""),
+      label: code + "  " + (catalog[code]?.title || "")
+    }));
+    rows.sort((a, b) => Number(a.code) - Number(b.code));
+    return rows;
   }
 
   function buildIndex(store) {
@@ -54,7 +65,8 @@ window.Sections = window.Sections || {};
   function aggregate(store, { mode, basis, axis, currentYear, filter }) {
     const idx = buildIndex(store);
     const installs = store.listInstallations().map(i => i.name);
-    const cats = CATEGORIES.slice();
+    const ccnRows = ccnsInUse(store);
+    const ccnByCode = {}; ccnRows.forEach(r => { ccnByCode[r.code] = r; });
     const progs = {}; store.listPrograms().forEach(p => progs[p.id] = p);
 
     const fs = filter || {};
@@ -68,7 +80,7 @@ window.Sections = window.Sections || {};
       return true;
     });
 
-    // Build assignments stream: { year, installation, category, sf, projectId }
+    // Stream each CCN assignment: { year, installation, ccnCode, sf, projectId }
     const stream = [];
     projs.forEach(p => {
       const defaultYear = projectActivationFY(p, true);
@@ -77,31 +89,31 @@ window.Sections = window.Sections || {};
         if (!c || c.um !== "SF") return;
         const y = a.scheduledFY ?? defaultYear;
         if (y == null) return;
-        const cat = catOf(c);
-        if (!cat) return;
+        const code = c.codeNormalized || c.code;
         let sf = Number(a.qty) || 0;
         if (basis === "net" && p.projectType === "DEMO") sf = -Math.abs(sf);
-        stream.push({ year: Number(y), installation: p.installation || "Unknown", category: cat, sf, projectId: p.id });
+        stream.push({ year: Number(y), installation: p.installation || "SACO", ccnCode: code, sf, projectId: p.id });
       });
-      // REPLACEMENT swap: at the replacement activation year, subtract the replaced project's SF assignments (net only)
       if (basis === "net" && p.projectType === "REPLACEMENT" && p.replaces && idx.byId[p.replaces]) {
         const replaced = idx.byId[p.replaces];
         const y = projectActivationFY(p, true);
         if (y != null) {
           (replaced.ccns || []).forEach(a => {
             const c = idx.catalog[a.ccn]; if (!c || c.um !== "SF") return;
-            const cat = catOf(c); if (!cat) return;
-            stream.push({ year: Number(y), installation: replaced.installation || "Unknown", category: cat, sf: -Math.abs(Number(a.qty) || 0), projectId: p.id + "::replaces::" + replaced.id });
+            const code = c.codeNormalized || c.code;
+            stream.push({ year: Number(y), installation: replaced.installation || "SACO", ccnCode: code, sf: -Math.abs(Number(a.qty) || 0), projectId: p.id + "::replaces::" + replaced.id });
           });
         }
       }
     });
 
-    // Reduce to matrix: rows × cols → sf
-    const rows = axis === "install-x-category" ? installs : cats;
-    const cols = axis === "install-x-category" ? cats : installs;
-    const rowKey = axis === "install-x-category" ? (s) => s.installation : (s) => s.category;
-    const colKey = axis === "install-x-category" ? (s) => s.category : (s) => s.installation;
+    // Rows = CCN codes in use, Columns = installations (default axis).
+    // Flip axis swaps rows and cols.
+    const codes = ccnRows.map(r => r.code);
+    const rows = axis === "ccn-x-install" ? codes : installs;
+    const cols = axis === "ccn-x-install" ? installs : codes;
+    const rowKey = axis === "ccn-x-install" ? (s) => s.ccnCode : (s) => s.installation;
+    const colKey = axis === "ccn-x-install" ? (s) => s.installation : (s) => s.ccnCode;
     const mat = {};
     rows.forEach(r => mat[r] = {});
     stream.forEach(s => {
@@ -112,9 +124,8 @@ window.Sections = window.Sections || {};
       mat[rk][ck] = (mat[rk][ck] || 0) + s.sf;
     });
 
-    // Year range
     const years = Array.from(new Set(stream.map(s => s.year))).sort((a,b)=>a-b);
-    return { matrix: mat, rows, cols, years, stream };
+    return { matrix: mat, rows, cols, years, stream, ccnByCode };
   }
 
   function drillDown(stream, row, col, mode, currentYear, axis) {
@@ -122,8 +133,8 @@ window.Sections = window.Sections || {};
     const filtered = stream.filter(s => {
       const applicable = mode === "cumulative" ? s.year <= currentYear : s.year === currentYear;
       if (!applicable) return false;
-      if (axis === "install-x-category") return s.installation === row && s.category === col;
-      return s.category === row && s.installation === col;
+      if (axis === "ccn-x-install") return s.ccnCode === row && s.installation === col;
+      return s.installation === row && s.ccnCode === col;
     });
     const byProj = {};
     filtered.forEach(s => { byProj[s.projectId] = (byProj[s.projectId] || 0) + s.sf; });
@@ -152,7 +163,7 @@ window.Sections = window.Sections || {};
   window.Sections.heatmap = function (container) {
     const store = window.DataStore;
     container.innerHTML = "";
-    const state = { mode: "cumulative", basis: "net", axis: "install-x-category", currentYear: null, playing: false };
+    const state = { mode: "cumulative", basis: "net", axis: "install-x-ccn", currentYear: null, playing: false };
 
     const controls = $("div", { class: "hm-controls" }, [
       $("span", { class: "u-muted", text: "Mode:" }),
@@ -167,8 +178,8 @@ window.Sections = window.Sections || {};
       ]),
       $("span", { class: "u-muted", text: "Axis:" }),
       $("div", { class: "seg" }, [
-        $("button", { class: "seg-btn active", "data-val": "install-x-category", text: "Inst × Cat", onclick: () => { state.axis = "install-x-category"; render(); } }),
-        $("button", { class: "seg-btn", "data-val": "category-x-install", text: "Cat × Inst", onclick: () => { state.axis = "category-x-install"; render(); } }),
+        $("button", { class: "seg-btn active", "data-val": "install-x-ccn", text: "Installation by CCN", onclick: () => { state.axis = "install-x-ccn"; render(); } }),
+        $("button", { class: "seg-btn", "data-val": "ccn-x-install", text: "CCN by Installation", onclick: () => { state.axis = "ccn-x-install"; render(); } }),
       ])
     ]);
     container.appendChild(controls);
@@ -185,29 +196,53 @@ window.Sections = window.Sections || {};
     function setActiveSeg(group, val) { group.querySelectorAll(".seg-btn").forEach(b => b.classList.toggle("active", b.getAttribute("data-val") === val)); }
 
     function render() {
-      // Update segmented states
       controls.querySelectorAll(".seg").forEach((g, i) => {
         const val = [state.mode, state.basis, state.axis][i];
         setActiveSeg(g, val);
       });
-      const agg = aggregate(store, { mode: state.mode, basis: state.basis, axis: state.axis, currentYear: state.currentYear ?? 0, filter: window.FilterState });
-      const years = agg.years.length ? agg.years : [ new Date().getFullYear() ];
-      if (state.currentYear == null || state.currentYear < years[0] || state.currentYear > years[years.length - 1]) {
-        state.currentYear = years[years.length - 1];
+      const agg = aggregate(store, { mode: state.mode, basis: state.basis, axis: state.axis, currentYear: state.currentYear ?? FY_MAX_DEFAULT, filter: window.FilterState });
+      // Year slider always spans FY_MIN_DEFAULT..FY_MAX_DEFAULT so the narrative extends far beyond the latest data point.
+      const years = [];
+      for (let y = FY_MIN_DEFAULT; y <= FY_MAX_DEFAULT; y++) years.push(y);
+      if (state.currentYear == null) {
+        state.currentYear = agg.years.length ? Math.min(Math.max(agg.years[agg.years.length - 1], FY_MIN_DEFAULT), FY_MAX_DEFAULT) : new Date().getFullYear();
       }
       renderSlider(years);
-      // Re-aggregate now that year is set
       const agg2 = aggregate(store, { mode: state.mode, basis: state.basis, axis: state.axis, currentYear: state.currentYear, filter: window.FilterState });
       drawHeatmap(agg2);
       renderSide(agg2);
     }
 
+    function labelForAxisValue(axis, dim, value, agg) {
+      // axis: "install-x-ccn" means rows=installations, cols=CCN codes.
+      //       "ccn-x-install" means rows=CCN codes, cols=installations.
+      if (axis === "install-x-ccn") {
+        if (dim === "col") {
+          const meta = agg.ccnByCode[value];
+          return meta ? `${value}  ${meta.title || ""}`.trim() : value;
+        }
+        return value; // row: installation name
+      }
+      if (dim === "row") {
+        const meta = agg.ccnByCode[value];
+        return meta ? `${value}  ${meta.title || ""}`.trim() : value;
+      }
+      return value; // col: installation name
+    }
+
     function drawHeatmap(agg) {
       gridHost.innerHTML = "";
+      if (agg.rows.length === 0 || agg.cols.length === 0) {
+        gridHost.appendChild($("div", { class: "hm-empty" }, [
+          $("strong", { text: "No CCN assignments yet." }),
+          $("div", { class: "u-muted", text: "Assign CCNs to projects in the Projects view. Each assignment lights up a cell here, tied to the project's activation fiscal year." })
+        ]));
+        return;
+      }
       const hostW = Math.max(gridHost.clientWidth || 1200, 900);
-      const labelW = 170;
-      const cellW = Math.max(80, Math.floor((hostW - labelW - 40) / Math.max(1, agg.cols.length)));
-      const cellH = 56;
+      const labelW = state.axis === "install-x-ccn" ? 160 : 260;
+      const cellW = Math.max(70, Math.floor((hostW - labelW - 40) / Math.max(1, agg.cols.length)));
+      const cellH = 50;
       const width = labelW + agg.cols.length * cellW + 40;
       const height = 44 + agg.rows.length * cellH + 20;
       const svg = window.d3.select(gridHost).append("svg").attr("viewBox", `0 0 ${width} ${height}`).attr("preserveAspectRatio", "none").attr("width", "100%").attr("height", String(height)).attr("class", "hm-svg");
@@ -215,33 +250,39 @@ window.Sections = window.Sections || {};
       agg.rows.forEach(r => agg.cols.forEach(c => { maxAbs = Math.max(maxAbs, Math.abs(agg.matrix[r]?.[c] || 0)); }));
       const pos = window.d3.scaleSequential(window.d3.interpolateBlues).domain([0, maxAbs || 1]);
       const neg = window.d3.scaleSequential(window.d3.interpolateReds).domain([0, maxAbs || 1]);
-      // Column headers
       agg.cols.forEach((c, i) => {
-        const label = state.axis === "install-x-category" ? (CATEGORY_LABEL[c] || c) : c;
-        svg.append("text").attr("x", labelW + i * cellW + cellW / 2).attr("y", 28).attr("text-anchor", "middle").attr("font-size", 12).attr("font-weight", 600).attr("fill", "#1B2535").text(label);
+        const label = labelForAxisValue(state.axis, "col", c, agg);
+        // CCN labels can be long; truncate for column headers.
+        const short = label.length > 20 ? label.slice(0, 18) + "..." : label;
+        const t = svg.append("text").attr("x", labelW + i * cellW + cellW / 2).attr("y", 26).attr("text-anchor", "middle").attr("font-size", 11).attr("font-weight", 600).attr("fill", "#1B2535").text(short);
+        t.attr("data-tip", label);
       });
       agg.rows.forEach((r, rIdx) => {
-        const label = state.axis === "install-x-category" ? r : (CATEGORY_LABEL[r] || r);
-        svg.append("text").attr("x", labelW - 10).attr("y", 44 + rIdx * cellH + cellH / 2 + 4).attr("text-anchor", "end").attr("font-size", 12).attr("font-weight", 600).attr("fill", "#1B2535").text(label);
+        const label = labelForAxisValue(state.axis, "row", r, agg);
+        const short = label.length > 34 ? label.slice(0, 32) + "..." : label;
+        const t = svg.append("text").attr("x", labelW - 10).attr("y", 44 + rIdx * cellH + cellH / 2 + 4).attr("text-anchor", "end").attr("font-size", 11).attr("font-weight", 600).attr("fill", "#1B2535").text(short);
+        t.attr("data-tip", label);
         agg.cols.forEach((c, cIdx) => {
           const v = agg.matrix[r]?.[c] || 0;
           const color = v === 0 ? "#EDF0F4" : (v > 0 ? pos(Math.abs(v)) : neg(Math.abs(v)));
+          const rowLabel = labelForAxisValue(state.axis, "row", r, agg);
+          const colLabel = labelForAxisValue(state.axis, "col", c, agg);
           svg.append("rect")
             .attr("x", labelW + cIdx * cellW + 3).attr("y", 44 + rIdx * cellH + 3)
             .attr("width", cellW - 6).attr("height", cellH - 6)
             .attr("rx", 4).attr("fill", color)
             .attr("stroke", "#CDD5DE").attr("stroke-width", 0.5)
-            .attr("data-tip", `${r} / ${c}: ${Math.round(v).toLocaleString()} SF`)
+            .attr("data-tip", `${rowLabel} | ${colLabel}: ${Math.round(v).toLocaleString()} SF`)
             .style("cursor", "pointer")
             .on("click", () => drillDown(agg.stream, r, c, state.mode, state.currentYear, state.axis));
           if (Math.abs(v) >= 1) {
             svg.append("text").attr("x", labelW + cIdx * cellW + cellW / 2).attr("y", 44 + rIdx * cellH + cellH / 2 + 5)
-              .attr("text-anchor", "middle").attr("font-size", 13).attr("font-weight", 700)
+              .attr("text-anchor", "middle").attr("font-size", 12).attr("font-weight", 700)
               .attr("fill", Math.abs(v) > maxAbs * 0.5 ? "#fff" : "#1B2535")
               .text(Math.round(v / 1000) + "k");
           } else if (v === 0) {
             svg.append("text").attr("x", labelW + cIdx * cellW + cellW / 2).attr("y", 44 + rIdx * cellH + cellH / 2 + 4)
-              .attr("text-anchor", "middle").attr("font-size", 10).attr("fill", "#8A98A8").text("-");
+              .attr("text-anchor", "middle").attr("font-size", 10).attr("fill", "#8A98A8").text(".");
           }
         });
       });
@@ -286,7 +327,7 @@ window.Sections = window.Sections || {};
       });
       if (!delivering.length) { side.appendChild($("div", { class: "u-muted", text: "No projects in scope for this year." })); return; }
       const grouped = {};
-      delivering.forEach(p => { const inst = p.installation || "Unknown"; grouped[inst] = grouped[inst] || []; grouped[inst].push(p); });
+      delivering.forEach(p => { const inst = p.installation || "SACO"; grouped[inst] = grouped[inst] || []; grouped[inst].push(p); });
       Object.entries(grouped).sort().forEach(([inst, list]) => {
         side.appendChild($("h4", { class: "section-h4", text: `${inst} (${list.length})` }));
         const ul = $("ul", { class: "side-list" });

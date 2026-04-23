@@ -248,7 +248,7 @@ window.Sections = window.Sections || {};
           const item = $("button", { class: "asgn-item", onclick: () => renderAssignmentPanel(right, p.id) }, [
             $("span", { class: "chip chip-small", style: `background:${color}1a;color:${color}`, text: prog?.umbrella || "Other" }),
             $("span", { class: "asgn-item-title", text: p.title || p.id }),
-            $("span", { class: "u-muted", text: ` · ${p.installation || "Unknown"}` }),
+            $("span", { class: "u-muted", text: ` · ${p.installation || "SACO"}` }),
             (p.ccns && p.ccns.length) ? $("span", { class: "u-muted", text: ` · ${p.ccns.length} CCNs` }) : null
           ]);
           list.appendChild(item);

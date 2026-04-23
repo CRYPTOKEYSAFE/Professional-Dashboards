@@ -122,7 +122,7 @@ window.Sections = window.Sections || {};
   function installationChip(name, ctx) {
     const i = (ctx.store.listInstallations() || []).find(x => x.name === name);
     const color = i ? i.color : "#8A98A8";
-    return `<span class="chip chip-inst" style="background:${color}1a;color:${color};border-color:${color}4d">${name || "Unknown"}</span>`;
+    return `<span class="chip chip-inst" style="background:${color}1a;color:${color};border-color:${color}4d">${name || "SACO"}</span>`;
   }
   function typeChip(t) {
     if (!t) return "";
@@ -282,13 +282,44 @@ window.Sections = window.Sections || {};
     const ctx = { store };
     container.innerHTML = "";
 
+    // Read persisted view preference (localStorage), default to "table"
+    const getViewPref = () => {
+      try { return localStorage.getItem("dashboard.v2.projectsView") || "table"; }
+      catch (_) { return "table"; }
+    };
+    const setViewPref = (v) => { try { localStorage.setItem("dashboard.v2.projectsView", v); } catch (_) {} };
+
+    let currentView = getViewPref();
+
+    const viewToggle = $("div", { class: "seg" }, [
+      $("button", {
+        class: "seg-btn" + (currentView === "table" ? " active" : ""),
+        "data-val": "table", text: "Table",
+        onclick: () => { currentView = "table"; setViewPref("table"); renderView(); }
+      }),
+      $("button", {
+        class: "seg-btn" + (currentView === "cards" ? " active" : ""),
+        "data-val": "cards", text: "Cards",
+        onclick: () => { currentView = "cards"; setViewPref("cards"); renderView(); }
+      })
+    ]);
+
     const toolbar = $("div", { class: "grid-toolbar" }, [
-      $("button", { class: "btn btn-primary", text: "+ Add row", onclick: () => {
+      $("span", { class: "u-muted", text: "View:" }),
+      viewToggle,
+      $("div", { class: "pc-toolbar-sep" }),
+      $("button", { class: "btn btn-primary", text: "+ Add Project", onclick: () => {
         const id = "new-" + Date.now().toString(36);
-        store.upsertProject({ id, source: "mlr", program: "other", title: "New project", installation: "Unknown", unknownInstallation: true, ccns: [] });
+        store.upsertProject({
+          id, source: "mlr", program: "other",
+          title: "New project", installation: "SACO",
+          unknownInstallation: true,
+          milestoneChecks: { ioc: false, foc: false },
+          ccns: []
+        });
       } }),
-      $("button", { class: "btn", text: "Paste from spreadsheet…", onclick: () => openBulkPaste(ctx) }),
-      $("button", { class: "btn", text: "Columns…", onclick: () => openColumnSettings(ctx, tableRef.current) }),
+      $("button", { class: "btn", text: "Paste from spreadsheet", onclick: () => openBulkPaste(ctx) }),
+      $("button", { class: "btn", text: "Columns", onclick: () => openColumnSettings(ctx, tableRef.current) }),
       $("div", { class: "u-grow" }),
       $("span", { id: "grid-count", class: "u-muted" })
     ]);
@@ -297,43 +328,65 @@ window.Sections = window.Sections || {};
     container.appendChild(host);
 
     const tableRef = { current: null };
-    const cols = tabulatorColumnsFromSchema(store.listSchemaColumns(), ctx);
-    const data = currentProjects(ctx);
 
-    tableRef.current = new window.Tabulator(host, {
-      data,
-      columns: cols,
-      layout: "fitDataStretch",
-      height: "calc(100vh - 260px)",
-      reactiveData: true,
-      selectable: true,
-      resizableColumnFit: true,
-      pagination: true,
-      paginationSize: 100,
-      paginationSizeSelector: [50, 100, 200, 500, 1000],
-      rowFormatter: (row) => {
-        const d = row.getData();
-        if (d.unknownInstallation) row.getElement().classList.add("row-unknown");
-      },
-      cellEdited: (cell) => {
-        const d = cell.getRow().getData();
-        store.upsertProject(d);
+    function renderView() {
+      host.innerHTML = "";
+      viewToggle.querySelectorAll(".seg-btn").forEach(b => {
+        b.classList.toggle("active", b.getAttribute("data-val") === currentView);
+      });
+      if (currentView === "cards") {
+        host.classList.remove("grid-host"); host.classList.add("cards-host");
+        window.CardsView.renderGrid(host, currentProjects(ctx), store, ctx);
+        tableRef.current = null;
+      } else {
+        host.classList.remove("cards-host"); host.classList.add("grid-host");
+        const cols = tabulatorColumnsFromSchema(store.listSchemaColumns(), ctx);
+        tableRef.current = new window.Tabulator(host, {
+          data: currentProjects(ctx),
+          columns: cols,
+          layout: "fitDataStretch",
+          height: "calc(100vh - 320px)",
+          reactiveData: true,
+          selectable: true,
+          resizableColumnFit: true,
+          pagination: true,
+          paginationSize: 100,
+          paginationSizeSelector: [50, 100, 200, 500, 1000],
+          rowFormatter: (row) => {
+            const d = row.getData();
+            if (d.unknownInstallation) row.getElement().classList.add("row-unknown");
+          },
+          cellEdited: (cell) => {
+            const d = cell.getRow().getData();
+            store.upsertProject(d);
+          }
+        });
       }
-    });
+      setCount();
+    }
 
     const setCount = () => {
       const el = document.getElementById("grid-count");
-      if (el) el.textContent = `${tableRef.current.getData().length} projects (of ${store.listProjects ? store.listProjects().length : currentProjects(ctx).length} total)`;
+      if (!el) return;
+      const visible = currentProjects(ctx).length;
+      const total = store.getProjects().length;
+      el.textContent = `${visible} of ${total} projects`;
     };
-    setCount();
 
-    // Filter + change subscriptions
-    const onFilter = () => { tableRef.current.replaceData(currentProjects(ctx)); setCount(); };
-    const onChange = () => { tableRef.current.replaceData(currentProjects(ctx)); setCount(); };
+    renderView();
+
+    const onFilter = () => renderView();
+    const onChange = () => {
+      if (currentView === "cards") {
+        window.CardsView.renderGrid(host, currentProjects(ctx), store, ctx);
+      } else if (tableRef.current) {
+        tableRef.current.replaceData(currentProjects(ctx));
+      }
+      setCount();
+    };
     document.addEventListener("filter-change", onFilter);
     store.on("change", onChange);
 
-    // Clean up on re-navigation
     const mo = new MutationObserver(() => {
       if (!document.body.contains(host)) {
         document.removeEventListener("filter-change", onFilter);

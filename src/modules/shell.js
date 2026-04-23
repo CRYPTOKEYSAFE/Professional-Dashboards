@@ -33,6 +33,7 @@ window.Shell = (function () {
     { id: "heatmap", label: "Heatmap", icon: "activity" },
     { id: "crosswalk", label: "Crosswalk", icon: "link" },
     { id: "admin", label: "Admin", icon: "settings" },
+    { id: "instructions", label: "Instructions", icon: "info" },
   ];
 
   let rootEl = null, mainEl = null, ttEl = null, lastSection = "overview", layoutEl = null;
@@ -89,7 +90,7 @@ window.Shell = (function () {
 
     const searchInp = $("input", { class: "search-inp", type: "search", placeholder: "Search project, ID, building...", value: window.FilterState.search, oninput: (e) => { window.FilterState.search = e.target.value; dispatchFilter(); } });
 
-    const vwBtn = $("button", { class: "viewer-chip", "data-tip": "Change viewer name (stamped on exports)", onclick: () => promptViewerChange(), text: viewer ? "Viewer: " + viewer : "Set Viewer" });
+    const vwBtn = $("button", { class: "viewer-chip", "data-tip": "Name stamped on every export (FOUO watermark). Click to change.", onclick: () => promptViewerChange(), text: viewer ? "Prepared By: " + viewer : "Prepared By: (not set)" });
 
     // Clocks (JST / HST / EST / PST / ZULU)
     const clocks = $("div", { class: "hdr-clocks" });
@@ -123,7 +124,7 @@ window.Shell = (function () {
       $("div", { class: "hdr-row-1" }, [
         $("div", { class: "hdr-left" }, [
           $("div", { class: "hdr-org", text: "MCIPAC G-F / PPE" }),
-          $("div", { class: "hdr-title", text: "DPRI / 12th MLR / 3/12 Long-Range Facility Plan" }),
+          $("div", { class: "hdr-title", text: "DPRI / MCIPAC Integrated Facilities" }),
           $("div", { class: "hdr-sub", text: "Defense Policy Review Initiative / 12th Marine Littoral Regiment / 3d Bn 12th Marines" }),
           $("div", { class: "hdr-attr", text: `${projCt} projects / ${store.listCCNs().length} CCN catalog entries / Source: FC 2-000-05N Appendix A` })
         ]),
@@ -146,25 +147,35 @@ window.Shell = (function () {
     startClocks();
   }
 
+  // Clocks tick once per second. We intentionally keep a single interval for
+  // the whole app lifetime (re-renders of the header re-use stable element
+  // ids so the tick handler re-finds them after every replaceWith).
   let clockInterval = null;
+  const TZ_MAP = {
+    jst: "Asia/Tokyo",
+    hst: "Pacific/Honolulu",
+    est: "America/New_York",
+    pst: "America/Los_Angeles",
+    zulu: "UTC"
+  };
+  function tickClocks() {
+    const now = new Date();
+    for (const id in TZ_MAP) {
+      const el = document.getElementById("clk-" + id);
+      if (!el) continue;
+      try {
+        el.textContent = now.toLocaleTimeString("en-US", {
+          timeZone: TZ_MAP[id],
+          hour: "2-digit", minute: "2-digit", second: "2-digit",
+          hour12: false
+        });
+      } catch (_) { /* invalid tz on legacy engine: skip */ }
+    }
+  }
   function startClocks() {
+    tickClocks();
     if (clockInterval) return;
-    const update = () => {
-      const now = new Date();
-      const map = {
-        jst: "Asia/Tokyo", hst: "Pacific/Honolulu",
-        est: "America/New_York", pst: "America/Los_Angeles", zulu: "UTC"
-      };
-      for (const id in map) {
-        const el = document.getElementById("clk-" + id);
-        if (!el) continue;
-        try {
-          el.textContent = now.toLocaleTimeString("en-US", { timeZone: map[id], hour: "2-digit", minute: "2-digit", hour12: false });
-        } catch (e) { /* ignore */ }
-      }
-    };
-    update();
-    clockInterval = setInterval(update, 30000);
+    clockInterval = setInterval(tickClocks, 1000);
   }
 
   function renderSidebar() {

@@ -39,7 +39,7 @@ window.DataStore = (function () {
     { key: 'program',             label: 'Program',           type: 'enum',     userDefined: false, order: 2 },
     { key: 'title',               label: 'Title',             type: 'text',     userDefined: false, order: 3 },
     { key: 'installation',        label: 'Installation',      type: 'text',     userDefined: false, order: 4 },
-    { key: 'unknownInstallation', label: 'Unknown Install',   type: 'bool',     userDefined: false, order: 5, hidden: true },
+    { key: 'unknownInstallation', label: 'Site Pending (SACO)',   type: 'bool',     userDefined: false, order: 5, hidden: true },
     { key: 'bldg',                label: 'Bldg',              type: 'text',     userDefined: false, order: 6 },
     { key: 'projectType',         label: 'Project Type',      type: 'enum',     enumValues: ['NEW', 'REPLACEMENT', 'DEMO', 'CONSOLIDATION', 'CONVERSION', 'RELOCATION'], userDefined: false, order: 7 },
     { key: 'phase',               label: 'Phase',             type: 'number',   userDefined: false, order: 8 },

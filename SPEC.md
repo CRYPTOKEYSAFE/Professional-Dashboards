@@ -45,8 +45,8 @@ type Project = {
     cStart?: string|null; cFinish?: string|null;
     aStart?: string|null; aFinish?: string|null;   // a_finish = BOD
   };
-  bodFY?: number|null;              // derived: year(dates.aFinish) when source=dpri; null otherwise
-  bodFYOverride?: number|null;      // user-editable override; takes precedence over bodFY in heatmap
+  activationFY?: number|null;              // derived: year(dates.aFinish) when source=dpri; null otherwise
+  activationFYOverride?: number|null;      // user-editable override; takes precedence over activationFY in heatmap
   foc?: string;                     // MLR only; tier suffix STRIPPED per §3.6
   focTierRaw?: string;              // kept internally (original foc) for audit; never displayed
   replaces?: string|null;           // DPRI
@@ -59,7 +59,7 @@ type Project = {
 type ProjectCCN = {
   ccn: string;             // must exist in ccn-catalog.json
   qty: number;             // in the CCN's UM (SF, EA, LF, …)
-  scheduledFY: number;     // the FY this CCN lands; default = bodFY of parent project
+  scheduledFY: number;     // the FY this CCN lands; default = activationFY of parent project
   note?: string;
 };
 ```
@@ -123,11 +123,11 @@ For any MLR row whose `foc` matches `/\s*\(T\d+\)\s*$/`:
 - Canonical `foc` = stripped value (e.g. `"FOC #1"`)
 - `focTierRaw` = original full value (e.g. `"FOC #1 (T1)"`) — kept for audit, never rendered in UI
 
-### 3.7 `bodFY` derivation
+### 3.7 `activationFY` derivation
 
-For DPRI rows: `bodFY = year(dates.aFinish)` if `aFinish` non-null, else `null`. Heatmap uses `bodFYOverride ?? bodFY`.
+For DPRI rows: `activationFY = year(dates.aFinish)` if `aFinish` non-null, else `null`. Heatmap uses `activationFYOverride ?? activationFY`.
 
-For MLR rows: `bodFY = null` today (no activation dates in source). The user can fill `bodFYOverride` per row. Heatmap falls back to a MLR project's earliest non-zero FY in `fyPlan` when both are null, but **visually dims** those cells to signal "estimated from budget, not programmed BOD."
+For MLR rows: `activationFY = null` today (no activation dates in source). The user can fill `activationFYOverride` per row. Heatmap falls back to a MLR project's earliest non-zero FY in `fyPlan` when both are null, but **visually dims** those cells to signal "estimated from budget, not programmed BOD."
 
 ## 4. UI layout
 
@@ -297,10 +297,10 @@ Rollups must:
 This dashboard exists to let a planner show a client "where does the laydown land, what space is available when." Interactive affordances:
 
 - **Tooltips everywhere.** Every chip, badge, column header, KPI card, heatmap cell has a tooltip explaining what it represents and how it's computed. Field definitions come from the schema so they update when users rename.
-- **Hover overs** on project rows reveal a mini-card: title, installation, program badge, BOD FY, top-3 CCN assignments by sqft, cost.
+- **Hover overs** on project rows reveal a mini-card: title, installation, program badge, A Finish FY, top-3 CCN assignments by sqft, cost.
 - **Drill-downs** on every aggregate: click a KPI → filtered list; click a heatmap cell → list of contributing projects + CCNs; click an installation chip → installation detail with all projects + CCN time series.
 - **Year slider** (heatmap section) is the primary narrative tool: drag it / hit play to watch the CCN laydown fill in across FYs. Shows FY label + play/pause/step/loop controls. The slider also controls a "Projects delivered by FY X" side panel that updates as the user scrubs.
-- **Installation-detail page** (accessible via drill-down): per-installation page shows cumulative CCN sqft by category over time (stacked area chart), a project list grouped by program umbrella with BOD FY, and a "what will be available in [FY]" mode that projects forward.
+- **Installation-detail page** (accessible via drill-down): per-installation page shows cumulative CCN sqft by category over time (stacked area chart), a project list grouped by program umbrella with A Finish FY, and a "what will be available in [FY]" mode that projects forward.
 - **Export views**: every drill-down has a "Print/Export" action that produces a FOUO-banner'd snapshot suitable for a briefing slide.
 
 ## 10. Verification checklist (Wave 3)

@@ -153,7 +153,7 @@ window.Sections = window.Sections || {};
 
     function addRow() {
       const ass = (p.ccns || []).slice();
-      ass.push({ ccn: "", qty: 0, scheduledFY: p.bodFYOverride ?? p.bodFY ?? null, note: "" });
+      ass.push({ ccn: "", qty: 0, scheduledFY: p.activationFYOverride ?? p.activationFY ?? null, note: "" });
       store.upsertProject(Object.assign({}, p, { ccns: ass }));
     }
 

@@ -208,8 +208,8 @@ def normalize_dpri(rec: dict) -> dict:
         "totalCost": None,
         "fyPlan": {},
         "dates": dates,
-        "bodFY": bod_fy,
-        "bodFYOverride": None,
+        "activationFY": bod_fy,
+        "activationFYOverride": None,
         "foc": None,
         "focTierRaw": None,
         "replaces": rec.get("replaces"),
@@ -249,8 +249,8 @@ def normalize_mlr(rec: dict) -> dict:
         "totalCost": rec.get("total"),
         "fyPlan": fy_plan,
         "dates": None,
-        "bodFY": None,
-        "bodFYOverride": None,
+        "activationFY": None,
+        "activationFYOverride": None,
         "foc": foc_stripped,
         "focTierRaw": foc_raw,
         "replaces": None,
@@ -293,7 +293,7 @@ def main() -> None:
             unknown_count += 1
         if p["focTierRaw"]:
             tier_stripped += 1
-        if p["source"] == "dpri" and p["bodFY"] is not None:
+        if p["source"] == "dpri" and p["activationFY"] is not None:
             dpri_bod_set += 1
 
     # ---- Write outputs ----
@@ -329,7 +329,7 @@ def main() -> None:
     w("## Integrity")
     w(f"- `unknownInstallation=true`: **{unknown_count}** rows (expected 28 from SACO Program installation collision).")
     w(f"- FOC tier suffix stripped: **{tier_stripped}** rows (source counter was T1=15 + T2=6 + T3=10 + T4=6 + T5=4 + T6=4 = 45).")
-    w(f"- DPRI rows with derived `bodFY` (from `dates.aFinish`): **{dpri_bod_set}** of 412.")
+    w(f"- DPRI rows with derived `activationFY` (from `dates.aFinish`): **{dpri_bod_set}** of 412.")
     w("")
     w("## Samples")
     w("### DPRI sample")

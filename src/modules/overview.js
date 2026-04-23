@@ -1,4 +1,4 @@
-/* overview.js - DPRI-style horizontal KPI strip with phase grid + installation burst + BOD timeline. */
+/* overview.js - DPRI-style horizontal KPI strip with phase grid + installation burst + activation timeline. */
 window.Sections = window.Sections || {};
 
 (function () {
@@ -40,8 +40,8 @@ window.Sections = window.Sections || {};
     const umbrellas = { DPRI: 0, "12th MLR": 0, "3/12": 0, Other: 0 };
     const phaseCounts = { 0:0, 1:0, 2:0, 3:0, 4:0, 5:0 };
     const installCounts = {};
-    let totalCost = 0, totalSF = 0, withBOD = 0, missingCCN = 0;
-    let bodMinYear = Infinity, bodMaxYear = -Infinity;
+    let totalCost = 0, totalSF = 0, withActivation = 0, missingCCN = 0;
+    let activMinYear = Infinity, activMaxYear = -Infinity;
     const progMeta = {}; store.listPrograms().forEach(p => progMeta[p.id] = p);
     projects.forEach(p => {
       const u = progMeta[p.program]?.umbrella || "Other";
@@ -55,17 +55,17 @@ window.Sections = window.Sections || {};
         const c = catalog[a.ccn] || catalog[(a.ccn || "").replace(/\s/g, "")];
         if (c && c.um === "SF") totalSF += a.qty || 0;
       });
-      const bod = p.bodFYOverride ?? p.bodFY ?? null;
+      const bod = p.activationFYOverride ?? p.activationFY ?? null;
       if (bod != null) {
-        withBOD++;
-        if (bod < bodMinYear) bodMinYear = bod;
-        if (bod > bodMaxYear) bodMaxYear = bod;
+        withActivation++;
+        if (bod < activMinYear) activMinYear = bod;
+        if (bod > activMaxYear) activMaxYear = bod;
       }
       if (!p.ccns || p.ccns.length === 0) missingCCN++;
     });
-    if (!isFinite(bodMinYear)) bodMinYear = null;
-    if (!isFinite(bodMaxYear)) bodMaxYear = null;
-    return { projects, umbrellas, phaseCounts, installCounts, totalCost, totalSF, withBOD, missingCCN, progMeta, bodMinYear, bodMaxYear };
+    if (!isFinite(activMinYear)) activMinYear = null;
+    if (!isFinite(activMaxYear)) activMaxYear = null;
+    return { projects, umbrellas, phaseCounts, installCounts, totalCost, totalSF, withActivation, missingCCN, progMeta, activMinYear, activMaxYear };
   }
 
   function phaseGrid(phaseCounts) {
@@ -126,11 +126,11 @@ window.Sections = window.Sections || {};
   function bodTimeline(projects) {
     const byYear = {};
     projects.forEach(p => {
-      const y = p.bodFYOverride ?? p.bodFY ?? null;
+      const y = p.activationFYOverride ?? p.activationFY ?? null;
       if (y != null) byYear[y] = (byYear[y] || 0) + 1;
     });
     const years = Object.keys(byYear).map(Number).sort((a, b) => a - b);
-    if (!years.length) return $("div", { class: "u-muted", text: "No BOD data on projects yet." });
+    if (!years.length) return $("div", { class: "u-muted", text: "No activation dates on projects yet." });
     const minY = years[0], maxY = years[years.length - 1];
     const full = [];
     for (let y = minY; y <= maxY; y++) full.push([y, byYear[y] || 0]);
@@ -161,7 +161,7 @@ window.Sections = window.Sections || {};
       const w = bw * 0.7;
       const yy = topPad + (plotH - bh);
       const rect = svg("rect", { x, y: yy, width: w, height: bh, fill: v > 0 ? "#2E91AE" : "#EDF0F4", rx: 2 });
-      rect.setAttribute("data-tip", `FY${y}: ${v} project${v === 1 ? "" : "s"} BOD`);
+      rect.setAttribute("data-tip", `FY${y}: ${v} project${v === 1 ? "" : "s"} activating`);
       s.appendChild(rect);
       if (i % Math.max(1, Math.floor(full.length / 24)) === 0 || y === minY || y === maxY) {
         const t = svg("text", { x: x + w/2, y: h - botPad + 14, "text-anchor": "middle", "font-size": 10, fill: "#546270" });
@@ -205,15 +205,15 @@ window.Sections = window.Sections || {};
         `DPRI ${agg.umbrellas.DPRI} · 12th MLR ${agg.umbrellas["12th MLR"]} · 3/12 ${agg.umbrellas["3/12"]} · Other ${agg.umbrellas.Other}`,
         "All projects across all programs", () => go("projects")));
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
-      const span = (agg.bodMinYear && agg.bodMaxYear) ? (agg.bodMaxYear - agg.bodMinYear) + " yr" : "-";
-      const spanSub = (agg.bodMinYear && agg.bodMaxYear) ? `FY${agg.bodMinYear} to FY${agg.bodMaxYear}` : "set BOD dates";
-      bar.appendChild(kpi("", span, "Schedule Span", spanSub, "BOD earliest to latest"));
+      const span = (agg.activMinYear && agg.activMaxYear) ? (agg.activMaxYear - agg.activMinYear) + " yr" : "-";
+      const spanSub = (agg.activMinYear && agg.activMaxYear) ? `FY${agg.activMinYear} to FY${agg.activMaxYear}` : "set activation dates";
+      bar.appendChild(kpi("", span, "Schedule Span", spanSub, "Activation finish: earliest to latest"));
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
       bar.appendChild(kpi("", fmtCurShort(agg.totalCost), "Programmed Cost", "total + FY plan", "Cost programmed across all projects", () => go("projects")));
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
       bar.appendChild(kpi("", fmtSF(agg.totalSF), "CCN Sq Ft", agg.totalSF === 0 ? "no CCN data yet" : "from CCN assignments", "Sum of SF from all CCN assignments", () => go("heatmap")));
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
-      bar.appendChild(kpi("", `${agg.withBOD}/${agg.projects.length}`, "BOD Set", `${Math.round(100 * agg.withBOD / Math.max(1, agg.projects.length))}% coverage`, "Projects with Beneficial Occupancy Date"));
+      bar.appendChild(kpi("", `${agg.withActivation}/${agg.projects.length}`, "Activation Set", `${Math.round(100 * agg.withActivation / Math.max(1, agg.projects.length))}% coverage`, "Projects with Activation Finish Date"));
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
       bar.appendChild(kpi("warn", fmtInt(agg.missingCCN), "No CCNs", "pending assignment", "Projects that need CCN data entered", () => go("assignment")));
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
@@ -222,9 +222,9 @@ window.Sections = window.Sections || {};
       bar.appendChild(installBurst(agg.installCounts, store.listInstallations()));
       container.appendChild(bar);
 
-      // BOD timeline - full width
+      // Activation timeline - full width
       const tlSection = $("section", { class: "ov-section" }, [
-        $("h3", { class: "ov-section-h", text: "Beneficial Occupancy by Fiscal Year" }),
+        $("h3", { class: "ov-section-h", text: "Activation Finish by Fiscal Year" }),
         bodTimeline(agg.projects)
       ]);
       container.appendChild(tlSection);
@@ -272,11 +272,11 @@ window.Sections = window.Sections || {};
         document.createTextNode(" projects lack CCN assignments. "),
         $("a", { href: "#assignment", onclick: (e) => { e.preventDefault(); go("assignment"); }, text: "Open Assignment view." })
       ]));
-      const noBod = agg.projects.filter(p => (p.bodFYOverride ?? p.bodFY) == null).length;
+      const noBod = agg.projects.filter(p => (p.activationFYOverride ?? p.activationFY) == null).length;
       if (noBod) openList.appendChild($("li", {}, [
         $("span", { class: "ov-open-ct", text: String(noBod) }),
-        document.createTextNode(" projects have no BOD FY. "),
-        $("a", { href: "#projects", onclick: (e) => { e.preventDefault(); go("projects"); }, text: "Set bodFYOverride per row." })
+        document.createTextNode(" projects have no A Finish FY. "),
+        $("a", { href: "#projects", onclick: (e) => { e.preventDefault(); go("projects"); }, text: "Set activationFYOverride per row." })
       ]));
       const unk = agg.projects.filter(p => p.unknownInstallation).length;
       if (unk) openList.appendChild($("li", {}, [

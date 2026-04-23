@@ -8,9 +8,9 @@ window.DataStore = (function () {
   'use strict';
 
   // --- constants ------------------------------------------------------------
-  var LS_KEY = 'dashboard.v1';
-  var LS_HISTORY_KEY = 'dashboard.v1.history';
-  var LS_VIEWER_KEY = 'dashboard.v1.viewer';
+  var LS_KEY = 'dashboard.v2';
+  var LS_HISTORY_KEY = 'dashboard.v2.history';
+  var LS_VIEWER_KEY = 'dashboard.v2.viewer';
   var HISTORY_MAX = 20;
 
   // --- internal state -------------------------------------------------------
@@ -49,8 +49,8 @@ window.DataStore = (function () {
     { key: 'totalCost',           label: 'Total Cost',        type: 'currency', unit: 'USD', userDefined: false, order: 12 },
     { key: 'fyPlan',              label: 'FY Plan',           type: 'object',   userDefined: false, order: 13, hidden: true },
     { key: 'dates',               label: 'Dates',             type: 'object',   userDefined: false, order: 14, hidden: true },
-    { key: 'bodFY',               label: 'BOD FY',            type: 'number',   userDefined: false, order: 15 },
-    { key: 'bodFYOverride',       label: 'BOD FY Override',   type: 'number',   userDefined: false, order: 16 },
+    { key: 'activationFY',               label: 'A Finish FY',            type: 'number',   userDefined: false, order: 15 },
+    { key: 'activationFYOverride',       label: 'A Finish FY Override',   type: 'number',   userDefined: false, order: 16 },
     { key: 'foc',                 label: 'FOC',               type: 'text',     userDefined: false, order: 17 },
     { key: 'focTierRaw',          label: 'FOC Tier Raw',      type: 'text',     userDefined: false, order: 18, hidden: true },
     { key: 'replaces',            label: 'Replaces',          type: 'text',     userDefined: false, order: 19 },

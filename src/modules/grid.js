@@ -198,7 +198,7 @@ window.Sections = window.Sections || {};
   // --- Bulk CSV paste modal ---
   function openBulkPaste(ctx) {
     const dlg = $("dialog", { class: "paste-dialog" });
-    const textarea = $("textarea", { rows: 12, placeholder: "Paste tab- or comma-separated rows. First row = headers (matching field keys like title, installation, program, totalCost, bodFYOverride...)" });
+    const textarea = $("textarea", { rows: 12, placeholder: "Paste tab- or comma-separated rows. First row = headers (matching field keys like title, installation, program, totalCost, activationFYOverride...)" });
     const preview = $("div", { class: "paste-preview u-muted", text: "Paste rows above to preview." });
     let parsed = null;
     textarea.addEventListener("input", () => {

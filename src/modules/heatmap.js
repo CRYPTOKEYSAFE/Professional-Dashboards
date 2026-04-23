@@ -41,8 +41,8 @@ window.Sections = window.Sections || {};
     return { catalog, projects, byId, replacedBy };
   }
 
-  function projectBodFY(p, fyPlanFallback) {
-    const b = p.bodFYOverride ?? p.bodFY ?? null;
+  function projectActivationFY(p, fyPlanFallback) {
+    const b = p.activationFYOverride ?? p.activationFY ?? null;
     if (b != null) return b;
     if (fyPlanFallback && p.fyPlan) {
       const entries = Object.entries(p.fyPlan).filter(([, v]) => v > 0).map(([k]) => Number(k.replace(/FY/i, "")));
@@ -71,7 +71,7 @@ window.Sections = window.Sections || {};
     // Build assignments stream: { year, installation, category, sf, projectId }
     const stream = [];
     projs.forEach(p => {
-      const defaultYear = projectBodFY(p, true);
+      const defaultYear = projectActivationFY(p, true);
       (p.ccns || []).forEach(a => {
         const c = idx.catalog[a.ccn] || idx.catalog[(a.ccn || "").replace(/\s/g, "")];
         if (!c || c.um !== "SF") return;
@@ -83,10 +83,10 @@ window.Sections = window.Sections || {};
         if (basis === "net" && p.projectType === "DEMO") sf = -Math.abs(sf);
         stream.push({ year: Number(y), installation: p.installation || "Unknown", category: cat, sf, projectId: p.id });
       });
-      // REPLACEMENT swap: at the replacement's BOD year, subtract the replaced project's SF assignments (net only)
+      // REPLACEMENT swap: at the replacement activation year, subtract the replaced project's SF assignments (net only)
       if (basis === "net" && p.projectType === "REPLACEMENT" && p.replaces && idx.byId[p.replaces]) {
         const replaced = idx.byId[p.replaces];
-        const y = projectBodFY(p, true);
+        const y = projectActivationFY(p, true);
         if (y != null) {
           (replaced.ccns || []).forEach(a => {
             const c = idx.catalog[a.ccn]; if (!c || c.um !== "SF") return;
@@ -280,7 +280,7 @@ window.Sections = window.Sections || {};
       side.appendChild($("h3", { class: "section-h3", text: `Projects delivering by FY${state.currentYear}` }));
       const progs = {}; store.listPrograms().forEach(p => progs[p.id] = p);
       const delivering = store.getProjects().filter(p => {
-        const y = projectBodFY(p, true);
+        const y = projectActivationFY(p, true);
         if (y == null) return false;
         return state.mode === "cumulative" ? y <= state.currentYear : y === state.currentYear;
       });

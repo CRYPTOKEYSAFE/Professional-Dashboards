@@ -47,7 +47,20 @@ window.Sections = window.Sections || {};
       // Editable when cell is clicked
       col.editor = editorForType(c, ctx);
       if (c.type === "enum" && c.enumValues) col.headerFilterParams = { values: c.enumValues };
-      // Special program/umbrella/installation cell rendering with colored chips
+      // Dynamic values for header filter on program/installation (not stored in enumValues)
+      if (c.type === "enum" && c.key === "program") {
+        const vals = {};
+        ctx.store.listPrograms().forEach(p => { vals[p.id] = p.label; });
+        col.headerFilter = "list";
+        col.headerFilterParams = { values: vals, clearable: true };
+      }
+      if (c.type === "text" && c.key === "installation") {
+        const vals = {};
+        ctx.store.listInstallations().forEach(i => { vals[i.name] = i.name; });
+        col.headerFilter = "list";
+        col.headerFilterParams = { values: vals, clearable: true };
+      }
+      // Special program/installation cell rendering with colored chips
       if (c.key === "program") col.formatter = (cell) => programChip(cell.getValue(), ctx);
       if (c.key === "installation") col.formatter = (cell) => installationChip(cell.getValue(), ctx);
       if (c.key === "projectType") col.formatter = (cell) => typeChip(cell.getValue());
@@ -96,7 +109,7 @@ window.Sections = window.Sections || {};
             return sel;
           };
         }
-        return { type: "list", values: c.enumValues || [] };
+        return c.enumValues && c.enumValues.length ? { type: "list", values: c.enumValues } : "input";
       default: return "input";
     }
   }

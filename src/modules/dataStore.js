@@ -481,6 +481,28 @@ window.DataStore = (function () {
     return result;
   };
 
+  /** @description Patch an existing column definition (label, unit, hidden, enumValues, order). */
+  var updateSchemaColumn = function (key, patch) {
+    var result = mutate('updateSchemaColumn', { key: key, patch: patch }, function () {
+      var cols = state.schema.columns;
+      for (var i = 0; i < cols.length; i++) {
+        if (cols[i].key === key) {
+          for (var k in patch) if (Object.prototype.hasOwnProperty.call(patch, k)) cols[i][k] = patch[k];
+          return true;
+        }
+      }
+      return false;
+    });
+    emit('schema-change', { type: 'update', key: key, patch: patch });
+    return result;
+  };
+
+  /** @description Store client-brief notes text on the root state so it travels with exports. */
+  var setBriefNotes = function (text) {
+    return mutate('setBriefNotes', { text: text }, function () { state.briefNotes = text || ''; });
+  };
+  var getBriefNotes = function () { return state.briefNotes || ''; };
+
   // --- events ---------------------------------------------------------------
 
   /** @description Subscribe to 'change' or 'schema-change'. */
@@ -570,6 +592,9 @@ window.DataStore = (function () {
     getViewer: getViewer,
     addSchemaColumn: addSchemaColumn,
     removeSchemaColumn: removeSchemaColumn,
+    updateSchemaColumn: updateSchemaColumn,
+    setBriefNotes: setBriefNotes,
+    getBriefNotes: getBriefNotes,
     listSchemaColumns: listSchemaColumns,
     on: on,
     off: off,

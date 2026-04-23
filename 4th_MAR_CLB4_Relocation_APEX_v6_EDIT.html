@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1600">
-<title>4th Marine Regiment / CLB-4 Master Relocation Plan - APEX OMEGA v5.0</title>
+<title>4th Marine Regiment / CLB-4 Master Relocation Plan - APEX OMEGA v6.0</title>
 <style>
 /* ============================================================
-   APEX OMEGA v5.0 - 4th MAR / CLB-4 MASTER RELOCATION PLAN
+   APEX OMEGA v6.0 - 4th MAR / CLB-4 MASTER RELOCATION PLAN
    MCIPAC G-F / PPE - Camp Schwab Consolidation
    Palette: Military Dark/Pacific Hybrid - Deep Navy + Teal
    ============================================================ */
@@ -47,13 +47,21 @@
   --status-purple:  #7B4FBE;
   --status-purple-bg:#1A0F2E;
 
-  /* Unit tile colors */
-  --tile-div:     #1E4A72;
-  --tile-mlg:     #0E3D28;
-  --tile-reg:     #3A0E6E;
-  --tile-arm:     #0E3D22;
-  --tile-med:     #5C0E2A;
-  --tile-mtr:     #1A4030;
+  /* Unit tile colors - distinct hues for each echelon */
+  --tile-div:     #1E4A72;  /* Division: steel blue */
+  --tile-mlg:     #0E3D28;  /* MLG: forest green */
+  --tile-reg:     #3A0E6E;  /* Regiment: deep purple */
+  --tile-arm:     #5A3A0E;  /* Armory: bronze/ochre */
+  --tile-med:     #5C0E2A;  /* Medical: crimson */
+  --tile-mtr:     #0E3A5C;  /* Motor Transport: dark teal */
+
+  /* Tile text colors (AA contrast) */
+  --tile-div-tx:  #CFE2F3;
+  --tile-mlg-tx:  #C8E6C9;
+  --tile-reg-tx:  #E1BEE7;
+  --tile-arm-tx:  #FFE0B2;
+  --tile-med-tx:  #FCE4EC;
+  --tile-mtr-tx:  #B3E5FC;
 
   /* FRF */
   --frf-red:      #C1272D;
@@ -77,6 +85,74 @@
   /* Layout */
   --class-bar-h: 28px;
   --header-h: auto;
+  --sidebar-w: 240px;
+  --sidebar-cw: 58px;
+
+  /* Edit system accent */
+  --edit-accent: #7B4FBE;
+  --edit-accent-light: #CE93D8;
+  --edit-accent-bg: #1A0A3A;
+}
+
+/* Light theme override - full APEX OMEGA palette */
+[data-theme="light"] {
+  --primary:      #1E4D8C;
+  --primary-mid:  #2962B0;
+  --primary-light:#4A7FB8;
+  --accent:       #0D7A8C;
+  --accent-light: #2E9BB5;
+  --accent-bright:#0A6678;
+
+  --bg:           #F1F4F8;
+  --bg-card:      #FFFFFF;
+  --bg-panel:     #EDF1F6;
+  --bg-section:   #E6EBF2;
+
+  --text:         #15202F;
+  --text-muted:   #4A5668;
+  --text-light:   #7A869A;
+
+  --border:       #C8D1DE;
+  --border-light: #E0E6EE;
+
+  --status-green:   #0B6E4C;
+  --status-green-bg:#D4F4E8;
+  --status-amber:   #7A5900;
+  --status-amber-bg:#FFF3CC;
+  --status-red:     #8C2B0B;
+  --status-red-bg:  #F8E0DB;
+  --status-blue:    #0B6E8C;
+  --status-blue-bg: #D6EEF5;
+  --status-purple:  #5A0B8C;
+  --status-purple-bg:#F0E0F8;
+
+  --tile-div:     #1E4D8C;
+  --tile-mlg:     #0B6E4C;
+  --tile-reg:     #5A0B8C;
+  --tile-arm:     #7A5900;
+  --tile-med:     #8C2B0B;
+  --tile-mtr:     #0B6E8C;
+  --tile-div-tx:  #FFFFFF;
+  --tile-mlg-tx:  #FFFFFF;
+  --tile-reg-tx:  #FFFFFF;
+  --tile-arm-tx:  #FFFFFF;
+  --tile-med-tx:  #FFFFFF;
+  --tile-mtr-tx:  #FFFFFF;
+
+  --frf-red:      #8C2B0B;
+  --frf-red-bg:   #F8E0DB;
+  --swing-amber:  #7A5900;
+  --swing-bg:     #FFF3CC;
+
+  --ph1: #2A5F9C;
+  --ph2: #1E4580;
+  --ph3: #0B6E4C;
+  --ph4: #8C2B0B;
+  --ph5: #1E3555;
+
+  --edit-accent: #5A0B8C;
+  --edit-accent-light: #7A2BAC;
+  --edit-accent-bg: #F0E0F8;
 }
 
 /* ============================================================
@@ -127,8 +203,9 @@ body {
    MAIN WRAPPER
    ============================================================ */
 .main-wrapper {
-  max-width: 1680px; margin: 0 auto; padding: 20px 24px;
+  margin: 0 auto; padding: 16px 20px;
 }
+body { min-width: 0; }
 
 /* ============================================================
    HEADER
@@ -624,13 +701,14 @@ kbd {
   display: inline-block; flex-shrink: 0;
 }
 
-/* Tile type colors */
-.t-mlg { background: var(--tile-mlg); color: #C8E6C9; }
-.t-div { background: var(--tile-div); color: var(--text); }
-.t-reg { background: var(--tile-reg); color: #E1BEE7; border: 1px solid rgba(123,79,190,0.6); }
-.t-arm { background: var(--tile-arm); color: #C8E6C9; }
-.t-med { background: var(--tile-med); color: #FCE4EC; }
-.t-mtr { background: var(--tile-mtr); color: #DCEDC8; }
+/* Tile type colors - each echelon has its own distinct hue */
+.t-mlg { background: var(--tile-mlg); color: var(--tile-mlg-tx); border: 1px solid rgba(43,168,74,0.45); }
+.t-div { background: var(--tile-div); color: var(--tile-div-tx); border: 1px solid rgba(75,172,198,0.40); }
+.t-reg { background: var(--tile-reg); color: var(--tile-reg-tx); border: 1px solid rgba(123,79,190,0.60); }
+.t-arm { background: var(--tile-arm); color: var(--tile-arm-tx); border: 1px solid rgba(212,144,10,0.55); }
+.t-med { background: var(--tile-med); color: var(--tile-med-tx); border: 1px solid rgba(193,39,45,0.50); }
+.t-mtr { background: var(--tile-mtr); color: var(--tile-mtr-tx); border: 1px solid rgba(46,155,181,0.50); }
+.tile:hover { filter: brightness(1.15); box-shadow: 0 4px 14px rgba(0,0,0,0.7); }
 
 /* Map footer */
 .map-footer {
@@ -738,7 +816,7 @@ body.edit-mode #edit-mode-btn { background: #7A0E12; border-color: #C1272D; colo
 .eb-btn.danger  { background: #7A0E12; border-color: #C1272D; color: #fff; }
 .eb-btn.success { background: #0E5530; border-color: #2BA84A; color: #fff; }
 
-#edit-bar-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.15); margin: 0 4px; }
+.edit-bar-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.15); margin: 0 4px; }
 #edit-bar-hint { font-size: 9px; color: rgba(255,255,255,0.35); margin-left: auto; }
 #edit-unsaved { font-size: 9px; color: #FFB74D; font-weight: 700;
   display: none; margin-left: 8px; }
@@ -852,9 +930,382 @@ body.edit-mode .tile:hover { outline: 2px solid #7B4FBE; }
   padding: 8px 10px; margin-bottom: 6px;
 }
 .seq-row-head {
-  font-size: 9px; font-weight: 800; color: #CE93D8;
+  font-size: 9px; font-weight: 800; color: var(--edit-accent-light);
   text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px;
 }
+
+/* ============================================================
+   APEX OMEGA v6.0 - APP SHELL (SIDEBAR + TABS)
+   Z-index stack:
+   class-bar 9999 > toast 9900 > cmd-palette 9500 > edit-panel 9000 >
+   edit-mode-btn 8001 > edit-bar 8000 > detail-drawer 850 > modal 900 >
+   conf-dialog 920 > sticky header 400 > sidebar 500
+   ============================================================ */
+
+.app-shell { display: flex; min-height: 100vh;
+  padding-top: var(--class-bar-h); padding-bottom: var(--class-bar-h); }
+
+/* SIDEBAR */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  position: fixed; top: var(--class-bar-h); bottom: var(--class-bar-h); left: 0;
+  overflow-y: auto; transition: width .2s ease;
+  z-index: 500; display: flex; flex-direction: column;
+}
+.sidebar.collapsed { width: var(--sidebar-cw); }
+body.edit-mode .sidebar { top: calc(var(--class-bar-h) + 38px); }
+
+.sb-hdr { padding: 14px 12px; border-bottom: 1px solid var(--border);
+  background: var(--primary); color: #fff; flex-shrink: 0; }
+.sb-logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark { background: var(--accent); color: #fff; width: 34px; height: 34px;
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 13px; flex-shrink: 0; letter-spacing: .04em; }
+.logo-text { font-weight: 800; font-size: 13px; line-height: 1.2; }
+.logo-sub { font-size: 10px; font-weight: 500; opacity: .85; margin-top: 2px; }
+.sidebar.collapsed .logo-text, .sidebar.collapsed .logo-sub { display: none; }
+
+.nav-grp { padding: 8px 0; border-bottom: 1px solid var(--border-light); }
+.nav-grp-lbl { font-size: 9.5px; color: var(--text-light); text-transform: uppercase;
+  letter-spacing: .1em; font-weight: 800; padding: 4px 14px 6px; }
+.sidebar.collapsed .nav-grp-lbl { display: none; }
+
+.nav-btn { display: flex; align-items: center; gap: 10px; padding: 9px 14px;
+  width: 100%; background: none; border: none; color: var(--text-muted);
+  font-size: 12.5px; font-weight: 600; cursor: pointer; text-align: left;
+  border-left: 3px solid transparent;
+  transition: background .15s, color .15s, border-color .15s;
+  font-family: var(--font-sans); }
+.nav-btn:hover { background: var(--bg-section); color: var(--text); }
+.nav-btn.active { background: var(--bg-section); color: var(--accent-bright);
+  border-left-color: var(--accent); font-weight: 700; }
+.nav-icon { font-size: 15px; min-width: 20px; text-align: center; color: var(--accent); }
+.nav-btn.active .nav-icon { color: var(--accent-bright); }
+.sidebar.collapsed .nav-label { display: none; }
+.sidebar.collapsed .nav-btn { justify-content: center; padding: 9px 0; }
+
+.sb-footer { margin-top: auto; padding: 10px 12px; border-top: 1px solid var(--border-light);
+  background: var(--bg-section); flex-shrink: 0; }
+.sb-footer-row { display: flex; align-items: center; gap: 7px; font-size: 10px;
+  color: var(--text-muted); margin: 3px 0; }
+.sb-clsbadge { background: var(--status-red); color: #fff; font-weight: 800;
+  padding: 1px 7px; border-radius: 3px; font-size: 9px; letter-spacing: .1em; }
+.sidebar.collapsed .sb-footer-text { display: none; }
+
+/* MAIN CONTENT */
+.main-content { flex: 1; margin-left: var(--sidebar-w); transition: margin-left .2s ease;
+  min-width: 0; display: flex; flex-direction: column; }
+.sidebar.collapsed ~ .main-content { margin-left: var(--sidebar-cw); }
+
+.main-header { background: var(--bg-card); border-bottom: 1px solid var(--border);
+  padding: 12px 20px; position: sticky; top: var(--class-bar-h); z-index: 400; }
+body.edit-mode .main-header { top: calc(var(--class-bar-h) + 38px); }
+
+.toolbar { display: flex; align-items: center; gap: 10px; padding: 10px 20px;
+  background: var(--bg-card); border-bottom: 1px solid var(--border);
+  flex-wrap: wrap; z-index: 300; }
+.tool-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.tool-label { font-size: 9.5px; color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: .08em; font-weight: 800; }
+.tool-sep { width: 1px; height: 22px; background: var(--border); }
+
+.srch { min-width: 220px; background: var(--bg-section); border: 1px solid var(--border);
+  color: var(--text); padding: 6px 10px; border-radius: 4px; font-size: 12px;
+  font-family: inherit; }
+.srch:focus { outline: 2px solid var(--accent-bright); outline-offset: -1px; border-color: var(--accent); }
+
+.tb-select { background: var(--bg-section); border: 1px solid var(--border);
+  color: var(--text); padding: 6px 8px; border-radius: 4px; font-size: 11.5px;
+  font-family: inherit; max-width: 150px; cursor: pointer; }
+.tb-select:focus { outline: 2px solid var(--accent-bright); }
+
+.hdr-btn { background: var(--bg-section); color: var(--text); border: 1px solid var(--border);
+  padding: 6px 11px; border-radius: 4px; font-size: 11px; font-weight: 700;
+  cursor: pointer; font-family: inherit; letter-spacing: 0.03em; transition: all 0.15s; }
+.hdr-btn:hover { background: var(--bg-panel); border-color: var(--accent); color: var(--accent-bright); }
+.hdr-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.hdr-btn.primary:hover { background: var(--accent-light); color: #fff; }
+.hdr-btn.danger { background: var(--status-red-bg); color: var(--status-red); border-color: var(--status-red); }
+.hdr-btn.danger:hover { background: var(--status-red); color: #fff; }
+
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+.seg-btn { background: var(--bg-section); color: var(--text-muted); border: none;
+  padding: 6px 11px; font-size: 11px; font-weight: 700; cursor: pointer;
+  border-right: 1px solid var(--border); font-family: inherit; }
+.seg-btn:last-child { border-right: none; }
+.seg-btn.active { background: var(--accent); color: #fff; }
+.seg-btn:hover:not(.active) { background: var(--bg-panel); color: var(--text); }
+
+/* TAB PANELS */
+.tab-container { flex: 1; min-height: 0; }
+.tab-panel { display: none; padding: 16px 20px; }
+.tab-panel.active { display: block; }
+
+/* Tab content cards */
+.panel-card { background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 6px; padding: 16px; margin-bottom: 14px; }
+.panel-card h3 { font-size: 13px; color: var(--accent-light); margin-bottom: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em; font-weight: 800; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+@media (max-width: 1100px) { .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+
+/* ============================================================
+   TABLES (Roster, Buildings, Editor)
+   ============================================================ */
+.tbl-wrap { background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden; }
+.tbl-info { padding: 8px 14px; border-bottom: 1px solid var(--border-light);
+  font-size: 11px; color: var(--text-muted); display: flex;
+  align-items: center; gap: 10px; flex-wrap: wrap; background: var(--bg-section); }
+.tbl-scroll { max-height: calc(100vh - 300px); overflow: auto; }
+
+.tbl { width: 100%; border-collapse: collapse; font-size: 11.5px; font-family: var(--font-sans); }
+.tbl th { background: var(--bg-section); color: var(--text); padding: 8px 10px;
+  text-align: left; font-weight: 800; border-bottom: 2px solid var(--border);
+  position: sticky; top: 0; font-size: 10.5px; text-transform: uppercase;
+  letter-spacing: .06em; cursor: pointer; user-select: none; z-index: 2; }
+.tbl th[data-sort]:hover { background: var(--bg-panel); color: var(--accent-bright); }
+.tbl th[aria-sort="ascending"]::after { content: ' \25B2'; color: var(--accent-bright); font-size: 9px; }
+.tbl th[aria-sort="descending"]::after { content: ' \25BC'; color: var(--accent-bright); font-size: 9px; }
+.tbl td { padding: 7px 10px; border-bottom: 1px solid var(--border-light); color: var(--text); }
+.tbl tr:hover td { background: var(--bg-section); }
+.tbl tr.row-click { cursor: pointer; }
+.tbl tr.row-click:hover td { background: var(--bg-panel); }
+.tbl tfoot td { background: var(--bg-section); font-weight: 800; border-top: 2px solid var(--border); }
+.tbl .num { text-align: right; font-family: var(--font-mono); }
+.tbl .cen { text-align: center; }
+
+/* Status / type pills for tables */
+.pill { display: inline-block; padding: 2px 8px; border-radius: 10px;
+  font-size: 9.5px; font-weight: 800; letter-spacing: .04em;
+  text-transform: uppercase; white-space: nowrap; border: 1px solid transparent; }
+.pill-move    { background: var(--status-green-bg); color: var(--status-green); border-color: var(--status-green); }
+.pill-swing   { background: var(--swing-bg); color: var(--swing-amber); border-color: var(--swing-amber); }
+.pill-frf     { background: var(--frf-red-bg); color: var(--status-red); border-color: var(--status-red); }
+.pill-final   { background: var(--status-blue-bg); color: var(--accent); border-color: var(--accent); }
+.pill-plan    { background: var(--bg-section); color: var(--text-muted); border-color: var(--border-light); }
+.pill-resident{ background: var(--status-green-bg); color: var(--status-green); border-color: var(--status-green); opacity: .85; }
+.pill-demo    { background: var(--frf-red-bg); color: var(--status-red); border-color: var(--status-red); }
+.pill-active  { background: var(--status-blue-bg); color: var(--accent); border-color: var(--accent); }
+.pill-pending { background: var(--swing-bg); color: var(--swing-amber); border-color: var(--swing-amber); }
+.pill-vacated { background: var(--bg-section); color: var(--text-muted); border-color: var(--border); }
+
+/* Type chip (by unit echelon) */
+.chip-type { display: inline-block; width: 12px; height: 12px; border-radius: 50%;
+  vertical-align: middle; margin-right: 6px; border: 1px solid rgba(255,255,255,0.2); }
+.chip-div { background: var(--tile-div); }
+.chip-mlg { background: var(--tile-mlg); }
+.chip-reg { background: var(--tile-reg); }
+.chip-arm { background: var(--tile-arm); }
+.chip-med { background: var(--tile-med); }
+.chip-mtr { background: var(--tile-mtr); }
+
+/* ============================================================
+   DETAIL DRAWER (slide from right)
+   ============================================================ */
+.detail-overlay { position: fixed; top: var(--class-bar-h); right: 0;
+  bottom: var(--class-bar-h); left: 0; background: rgba(0,0,0,.45);
+  z-index: 850; display: none; justify-content: flex-end; }
+.detail-overlay.open { display: flex; }
+body.edit-mode .detail-overlay { top: calc(var(--class-bar-h) + 38px); }
+.detail-panel { width: 560px; max-width: 100%; background: var(--bg-card);
+  border-left: 2px solid var(--accent); display: flex; flex-direction: column; overflow: hidden; }
+.dp-header { padding: 14px 18px; border-bottom: 1px solid var(--border);
+  background: var(--primary); color: #fff; position: relative; flex-shrink: 0; }
+.dp-title { font-size: 14px; font-weight: 800; padding-right: 40px; letter-spacing: 0.03em; }
+.dp-sub { font-size: 11px; opacity: .85; margin-top: 3px; }
+.dp-close { position: absolute; top: 10px; right: 12px; background: rgba(255,255,255,.12);
+  color: #fff; border: 1px solid rgba(255,255,255,.28); width: 30px; height: 30px;
+  border-radius: 4px; font-size: 16px; line-height: 1; cursor: pointer; }
+.dp-close:hover { background: rgba(255,255,255,0.22); }
+.dp-body { flex: 1; overflow-y: auto; padding: 14px 18px; min-height: 0; }
+.dp-footer { padding: 10px 18px; border-top: 1px solid var(--border);
+  background: var(--bg-section); display: flex; gap: 8px; justify-content: flex-end; flex-shrink: 0; }
+.dp-row { display: grid; grid-template-columns: 140px 1fr; gap: 10px;
+  padding: 6px 0; border-bottom: 1px dashed var(--border-light); font-size: 12px; }
+.dp-row:last-child { border-bottom: none; }
+.dp-row .dp-k { font-size: 10px; color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: .06em; font-weight: 700; align-self: center; }
+.dp-row .dp-v { color: var(--text); font-weight: 600; }
+.dp-section { font-size: 10px; color: var(--accent-light); text-transform: uppercase;
+  letter-spacing: 0.1em; font-weight: 800; margin: 14px 0 8px; padding-bottom: 4px;
+  border-bottom: 1px solid var(--border); }
+
+/* ============================================================
+   COMMAND PALETTE (Ctrl+K)
+   ============================================================ */
+.cmd-overlay { position: fixed; top: var(--class-bar-h); right: 0;
+  bottom: var(--class-bar-h); left: 0; background: rgba(0,0,0,.55);
+  z-index: 9500; display: none; padding-top: 110px; justify-content: center; }
+.cmd-overlay.open { display: flex; }
+body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
+.cmd-box { background: var(--bg-card); border: 1px solid var(--accent);
+  border-radius: 8px; width: 560px; max-width: 90vw; max-height: 420px;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6); }
+.cmd-inp { width: 100%; padding: 12px 16px; border: none;
+  border-bottom: 1px solid var(--border); background: var(--bg-section);
+  color: var(--text); font-size: 13px; outline: none; font-family: inherit; }
+.cmd-list { flex: 1; overflow-y: auto; padding: 6px 0; }
+.cmd-item { padding: 9px 16px; cursor: pointer; display: flex; align-items: center;
+  gap: 12px; font-size: 12px; color: var(--text); }
+.cmd-item:hover, .cmd-item.hi { background: var(--bg-section); color: var(--accent-bright); }
+.cmd-ico { width: 22px; text-align: center; color: var(--accent); font-size: 14px; }
+.cmd-label { flex: 1; }
+.cmd-key { margin-left: auto; font-size: 10px; color: var(--text-muted);
+  border: 1px solid var(--border); padding: 2px 6px; border-radius: 3px;
+  font-family: var(--font-mono); }
+.cmd-cat { font-size: 9.5px; color: var(--text-light); text-transform: uppercase;
+  letter-spacing: 0.1em; font-weight: 700; padding: 8px 16px 2px; }
+
+/* ============================================================
+   MODAL + CONFIRMATION
+   ============================================================ */
+.modal-overlay { position: fixed; top: var(--class-bar-h); right: 0;
+  bottom: var(--class-bar-h); left: 0; background: rgba(0,0,0,.55);
+  z-index: 900; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal-box { background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; max-width: 700px; width: 100%;
+  max-height: calc(100vh - 140px); display: flex; flex-direction: column;
+  overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.55); }
+.modal-hdr { padding: 12px 18px; border-bottom: 1px solid var(--border);
+  background: var(--bg-section); }
+.modal-hdr h3 { margin: 0; font-size: 14px; color: var(--accent-light); letter-spacing: 0.03em; }
+.modal-body { padding: 16px 18px; overflow-y: auto; flex: 1; font-size: 12px; }
+.modal-foot { padding: 10px 18px; border-top: 1px solid var(--border);
+  background: var(--bg-section); display: flex; gap: 8px; justify-content: flex-end; }
+.modal-row { display: grid; grid-template-columns: 140px 1fr; gap: 10px;
+  align-items: center; margin-bottom: 10px; }
+.modal-row label { font-size: 11px; color: var(--text-muted); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em; }
+.modal-row input, .modal-row select, .modal-row textarea {
+  width: 100%; background: var(--bg-section); border: 1px solid var(--border);
+  color: var(--text); padding: 6px 9px; border-radius: 4px; font-size: 12px; font-family: inherit; }
+
+.conf-overlay { position: fixed; top: var(--class-bar-h); right: 0;
+  bottom: var(--class-bar-h); left: 0; background: rgba(0,0,0,.6);
+  z-index: 920; display: none; align-items: center; justify-content: center; padding: 20px; }
+.conf-overlay.open { display: flex; }
+.conf-box { background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; max-width: 440px; width: 100%; }
+.conf-title { padding: 14px 20px; border-bottom: 1px solid var(--border);
+  font-size: 14px; font-weight: 800; color: var(--accent-light); }
+.conf-body { padding: 14px 20px; font-size: 12.5px; color: var(--text); line-height: 1.55; }
+.conf-actions { padding: 12px 20px; border-top: 1px solid var(--border);
+  display: flex; gap: 8px; justify-content: flex-end; background: var(--bg-section); }
+
+/* ============================================================
+   TOAST NOTIFICATIONS
+   ============================================================ */
+.toast-cont { position: fixed; top: calc(var(--class-bar-h) + 14px); right: 16px;
+  display: flex; flex-direction: column; gap: 8px; z-index: 9900; pointer-events: none; }
+.toast { background: var(--bg-card); border: 1px solid var(--border);
+  border-left: 3px solid var(--accent); color: var(--text); padding: 9px 14px;
+  border-radius: 4px; font-size: 12px; min-width: 240px; max-width: 380px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35); opacity: 0;
+  transition: opacity .25s; pointer-events: auto; }
+.toast.show { opacity: 1; }
+.toast.success { border-left-color: var(--status-green); }
+.toast.warning { border-left-color: var(--status-amber); }
+.toast.error   { border-left-color: var(--status-red); }
+
+/* ============================================================
+   SVG CHARTS
+   ============================================================ */
+.chart-box { background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 6px; padding: 14px; }
+.chart-title { font-size: 11px; font-weight: 800; color: var(--accent-light);
+  text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+.chart-svg { width: 100%; height: auto; display: block; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 10px;
+  margin-top: 8px; color: var(--text-muted); }
+.chart-legend-item { display: flex; align-items: center; gap: 5px; }
+.chart-legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+/* Gantt-style timeline */
+.gantt { display: grid; grid-template-columns: 180px repeat(12, 1fr);
+  gap: 2px; font-size: 10.5px; background: var(--border-light); padding: 2px; border-radius: 4px; }
+.gantt-hdr { background: var(--bg-section); padding: 6px 8px;
+  font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--text-muted); font-size: 9.5px; text-align: center; }
+.gantt-hdr.unit { text-align: left; }
+.gantt-row-lbl { background: var(--bg-card); padding: 7px 10px; color: var(--text);
+  font-weight: 700; font-size: 11px; }
+.gantt-cell { background: var(--bg-card); min-height: 22px; position: relative; }
+.gantt-bar { position: absolute; top: 3px; bottom: 3px; left: 2px; right: 2px;
+  border-radius: 3px; display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 800; font-size: 9px; letter-spacing: 0.05em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 4px; }
+.gantt-bar.move  { background: var(--status-green); }
+.gantt-bar.swing { background: var(--swing-amber); color: #000; }
+.gantt-bar.frf   { background: var(--status-red); }
+.gantt-bar.final { background: var(--accent); }
+.gantt-bar.res   { background: var(--tile-mtr); opacity: 0.7; }
+
+/* ============================================================
+   KPI TRENDS / PROGRESS BARS
+   ============================================================ */
+.prog-track { height: 8px; background: var(--bg-section); border-radius: 4px;
+  overflow: hidden; border: 1px solid var(--border); }
+.prog-fill { height: 100%; background: var(--accent); border-radius: 4px;
+  transition: width .4s ease; }
+.prog-fill.green { background: var(--status-green); }
+.prog-fill.amber { background: var(--status-amber); }
+.prog-fill.red { background: var(--status-red); }
+
+/* Editable field in editor tab */
+.editfld { background: var(--bg-section); border: 1px solid var(--border);
+  color: var(--text); padding: 4px 7px; border-radius: 3px; font-size: 11.5px;
+  min-width: 100px; font-family: inherit; }
+.editfld:focus { outline: 2px solid var(--accent-bright); border-color: var(--accent); }
+.ed-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.ed-table th { background: var(--bg-section); padding: 7px 9px; text-align: left;
+  font-size: 10px; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--text-muted); border-bottom: 2px solid var(--border);
+  position: sticky; top: 0; z-index: 5; font-weight: 800; }
+.ed-table td { padding: 4px 6px; border-bottom: 1px solid var(--border-light); }
+.ed-table input, .ed-table select { width: 100%; background: transparent;
+  border: 1px solid transparent; padding: 4px 6px; color: var(--text);
+  font-size: 11.5px; border-radius: 3px; font-family: inherit; }
+.ed-table input:hover, .ed-table select:hover { border-color: var(--border-light); }
+.ed-table input:focus, .ed-table select:focus { outline: 2px solid var(--accent-bright);
+  background: var(--bg-section); border-color: var(--accent); }
+
+/* Row action buttons in editor */
+.row-act { display: inline-flex; gap: 4px; }
+.row-act-btn { background: var(--bg-section); border: 1px solid var(--border);
+  color: var(--text-muted); padding: 3px 8px; border-radius: 3px;
+  font-size: 10px; cursor: pointer; font-family: inherit; font-weight: 700; }
+.row-act-btn:hover { color: var(--accent-bright); border-color: var(--accent); }
+.row-act-btn.del:hover { color: var(--status-red); border-color: var(--status-red); }
+
+/* ============================================================
+   LIGHT THEME PATCHES
+   ============================================================ */
+[data-theme="light"] .map-stage { background: #F5F7FA;
+  background-image: linear-gradient(rgba(46,155,181,0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46,155,181,0.10) 1px, transparent 1px); }
+[data-theme="light"] .m-bldg { background: #FFFFFF; border-color: #B0BDC9;
+  color: var(--accent); box-shadow: 0 2px 8px rgba(30,77,140,0.15); }
+[data-theme="light"] .m-bldg span { color: var(--text-muted); }
+[data-theme="light"] .m-bldg.frf { background: var(--frf-red-bg); border-color: var(--status-red); color: var(--status-red); }
+[data-theme="light"] .m-bldg.swing { background: var(--swing-bg); border-color: var(--swing-amber); color: var(--swing-amber); }
+[data-theme="light"] .m-bldg.demolished { background: #E8ECF0 !important;
+  border-color: #B0BDC9 !important; color: #7A869A !important; opacity: 0.65; }
+[data-theme="light"] .zone-label { color: rgba(30,77,140,0.35); }
+[data-theme="light"] .demo-line { background: repeating-linear-gradient(175deg,
+  transparent, transparent 12px, rgba(140,43,11,0.4) 12px, rgba(140,43,11,0.4) 20px);
+  border-left-color: rgba(140,43,11,0.7); }
+[data-theme="light"] .demo-label { color: rgba(140,43,11,0.8); }
+[data-theme="light"] body { background: var(--bg); color: var(--text); }
+[data-theme="light"] .class-bar { background: var(--primary); color: #fff; }
+[data-theme="light"] .fy-tag { background: var(--primary); color: #fff; border-color: var(--accent); }
 
 </style>
 </head>
@@ -871,7 +1322,96 @@ body.edit-mode .tile:hover { outline: 2px solid #7B4FBE; }
   UNCLASSIFIED // FOR INTERNAL PLANNING PURPOSES ONLY
 </div>
 
-<div class="main-wrapper" id="main-content">
+<!-- ============================================================
+     APEX OMEGA v6.0 - APP SHELL (SIDEBAR + MAIN CONTENT)
+     ============================================================ -->
+<div class="app-shell">
+
+  <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+    <div class="sb-hdr">
+      <div class="sb-logo">
+        <div class="logo-mark" aria-hidden="true">4M</div>
+        <div>
+          <div class="logo-text">4th MAR / CLB-4</div>
+          <div class="logo-sub">APEX OMEGA v6.0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-grp">
+      <div class="nav-grp-lbl">Dashboard</div>
+      <button class="nav-btn active" data-tab="overview" type="button" aria-label="Overview tab" title="Overview (1)">
+        <span class="nav-icon" aria-hidden="true">&#9632;</span><span class="nav-label">Overview</span>
+      </button>
+      <button class="nav-btn" data-tab="map" type="button" aria-label="Interactive map tab" title="Interactive Map (2)">
+        <span class="nav-icon" aria-hidden="true">&#9673;</span><span class="nav-label">Interactive Map</span>
+      </button>
+      <button class="nav-btn" data-tab="phases" type="button" aria-label="Phase grid tab" title="Phase Grid (3)">
+        <span class="nav-icon" aria-hidden="true">&#9783;</span><span class="nav-label">Phase Grid</span>
+      </button>
+    </div>
+
+    <div class="nav-grp">
+      <div class="nav-grp-lbl">Data</div>
+      <button class="nav-btn" data-tab="roster" type="button" aria-label="Unit roster tab" title="Unit Roster (4)">
+        <span class="nav-icon" aria-hidden="true">&#9863;</span><span class="nav-label">Unit Roster</span>
+      </button>
+      <button class="nav-btn" data-tab="buildings" type="button" aria-label="Building schedule tab" title="Building Schedule (5)">
+        <span class="nav-icon" aria-hidden="true">&#9638;</span><span class="nav-label">Building Schedule</span>
+      </button>
+      <button class="nav-btn" data-tab="timeline" type="button" aria-label="Timeline tab" title="Timeline (6)">
+        <span class="nav-icon" aria-hidden="true">&#9776;</span><span class="nav-label">Timeline</span>
+      </button>
+      <button class="nav-btn" data-tab="charts" type="button" aria-label="Charts tab" title="Charts (7)">
+        <span class="nav-icon" aria-hidden="true">&#9650;</span><span class="nav-label">Charts</span>
+      </button>
+    </div>
+
+    <div class="nav-grp">
+      <div class="nav-grp-lbl">Tools</div>
+      <button class="nav-btn" data-tab="editor" type="button" aria-label="Data editor tab" title="Data Editor (8)">
+        <span class="nav-icon" aria-hidden="true">&#9998;</span><span class="nav-label">Data Editor</span>
+      </button>
+      <button class="nav-btn" data-tab="help" type="button" aria-label="Help tab" title="Help (9)">
+        <span class="nav-icon" aria-hidden="true">?</span><span class="nav-label">How to Use</span>
+      </button>
+    </div>
+
+    <div class="nav-grp">
+      <div class="nav-grp-lbl">Actions</div>
+      <button class="nav-btn" id="act-cmd" type="button" aria-label="Open command palette" title="Command Palette (Ctrl+K)">
+        <span class="nav-icon" aria-hidden="true">&#8984;</span><span class="nav-label">Command Palette</span>
+      </button>
+      <button class="nav-btn" id="act-theme" type="button" aria-label="Toggle theme" title="Toggle Theme (T)">
+        <span class="nav-icon" aria-hidden="true">&#9681;</span><span class="nav-label">Toggle Theme</span>
+      </button>
+      <button class="nav-btn" id="act-edit" type="button" aria-label="Toggle edit mode" title="Toggle Edit Mode (E)">
+        <span class="nav-icon" aria-hidden="true">&#9998;</span><span class="nav-label">Edit Mode</span>
+      </button>
+      <button class="nav-btn" id="act-print" type="button" aria-label="Print dashboard" title="Print (P)">
+        <span class="nav-icon" aria-hidden="true">&#128424;</span><span class="nav-label">Print</span>
+      </button>
+      <button class="nav-btn" id="act-collapse" type="button" aria-label="Collapse sidebar" title="Collapse Sidebar (K)">
+        <span class="nav-icon" aria-hidden="true">&#8676;</span><span class="nav-label">Collapse</span>
+      </button>
+    </div>
+
+    <div class="sb-footer">
+      <div class="sb-footer-row">
+        <span class="sb-clsbadge">FOUO</span>
+        <span class="sb-footer-text">Unclassified</span>
+      </div>
+      <div class="sb-footer-row sb-footer-text">
+        <span>MCIPAC G-F &bull; PPE</span>
+      </div>
+      <div class="sb-footer-row sb-footer-text">
+        <span>Camp Schwab Consolidation</span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-content" id="main-content">
+  <div class="main-wrapper">
 
   <!-- HEADER -->
   <header class="hdr">
@@ -927,6 +1467,133 @@ body.edit-mode .tile:hover { outline: 2px solid #7B4FBE; }
       <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">1 June 2028 deadline</div>
     </div>
   </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar" role="region" aria-label="View tools and filters">
+    <div class="tool-group">
+      <label class="tool-label" for="q-search">Search</label>
+      <input id="q-search" class="srch" type="text" placeholder="Search units, buildings..." aria-label="Search">
+    </div>
+    <div class="tool-sep" aria-hidden="true"></div>
+    <div class="tool-group">
+      <label class="tool-label" for="f-type">Type</label>
+      <select id="f-type" class="tb-select" aria-label="Filter by unit type">
+        <option value="">All Types</option>
+        <option value="div">Division</option>
+        <option value="mlg">MLG</option>
+        <option value="reg">Regiment</option>
+        <option value="arm">Armory</option>
+        <option value="med">Medical</option>
+        <option value="mtr">Motor Transport</option>
+      </select>
+    </div>
+    <div class="tool-group">
+      <label class="tool-label" for="f-phase">Phase</label>
+      <select id="f-phase" class="tb-select" aria-label="Filter by phase">
+        <option value="">All Phases</option>
+        <option value="1">Phase 1 (FY26)</option>
+        <option value="2">Phase 2 (FY27)</option>
+        <option value="3">Phase 3 (FY28)</option>
+        <option value="4">Phase 4 (FRF)</option>
+        <option value="0">Resident / No Move</option>
+      </select>
+    </div>
+    <div class="tool-group">
+      <label class="tool-label" for="f-status">Status</label>
+      <select id="f-status" class="tb-select" aria-label="Filter by status">
+        <option value="">All Status</option>
+        <option value="Permanent Move">Permanent Move</option>
+        <option value="Swing">Swing</option>
+        <option value="FRF Action">FRF Action</option>
+        <option value="Consolidation">Consolidation</option>
+        <option value="Resident">Resident</option>
+        <option value="Pending">Pending</option>
+      </select>
+    </div>
+    <button class="hdr-btn" id="f-reset" type="button" aria-label="Reset all filters">Reset</button>
+    <div style="margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+      <button class="hdr-btn" id="btn-theme" type="button" aria-label="Toggle theme" title="Toggle theme (T)">&#9681; Theme</button>
+      <button class="hdr-btn" id="btn-cmd" type="button" aria-label="Open command palette" title="Command palette (Ctrl+K)">&#8984; Commands</button>
+      <button class="hdr-btn primary" id="btn-edit-tool" type="button" aria-label="Toggle edit mode" title="Toggle edit mode (E)">&#9998; Edit</button>
+      <button class="hdr-btn" id="btn-export" type="button" aria-label="Export data" title="Export">Export</button>
+      <button class="hdr-btn" id="btn-print" type="button" aria-label="Print" title="Print (P)">Print</button>
+    </div>
+  </div>
+
+  <!-- TAB CONTAINER -->
+  <div class="tab-container" id="tab-container">
+
+  <!-- TAB: OVERVIEW -->
+  <section class="tab-panel active" id="tab-overview" role="tabpanel" aria-labelledby="nav-overview">
+    <div class="grid-3">
+      <div class="panel-card">
+        <h3>Mission Summary</h3>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.6;">
+          Consolidation of 4th Marine Regiment and CLB-4 units across Camp Schwab
+          to enable vacation of FRF demolition zone (Bldg 3509) no later than
+          <strong style="color:var(--status-red);">1 June 2028</strong>. Phased over
+          FY26&ndash;FY28 with 15 unit elements relocating across 13 buildings in 4
+          distinct zones.
+        </p>
+        <div style="margin-top:12px;">
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Phase Progress</div>
+          <div id="ov-phase-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+        </div>
+      </div>
+      <div class="panel-card">
+        <h3>FRF Countdown</h3>
+        <div style="text-align:center;padding:12px 0;">
+          <div id="ov-countdown-big" style="font-family:var(--font-mono);font-size:32px;font-weight:800;color:var(--accent-bright);letter-spacing:0.05em;">--d --h --m</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.15em;margin-top:6px;">Until 1 June 2028</div>
+        </div>
+        <div style="margin-top:6px;">
+          <div class="prog-track"><div class="prog-fill" id="ov-countdown-prog" style="width:0%;"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--text-muted);margin-top:4px;">
+            <span>FY26 Start</span><span id="ov-countdown-pct">0%</span><span>FRF</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel-card">
+        <h3>Quick Actions</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <button class="hdr-btn" type="button" data-tab-jump="map">View Map</button>
+          <button class="hdr-btn" type="button" data-tab-jump="phases">Phase Grid</button>
+          <button class="hdr-btn" type="button" data-tab-jump="roster">Unit Roster</button>
+          <button class="hdr-btn" type="button" data-tab-jump="buildings">Buildings</button>
+          <button class="hdr-btn" type="button" data-tab-jump="timeline">Timeline</button>
+          <button class="hdr-btn" type="button" data-tab-jump="charts">Charts</button>
+          <button class="hdr-btn" type="button" data-tab-jump="editor">Editor</button>
+          <button class="hdr-btn" type="button" data-tab-jump="help">Help</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:14px;">
+      <div class="chart-box">
+        <div class="chart-title">Units by Echelon</div>
+        <svg id="chart-echelon" class="chart-svg" viewBox="0 0 300 160" aria-label="Unit type distribution"></svg>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">Buildings by Zone</div>
+        <svg id="chart-zones" class="chart-svg" viewBox="0 0 300 160" aria-label="Buildings by zone"></svg>
+      </div>
+    </div>
+
+    <div class="panel-card" style="margin-top:14px;">
+      <h3>Legend</h3>
+      <div class="legend" role="img" aria-label="Map and phase grid legend" style="margin-bottom:0;">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--swing-amber)"></div>Swing Space</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--status-green)"></div>Permanent Move</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--status-red)"></div>FRF Action</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--accent)"></div>Final Configuration</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--text-light)"></div>Planning / Contract</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--tile-mtr)"></div>In Place / No Move</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB: PHASE GRID (existing content) -->
+  <section class="tab-panel" id="tab-phases" role="tabpanel" aria-labelledby="nav-phases">
 
   <!-- LEGEND -->
   <div class="legend" role="img" aria-label="Map and phase grid legend">
@@ -1091,17 +1758,17 @@ body.edit-mode .tile:hover { outline: 2px solid #7B4FBE; }
       <div class="p-body">
         <div class="final-block">
           <div class="final-block-title">Consolidated Facilities</div>
-          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3314 (1st Deck) - 1st Bn, 4th MAR (UDP)</div>
-          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3314 (2nd Deck) - 4th MAR Regt HQ</div>
-          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3213 - CLB-4 HQ</div>
-          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3237 - Consol Supply (4th MAR Regt / CLB-4 / UDP-W)</div>
-          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3235 - Consol Comms (4th MAR Regt / CLB-4)</div>
-          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">1024 - Consol Armory (4th MAR Regt / CLB-4)</div>
-          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3210 - ACV / LAR CO (4th MAR Regt)</div>
-          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3270 - Motor Pool (4th MAR Regt / CLB-4)</div>
-          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3413 - CLB-4 A&amp;B CO</div>
-          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3335 - Safety/Fire/Env</div>
-          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3410 - HQ CO, 4th MAR Regt</div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3314 (1st Deck) - 1st Bn, 4th MAR (UDP)</span></div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3314 (2nd Deck) - 4th MAR Regt HQ</span></div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3213 - CLB-4 HQ</span></div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3237 - Consol Supply (4th MAR Regt / CLB-4 / UDP-W)</span></div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3235 - Consol Comms (4th MAR Regt / CLB-4)</span></div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">1024 - Consol Armory (4th MAR Regt / CLB-4)</span></div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3210 - ACV / LAR CO (4th MAR Regt)</span></div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3270 - Motor Pool (4th MAR Regt / CLB-4)</span></div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3413 - CLB-4 A&amp;B CO</span></div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3335 - Safety/Fire/Env</span></div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3410 - HQ CO, 4th MAR Regt</span></div>
         </div>
         <div class="card s-frf" style="margin-top:4px;">
           <span class="badge" style="background:var(--status-amber);color:#000;" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">PENDING</span>
@@ -1136,12 +1803,11 @@ body.edit-mode .tile:hover { outline: 2px solid #7B4FBE; }
     </div>
   </div>
 
-  <div class="org-footer" data-editable="text" data-label="Footer Attribution" title="Click to edit in Edit Mode">MCIPAC G-F &bull; PPE &bull; Camp Schwab Consolidation &bull; APEX OMEGA v5.0</div>
+  </section><!-- /tab-phases -->
 
-</div><!-- /main-wrapper -->
-
-<!-- INTERACTIVE EXECUTION MAP -->
-<div class="map-section" role="region" aria-label="Interactive execution demonstration">
+  <!-- TAB: INTERACTIVE MAP (existing execution demo) -->
+  <section class="tab-panel" id="tab-map" role="tabpanel" aria-labelledby="nav-map">
+  <div class="map-section" role="region" aria-label="Interactive execution demonstration">
   <div class="map-header">
     <div>
       <div class="map-title">Interactive Execution Demonstration - Camp Schwab Consolidation</div>
@@ -1344,7 +2010,514 @@ body.edit-mode .tile:hover { outline: 2px solid #7B4FBE; }
 
   <div class="map-footer">MCIPAC G-F &bull; PPE &bull; Camp Schwab Consolidation &bull; UNCLASSIFIED // FOR INTERNAL PLANNING PURPOSES ONLY</div>
 </div><!-- /map-section -->
+  </section><!-- /tab-map -->
 
+  <!-- TAB: UNIT ROSTER -->
+  <section class="tab-panel" id="tab-roster" role="tabpanel" aria-labelledby="nav-roster">
+    <div class="tbl-wrap">
+      <div class="tbl-info">
+        <span id="roster-count">15</span> unit elements
+        <span style="margin-left:auto;">
+          <button class="hdr-btn" id="roster-export-csv" type="button">Export CSV</button>
+          <button class="hdr-btn" id="roster-export-json" type="button">Export JSON</button>
+        </span>
+      </div>
+      <div class="tbl-scroll">
+        <table class="tbl" id="tbl-roster" aria-label="Unit roster">
+          <thead>
+            <tr>
+              <th data-sort="id">ID</th>
+              <th data-sort="name">Unit Name</th>
+              <th data-sort="type">Type</th>
+              <th data-sort="startBldg">Start Bldg</th>
+              <th data-sort="endBldg">End Bldg</th>
+              <th data-sort="phase" class="cen">Phase</th>
+              <th data-sort="date">Move Date</th>
+              <th data-sort="status">Status</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-roster"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB: BUILDING SCHEDULE -->
+  <section class="tab-panel" id="tab-buildings" role="tabpanel" aria-labelledby="nav-buildings">
+    <div class="tbl-wrap">
+      <div class="tbl-info">
+        <span id="bldg-count">13</span> buildings
+        <span style="margin-left:auto;">
+          <button class="hdr-btn" id="bldg-export-csv" type="button">Export CSV</button>
+          <button class="hdr-btn" id="bldg-export-json" type="button">Export JSON</button>
+        </span>
+      </div>
+      <div class="tbl-scroll">
+        <table class="tbl" id="tbl-buildings" aria-label="Building schedule">
+          <thead>
+            <tr>
+              <th data-sort="num">Number</th>
+              <th data-sort="label">Label</th>
+              <th data-sort="zone">Zone</th>
+              <th data-sort="status">Status</th>
+              <th data-sort="phaseIn" class="cen">Phase In</th>
+              <th data-sort="phaseOut" class="cen">Phase Out</th>
+              <th>Occupants</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-buildings"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB: TIMELINE / GANTT -->
+  <section class="tab-panel" id="tab-timeline" role="tabpanel" aria-labelledby="nav-timeline">
+    <div class="panel-card">
+      <h3>Unit Movement Timeline (FY26 - FY28)</h3>
+      <div id="gantt-root" class="gantt" aria-label="Gantt timeline of unit movements"></div>
+      <div class="chart-legend" style="margin-top:10px;">
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--status-green);"></div>Permanent Move</div>
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--swing-amber);"></div>Swing</div>
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--status-red);"></div>FRF Action</div>
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--accent);"></div>Final Config</div>
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--tile-mtr);opacity:.7;"></div>Resident</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB: CHARTS -->
+  <section class="tab-panel" id="tab-charts" role="tabpanel" aria-labelledby="nav-charts">
+    <div class="grid-2">
+      <div class="chart-box">
+        <div class="chart-title">Moves per Phase</div>
+        <svg id="chart-moves" class="chart-svg" viewBox="0 0 340 200" aria-label="Moves per phase"></svg>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">Unit Type Distribution</div>
+        <svg id="chart-types" class="chart-svg" viewBox="0 0 340 200" aria-label="Unit type distribution"></svg>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">Buildings by Zone</div>
+        <svg id="chart-bldg-zones" class="chart-svg" viewBox="0 0 340 200" aria-label="Buildings by zone"></svg>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">FRF Countdown (months remaining)</div>
+        <svg id="chart-countdown" class="chart-svg" viewBox="0 0 340 200" aria-label="FRF countdown"></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB: DATA EDITOR -->
+  <section class="tab-panel" id="tab-editor" role="tabpanel" aria-labelledby="nav-editor">
+    <div class="panel-card">
+      <h3 style="display:flex;align-items:center;gap:10px;">Unit Roster (Editable)
+        <span style="margin-left:auto;display:flex;gap:6px;">
+          <button class="hdr-btn primary" id="ed-add-unit" type="button">Add Unit</button>
+          <button class="hdr-btn" id="ed-save-units" type="button">Save Units</button>
+          <button class="hdr-btn" id="ed-reset-units" type="button">Reset</button>
+        </span>
+      </h3>
+      <div class="tbl-scroll" style="max-height:360px;">
+        <table class="ed-table" id="ed-units" aria-label="Unit editor">
+          <thead>
+            <tr><th>ID</th><th>Name</th><th>Type</th><th>Start</th><th>End</th><th>Phase</th><th>Date</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="tbody-ed-units"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel-card" style="margin-top:14px;">
+      <h3 style="display:flex;align-items:center;gap:10px;">Buildings (Editable)
+        <span style="margin-left:auto;display:flex;gap:6px;">
+          <button class="hdr-btn primary" id="ed-add-bldg" type="button">Add Building</button>
+          <button class="hdr-btn" id="ed-save-bldgs" type="button">Save Buildings</button>
+          <button class="hdr-btn" id="ed-reset-bldgs" type="button">Reset</button>
+        </span>
+      </h3>
+      <div class="tbl-scroll" style="max-height:360px;">
+        <table class="ed-table" id="ed-buildings" aria-label="Building editor">
+          <thead>
+            <tr><th>ID</th><th>Number</th><th>Label</th><th>Zone</th><th>Status</th><th>Phase In</th><th>Phase Out</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="tbody-ed-bldgs"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel-card" style="margin-top:14px;">
+      <h3>Import / Export</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="hdr-btn" id="ed-import" type="button">Import JSON</button>
+        <button class="hdr-btn" id="ed-export-all" type="button">Export All (JSON)</button>
+        <button class="hdr-btn" id="ed-export-html" type="button">Export HTML Snapshot</button>
+        <button class="hdr-btn danger" id="ed-clear-all" type="button">Clear All Overrides</button>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:10px;line-height:1.5;">
+        All edits auto-save to browser localStorage under <code style="background:var(--bg-section);padding:1px 5px;border-radius:3px;">4thMAR_edits_v1</code>.
+        Use Export HTML Snapshot to generate a self-contained file with all current edits baked in.
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB: HELP -->
+  <section class="tab-panel" id="tab-help" role="tabpanel" aria-labelledby="nav-help">
+    <div class="panel-card">
+      <h3>How to Use - APEX OMEGA v6.0</h3>
+      <div style="font-size:12px;color:var(--text);line-height:1.7;">
+        <p><strong>Tabs:</strong> Use the sidebar to switch between Overview, Interactive Map, Phase Grid, Unit Roster, Building Schedule, Timeline, Charts, Editor, and Help. Press <kbd>1</kbd>-<kbd>9</kbd> to jump between tabs.</p>
+        <p style="margin-top:10px;"><strong>Interactive Map:</strong> Open the Map tab, then press <kbd>Space</kbd> or <kbd>&rarr;</kbd> to advance through relocation phases. Press <kbd>R</kbd> to reset to initial posture. The Execute and Reset buttons perform the same actions.</p>
+        <p style="margin-top:10px;"><strong>Edit Mode:</strong> Press <kbd>E</kbd> or click the Edit button. Every text, KPI, badge, building, and unit tile becomes editable. Click any element to open the edit panel. Drag tiles on the map to reposition them. Press <kbd>E</kbd> again to exit.</p>
+        <p style="margin-top:10px;"><strong>Theme:</strong> Press <kbd>T</kbd> to toggle dark/light. Preference is saved to browser storage.</p>
+        <p style="margin-top:10px;"><strong>Search / Filter:</strong> The toolbar search + filter selects apply across the Roster, Buildings, Timeline, and Editor tables.</p>
+        <p style="margin-top:10px;"><strong>Command Palette:</strong> Press <kbd>Ctrl+K</kbd> (or <kbd>Cmd+K</kbd>) to open. Type to filter commands, <kbd>&uarr;</kbd>/<kbd>&darr;</kbd> to navigate, <kbd>Enter</kbd> to execute.</p>
+        <p style="margin-top:10px;"><strong>Detail Drawer:</strong> Click any row in Roster or Buildings, or any tile/building on the Map, to open the detail drawer.</p>
+        <p style="margin-top:10px;"><strong>Export:</strong> Export CSV/JSON per table, or Export HTML Snapshot from the Editor tab for a complete standalone file.</p>
+      </div>
+    </div>
+
+    <div class="panel-card" style="margin-top:14px;">
+      <h3>Keyboard Shortcuts</h3>
+      <table class="tbl">
+        <thead><tr><th>Key</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><kbd>1</kbd> - <kbd>9</kbd></td><td>Jump to tab</td></tr>
+          <tr><td><kbd>Ctrl+K</kbd> / <kbd>Cmd+K</kbd></td><td>Open command palette</td></tr>
+          <tr><td><kbd>E</kbd></td><td>Toggle edit mode</td></tr>
+          <tr><td><kbd>T</kbd></td><td>Toggle theme</td></tr>
+          <tr><td><kbd>K</kbd></td><td>Collapse sidebar</td></tr>
+          <tr><td><kbd>P</kbd></td><td>Print</td></tr>
+          <tr><td><kbd>Space</kbd> / <kbd>&rarr;</kbd></td><td>Advance map phase (in Map tab)</td></tr>
+          <tr><td><kbd>R</kbd></td><td>Reset map</td></tr>
+          <tr><td><kbd>Ctrl+Z</kbd></td><td>Undo last edit</td></tr>
+          <tr><td><kbd>Ctrl+S</kbd></td><td>Save edits</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Close overlay / exit edit</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  </div><!-- /tab-container -->
+
+  <div class="org-footer" data-editable="text" data-label="Footer Attribution" title="Click to edit in Edit Mode">MCIPAC G-F &bull; PPE &bull; Camp Schwab Consolidation &bull; APEX OMEGA v6.0</div>
+
+</div><!-- /main-wrapper -->
+</div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<!-- ============================================================
+     APEX OMEGA v6.0 - OVERLAYS
+     ============================================================ -->
+
+<!-- Detail Drawer -->
+<div class="detail-overlay" id="detail-overlay" role="dialog" aria-modal="true" aria-labelledby="dp-title">
+  <div class="detail-panel">
+    <div class="dp-header">
+      <div class="dp-title" id="dp-title">Detail</div>
+      <div class="dp-sub" id="dp-sub"></div>
+      <button class="dp-close" id="dp-close" type="button" aria-label="Close detail drawer" title="Close (Esc)">&#10005;</button>
+    </div>
+    <div class="dp-body" id="dp-body"></div>
+    <div class="dp-footer">
+      <button class="hdr-btn" id="dp-edit" type="button">Edit</button>
+      <button class="hdr-btn" id="dp-print" type="button">Print</button>
+      <button class="hdr-btn" id="dp-copy" type="button">Copy Summary</button>
+      <button class="hdr-btn primary" id="dp-close2" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Command Palette -->
+<div class="cmd-overlay" id="cmd-overlay" role="dialog" aria-modal="true" aria-labelledby="cmd-title">
+  <div class="cmd-box">
+    <input class="cmd-inp" id="cmd-inp" type="text" placeholder="Type a command or search..." aria-label="Command palette search">
+    <div class="cmd-list" id="cmd-list"></div>
+  </div>
+</div>
+
+<!-- Modal (Import / Add Unit / Add Building) -->
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3 id="modal-title">Modal</h3></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot">
+      <button class="hdr-btn" id="modal-cancel" type="button">Cancel</button>
+      <button class="hdr-btn primary" id="modal-ok" type="button">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Dialog -->
+<div class="conf-overlay" id="conf-overlay" role="dialog" aria-modal="true" aria-labelledby="conf-title">
+  <div class="conf-box">
+    <div class="conf-title" id="conf-title">Confirm</div>
+    <div class="conf-body" id="conf-body"></div>
+    <div class="conf-actions">
+      <button class="hdr-btn" id="conf-cancel" type="button">Cancel</button>
+      <button class="hdr-btn primary" id="conf-ok" type="button">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-cont" id="toast-cont" aria-live="polite" aria-atomic="false"></div>
+
+<script>
+/* ============================================================
+   APEX OMEGA v6.0 - CORE SYSTEMS
+   Data model, tabs, theme, sidebar, command palette,
+   detail drawer, tables, charts, editor, export
+   ============================================================ */
+(function() {
+  'use strict';
+
+  /* --- DATA MODEL --- */
+  var UNITS = [
+    { id:'t-saf',    name:'Safety/Fire/Env',       type:'div', startBldg:'3413', endBldg:'3335', phase:1, date:'Q3 FY26', status:'Permanent Move', note:'Moves to converted Base Theater offices. Bldg 3413 vacated for CLB-4 A&B backfill.' },
+    { id:'t-udp-sup',name:'UDP-W Supply',          type:'div', startBldg:'3446', endBldg:'3237', phase:2, date:'Q3 FY27', status:'Consolidation', note:'Consolidates into Bldg 3237 with 4th MAR Regt Supply and CLB-4 Supply already resident.' },
+    { id:'t-lar',    name:'LAR CO',                type:'div', startBldg:'3213', endBldg:'3210', phase:2, date:'Q2 FY27', status:'Permanent Move', note:'Co-locates with ACV CO at Bldg 3210.' },
+    { id:'t-clb-com',name:'CLB-4 COMM',            type:'mlg', startBldg:'3213', endBldg:'3235', phase:1, date:'Q3 FY26', status:'Swing', note:'Swings to Bldg 1024 Q3 FY26 (NIPR/phones on gym; servers on court). Returns to Bldg 3235 final Q3 FY28.' },
+    { id:'t-hq-co',  name:'HQ CO, 4th MAR',        type:'div', startBldg:'3509', endBldg:'3410', phase:2, date:'Q4 FY27', status:'FRF Action', note:'Vacates FRF demolition line (3509). Relocates to renovated Bldg 3410.' },
+    { id:'t-clb-hq', name:'CLB-4 HQ',              type:'mlg', startBldg:'3314', endBldg:'3213', phase:3, date:'Q3 FY28', status:'Permanent Move', note:'Moves to renovated Bldg 3213. Frees 3314 2nd deck for 4th MAR Regt HQ.' },
+    { id:'t-clb-ab', name:'CLB-4 A&B CO',          type:'mlg', startBldg:'3314', endBldg:'3413', phase:2, date:'Q2 FY27', status:'Permanent Move', note:'Occupies former Safety/Env building after renovation.' },
+    { id:'t-4th-sup',name:'4th MAR Supply',        type:'div', startBldg:'3237', endBldg:'3237', phase:0, date:'Resident', status:'Resident', note:'Resident in Bldg 3237, remains throughout all phases.' },
+    { id:'t-clb-sup',name:'CLB-4 Supply',          type:'mlg', startBldg:'3237', endBldg:'3237', phase:0, date:'Resident', status:'Resident', note:'Resident in Bldg 3237, remains throughout all phases.' },
+    { id:'t-4th-com',name:'4th MAR COMM',          type:'div', startBldg:'3235', endBldg:'3235', phase:0, date:'Resident', status:'Resident', note:'Resident in Bldg 3235, remains throughout all phases.' },
+    { id:'t-arm',    name:'Consolidated Armory',   type:'arm', startBldg:'3509', endBldg:'1024', phase:3, date:'Q3 FY28', status:'Permanent Move', note:'Consolidated Armory (4th MAR Regt / CLB-4) occupies renovated 1st floor of Bldg 1024.' },
+    { id:'t-reg',    name:'4th MAR Regimental HQ', type:'reg', startBldg:'3509', endBldg:'3314', phase:4, date:'Q3 FY28', status:'FRF Action', note:'Occupies renovated 2nd Deck of Bldg 3314. 1st Deck: 1st Bn, 4th MAR (UDP). Frees 3509 for demolition.' },
+    { id:'t-med',    name:'Med / ATC',             type:'med', startBldg:'3510', endBldg:'3510', phase:0, date:'Pending GOJ', status:'Pending', note:'Remains at Bldg 3510 pending GOJ replacement Medical/Dental clinic.' },
+    { id:'t-4th-mtr',name:'4th MAR Motor T',       type:'mtr', startBldg:'3270', endBldg:'3270', phase:0, date:'Resident', status:'Resident', note:'Resident at Bldg 3270 Motor Pool, remains in place throughout all phases.' },
+    { id:'t-clb-mtr',name:'CLB-4 Motor T',         type:'mtr', startBldg:'3270', endBldg:'3270', phase:0, date:'Resident', status:'Resident', note:'Resident at Bldg 3270 Motor Pool, remains in place throughout all phases.' }
+  ];
+
+  var BUILDINGS = [
+    { id:'b-3446', num:'3446', label:'UDP-W Supply (source)',      zone:'Source', status:'Vacated',   phaseIn:0, phaseOut:2, occupants:['t-udp-sup'] },
+    { id:'b-3413', num:'3413', label:'Safety/Env -> CLB-4 A&B',    zone:'Source', status:'Converted', phaseIn:0, phaseOut:2, occupants:['t-saf','t-clb-ab'] },
+    { id:'b-3213', num:'3213', label:'CLB-4 HQ (dest)',            zone:'Source', status:'Active',    phaseIn:3, phaseOut:0, occupants:['t-lar','t-clb-com','t-clb-hq'] },
+    { id:'b-3335', num:'3335', label:'Theater -> Safety/Fire/Env', zone:'Final',  status:'Active',    phaseIn:1, phaseOut:0, occupants:['t-saf'] },
+    { id:'b-1024', num:'1024', label:'BEQ / SWING -> Armory',      zone:'Swing',  status:'Swing',     phaseIn:1, phaseOut:0, occupants:['t-clb-com','t-arm'] },
+    { id:'b-3410', num:'3410', label:'HQ CO, 4th MAR Regt',        zone:'Final',  status:'Active',    phaseIn:2, phaseOut:0, occupants:['t-hq-co'] },
+    { id:'b-3237', num:'3237', label:'Consol Supply',              zone:'Final',  status:'Active',    phaseIn:0, phaseOut:0, occupants:['t-4th-sup','t-clb-sup','t-udp-sup'] },
+    { id:'b-3235', num:'3235', label:'Consol Comms',               zone:'Final',  status:'Active',    phaseIn:0, phaseOut:0, occupants:['t-4th-com','t-clb-com'] },
+    { id:'b-3210', num:'3210', label:'ACV / LAR CO',               zone:'Final',  status:'Active',    phaseIn:2, phaseOut:0, occupants:['t-lar'] },
+    { id:'b-3270', num:'3270', label:'Motor Pool',                 zone:'Final',  status:'Active',    phaseIn:0, phaseOut:0, occupants:['t-4th-mtr','t-clb-mtr'] },
+    { id:'b-3314', num:'3314', label:'4th MAR HQ (dest)',          zone:'Final',  status:'Active',    phaseIn:4, phaseOut:0, occupants:['t-reg'] },
+    { id:'b-3509', num:'3509', label:'4th MAR HQ (current)',       zone:'FRF',    status:'Demolish',  phaseIn:0, phaseOut:4, occupants:['t-hq-co','t-reg','t-arm'] },
+    { id:'b-3510', num:'3510', label:'Med / ATC',                  zone:'FRF',    status:'Pending',   phaseIn:0, phaseOut:0, occupants:['t-med'] }
+  ];
+
+  var FRF_DATE = new Date('2028-06-01T00:00:00+09:00');
+  var PROG_START = new Date('2025-10-01T00:00:00+09:00');
+
+  var STORE_KEY = '4thMAR_edits_v1';
+  var THEME_KEY = 'apex_theme';
+  var SIDEBAR_KEY = 'apex_sidebar';
+
+  /* --- UTILS --- */
+  function $(sel, root) { return (root||document).querySelector(sel); }
+  function $$(sel, root) { return Array.prototype.slice.call((root||document).querySelectorAll(sel)); }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function debounce(fn, ms) { var t; return function(){ var a=arguments, c=this;
+    clearTimeout(t); t=setTimeout(function(){ fn.apply(c,a); }, ms); }; }
+
+  /* --- TOAST --- */
+  function toast(msg, type) {
+    var cont = $('#toast-cont'); if (!cont) return;
+    var el = document.createElement('div');
+    el.className = 'toast' + (type ? ' ' + type : '');
+    el.textContent = msg;
+    cont.appendChild(el);
+    requestAnimationFrame(function(){ el.classList.add('show'); });
+    setTimeout(function(){ el.classList.remove('show');
+      setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 300); }, 2800);
+  }
+  window.__APEX_toast = toast;
+
+  /* --- TABS --- */
+  var activeTab = 'overview';
+  function switchTab(name) {
+    var btns = $$('.nav-btn[data-tab]');
+    btns.forEach(function(b){
+      var on = b.getAttribute('data-tab') === name;
+      b.classList.toggle('active', on);
+      if (on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
+    });
+    $$('.tab-panel').forEach(function(p){
+      p.classList.toggle('active', p.id === 'tab-' + name);
+    });
+    activeTab = name;
+    announce('Switched to ' + name + ' tab');
+    // Lazy-render heavy tabs
+    if (name === 'roster') renderRoster();
+    if (name === 'buildings') renderBuildings();
+    if (name === 'timeline') renderGantt();
+    if (name === 'charts') renderCharts();
+    if (name === 'editor') renderEditor();
+    if (name === 'overview') renderOverview();
+  }
+  function announce(msg) {
+    var a = $('#a11y-announce'); if (a) a.textContent = msg;
+  }
+
+  /* --- THEME --- */
+  function setTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    try { localStorage.setItem(THEME_KEY, t); } catch(e){}
+    var btn = $('#btn-theme'); if (btn) btn.title = 'Theme: ' + t + ' (T to toggle)';
+  }
+  function toggleTheme() {
+    var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    setTheme(cur === 'dark' ? 'light' : 'dark');
+    toast('Theme: ' + (cur === 'dark' ? 'Light' : 'Dark'), '');
+  }
+  (function initTheme(){
+    try { var saved = localStorage.getItem(THEME_KEY); if (saved) setTheme(saved); } catch(e){}
+  })();
+
+  /* --- SIDEBAR COLLAPSE --- */
+  function setSidebar(collapsed) {
+    var sb = $('#sidebar'); if (!sb) return;
+    sb.classList.toggle('collapsed', !!collapsed);
+    try { localStorage.setItem(SIDEBAR_KEY, collapsed ? '1' : '0'); } catch(e){}
+  }
+  function toggleSidebar() {
+    var sb = $('#sidebar'); if (!sb) return;
+    setSidebar(!sb.classList.contains('collapsed'));
+  }
+  (function initSidebar(){
+    try { if (localStorage.getItem(SIDEBAR_KEY) === '1') setSidebar(true); } catch(e){}
+  })();
+
+  /* --- FILTERS (shared across tables) --- */
+  var filters = { q:'', type:'', phase:'', status:'' };
+  function applyFilters() {
+    if (activeTab === 'roster') renderRoster();
+    if (activeTab === 'buildings') renderBuildings();
+    if (activeTab === 'timeline') renderGantt();
+    if (activeTab === 'editor') renderEditor();
+  }
+  function filterUnits() {
+    return UNITS.filter(function(u){
+      if (filters.q) {
+        var hay = (u.id+' '+u.name+' '+u.startBldg+' '+u.endBldg+' '+u.status+' '+u.date).toLowerCase();
+        if (hay.indexOf(filters.q.toLowerCase()) < 0) return false;
+      }
+      if (filters.type && u.type !== filters.type) return false;
+      if (filters.phase !== '' && String(u.phase) !== String(filters.phase)) return false;
+      if (filters.status && u.status !== filters.status) return false;
+      return true;
+    });
+  }
+  function filterBuildings() {
+    return BUILDINGS.filter(function(b){
+      if (filters.q) {
+        var hay = (b.id+' '+b.num+' '+b.label+' '+b.zone+' '+b.status).toLowerCase();
+        if (hay.indexOf(filters.q.toLowerCase()) < 0) return false;
+      }
+      return true;
+    });
+  }
+
+  /* --- SORTING --- */
+  var sortState = { roster:{key:'phase',dir:'asc'}, buildings:{key:'num',dir:'asc'} };
+  function sortRows(rows, key, dir) {
+    var mul = dir === 'desc' ? -1 : 1;
+    return rows.slice().sort(function(a,b){
+      var av = a[key], bv = b[key];
+      if (typeof av === 'number' && typeof bv === 'number') return (av-bv) * mul;
+      return String(av).localeCompare(String(bv)) * mul;
+    });
+  }
+  function wireSort(tableId, stateKey, render) {
+    $$('#'+tableId+' th[data-sort]').forEach(function(th){
+      th.addEventListener('click', function(){
+        var key = th.getAttribute('data-sort');
+        var st = sortState[stateKey];
+        st.dir = (st.key === key && st.dir === 'asc') ? 'desc' : 'asc';
+        st.key = key;
+        $$('#'+tableId+' th').forEach(function(t){ t.removeAttribute('aria-sort'); });
+        th.setAttribute('aria-sort', st.dir === 'asc' ? 'ascending' : 'descending');
+        render();
+      });
+    });
+  }
+
+  // Expose for later modules
+  window.__APEX = {
+    UNITS: UNITS, BUILDINGS: BUILDINGS,
+    switchTab: switchTab, toast: toast,
+    filters: filters, sortState: sortState,
+    filterUnits: filterUnits, filterBuildings: filterBuildings,
+    sortRows: sortRows, applyFilters: applyFilters,
+    toggleTheme: toggleTheme, toggleSidebar: toggleSidebar,
+    FRF_DATE: FRF_DATE, PROG_START: PROG_START,
+    esc: esc
+  };
+
+  // Store functions referenced later
+  window.__APEX.renderRoster = function(){};
+  window.__APEX.renderBuildings = function(){};
+  window.__APEX.renderGantt = function(){};
+  window.__APEX.renderCharts = function(){};
+  window.__APEX.renderEditor = function(){};
+  window.__APEX.renderOverview = function(){};
+
+  function renderRoster(){ if (window.__APEX.renderRoster) window.__APEX.renderRoster(); }
+  function renderBuildings(){ if (window.__APEX.renderBuildings) window.__APEX.renderBuildings(); }
+  function renderGantt(){ if (window.__APEX.renderGantt) window.__APEX.renderGantt(); }
+  function renderCharts(){ if (window.__APEX.renderCharts) window.__APEX.renderCharts(); }
+  function renderEditor(){ if (window.__APEX.renderEditor) window.__APEX.renderEditor(); }
+  function renderOverview(){ if (window.__APEX.renderOverview) window.__APEX.renderOverview(); }
+
+  // Wire nav + actions
+  function wireNav() {
+    $$('.nav-btn[data-tab]').forEach(function(b){
+      b.addEventListener('click', function(){ switchTab(b.getAttribute('data-tab')); });
+    });
+    $$('[data-tab-jump]').forEach(function(b){
+      b.addEventListener('click', function(){ switchTab(b.getAttribute('data-tab-jump')); });
+    });
+    var aCmd = $('#act-cmd'); if (aCmd) aCmd.addEventListener('click', function(){
+      if (window.__APEX.openCmd) window.__APEX.openCmd(); });
+    var aTheme = $('#act-theme'); if (aTheme) aTheme.addEventListener('click', toggleTheme);
+    var aEdit = $('#act-edit'); if (aEdit) aEdit.addEventListener('click', function(){
+      var btn = $('#edit-mode-btn'); if (btn) btn.click(); });
+    var aPrint = $('#act-print'); if (aPrint) aPrint.addEventListener('click', function(){ window.print(); });
+    var aColl = $('#act-collapse'); if (aColl) aColl.addEventListener('click', toggleSidebar);
+
+    var bTheme = $('#btn-theme'); if (bTheme) bTheme.addEventListener('click', toggleTheme);
+    var bCmd = $('#btn-cmd'); if (bCmd) bCmd.addEventListener('click', function(){
+      if (window.__APEX.openCmd) window.__APEX.openCmd(); });
+    var bEditTool = $('#btn-edit-tool'); if (bEditTool) bEditTool.addEventListener('click', function(){
+      var btn = $('#edit-mode-btn'); if (btn) btn.click(); });
+    var bPrint = $('#btn-print'); if (bPrint) bPrint.addEventListener('click', function(){ window.print(); });
+    var bExport = $('#btn-export'); if (bExport) bExport.addEventListener('click', function(){
+      if (window.__APEX.openCmd) window.__APEX.openCmd('export'); });
+
+    var q = $('#q-search'); if (q) q.addEventListener('input', debounce(function(){
+      filters.q = q.value; applyFilters(); }, 150));
+    ['f-type','f-phase','f-status'].forEach(function(id){
+      var el = $('#'+id); if (!el) return;
+      el.addEventListener('change', function(){
+        filters[id.split('-')[1]] = el.value; applyFilters();
+      });
+    });
+    var fReset = $('#f-reset'); if (fReset) fReset.addEventListener('click', function(){
+      filters.q = filters.type = filters.phase = filters.status = '';
+      ['q-search','f-type','f-phase','f-status'].forEach(function(id){
+        var el = $('#'+id); if (el) el.value = '';
+      });
+      applyFilters(); toast('Filters reset');
+    });
+  }
+
+  window.__APEX.wireNav = wireNav;
+  window.__APEX.switchTab = switchTab;
+
+})();
+</script>
 <script>
 (function() {
   'use strict';
@@ -2422,6 +3595,867 @@ body.edit-mode .tile:hover { outline: 2px solid #7B4FBE; }
 
 </script>
 
+<script>
+/* ============================================================
+   APEX OMEGA v6.0 - COMMAND PALETTE + DETAIL DRAWER
+   ============================================================ */
+(function(){
+  'use strict';
+  var A = window.__APEX; if (!A) return;
+
+  /* --- COMMAND PALETTE --- */
+  var CMDS = [
+    { id:'tab-overview',  cat:'Navigate', label:'Go to Overview',        key:'1', run:function(){ A.switchTab('overview'); } },
+    { id:'tab-map',       cat:'Navigate', label:'Go to Interactive Map', key:'2', run:function(){ A.switchTab('map'); } },
+    { id:'tab-phases',    cat:'Navigate', label:'Go to Phase Grid',      key:'3', run:function(){ A.switchTab('phases'); } },
+    { id:'tab-roster',    cat:'Navigate', label:'Go to Unit Roster',     key:'4', run:function(){ A.switchTab('roster'); } },
+    { id:'tab-buildings', cat:'Navigate', label:'Go to Building Schedule', key:'5', run:function(){ A.switchTab('buildings'); } },
+    { id:'tab-timeline',  cat:'Navigate', label:'Go to Timeline (Gantt)', key:'6', run:function(){ A.switchTab('timeline'); } },
+    { id:'tab-charts',    cat:'Navigate', label:'Go to Charts',          key:'7', run:function(){ A.switchTab('charts'); } },
+    { id:'tab-editor',    cat:'Navigate', label:'Go to Data Editor',     key:'8', run:function(){ A.switchTab('editor'); } },
+    { id:'tab-help',      cat:'Navigate', label:'Go to Help',            key:'9', run:function(){ A.switchTab('help'); } },
+    { id:'theme',         cat:'View',     label:'Toggle Theme (Dark/Light)', key:'T', run:function(){ A.toggleTheme(); } },
+    { id:'sidebar',       cat:'View',     label:'Collapse Sidebar',      key:'K', run:function(){ A.toggleSidebar(); } },
+    { id:'edit',          cat:'Edit',     label:'Toggle Edit Mode',      key:'E', run:function(){ var b=document.getElementById('edit-mode-btn'); if (b) b.click(); } },
+    { id:'exec',          cat:'Map',      label:'Execute Next Phase',    key:'Space', run:function(){ A.switchTab('map'); var b=document.getElementById('btn-exec'); if (b) b.click(); } },
+    { id:'reset',         cat:'Map',      label:'Reset Map',             key:'R', run:function(){ var b=document.getElementById('btn-reset'); if (b) b.click(); } },
+    { id:'print',         cat:'Output',   label:'Print Dashboard',       key:'P', run:function(){ window.print(); } },
+    { id:'csv-units',     cat:'Export',   label:'Export Unit Roster CSV', run:function(){ if (A.exportCSV) A.exportCSV('units'); } },
+    { id:'csv-bldgs',     cat:'Export',   label:'Export Building Schedule CSV', run:function(){ if (A.exportCSV) A.exportCSV('buildings'); } },
+    { id:'json-all',      cat:'Export',   label:'Export All Data JSON',  run:function(){ if (A.exportJSON) A.exportJSON(); } },
+    { id:'save',          cat:'Edit',     label:'Save All Edits',        key:'Ctrl+S', run:function(){ var b=document.getElementById('eb-save'); if (b) b.click(); } },
+    { id:'undo',          cat:'Edit',     label:'Undo Last Edit',        key:'Ctrl+Z', run:function(){ var b=document.getElementById('eb-undo'); if (b) b.click(); } }
+  ];
+
+  var cmdSel = 0, cmdFiltered = CMDS.slice();
+
+  function renderCmdList() {
+    var list = document.getElementById('cmd-list'); if (!list) return;
+    var html = '';
+    var lastCat = '';
+    cmdFiltered.forEach(function(c, i){
+      if (c.cat !== lastCat) { html += '<div class="cmd-cat">' + A.esc(c.cat) + '</div>'; lastCat = c.cat; }
+      html += '<div class="cmd-item' + (i === cmdSel ? ' hi' : '') + '" data-idx="' + i + '" role="option">' +
+              '<span class="cmd-ico">&#9656;</span>' +
+              '<span class="cmd-label">' + A.esc(c.label) + '</span>' +
+              (c.key ? '<span class="cmd-key">' + A.esc(c.key) + '</span>' : '') + '</div>';
+    });
+    if (!cmdFiltered.length) html = '<div class="cmd-item" style="opacity:.5;">No matching commands</div>';
+    list.innerHTML = html;
+    Array.prototype.forEach.call(list.querySelectorAll('.cmd-item[data-idx]'), function(el){
+      el.addEventListener('click', function(){
+        cmdSel = parseInt(el.getAttribute('data-idx'), 10);
+        runSelected();
+      });
+    });
+  }
+
+  function runSelected() {
+    var c = cmdFiltered[cmdSel]; if (!c) return;
+    closeCmd(); try { c.run(); } catch(e){ A.toast('Command failed: ' + e.message, 'error'); }
+  }
+
+  function openCmd(filter) {
+    cmdSel = 0; cmdFiltered = CMDS.slice();
+    var inp = document.getElementById('cmd-inp');
+    if (inp) {
+      inp.value = filter || '';
+      if (filter) filterCmd(filter);
+    }
+    document.getElementById('cmd-overlay').classList.add('open');
+    renderCmdList();
+    setTimeout(function(){ if (inp) inp.focus(); }, 30);
+  }
+  function closeCmd() {
+    document.getElementById('cmd-overlay').classList.remove('open');
+  }
+  function filterCmd(q) {
+    q = (q || '').toLowerCase().trim();
+    if (!q) cmdFiltered = CMDS.slice();
+    else cmdFiltered = CMDS.filter(function(c){
+      return c.label.toLowerCase().indexOf(q) >= 0 || c.cat.toLowerCase().indexOf(q) >= 0;
+    });
+    cmdSel = 0; renderCmdList();
+  }
+
+  function wireCmd() {
+    var overlay = document.getElementById('cmd-overlay');
+    var inp = document.getElementById('cmd-inp');
+    if (!overlay || !inp) return;
+    overlay.addEventListener('click', function(e){ if (e.target === overlay) closeCmd(); });
+    inp.addEventListener('input', function(){ filterCmd(inp.value); });
+    inp.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowDown') { e.preventDefault(); cmdSel = Math.min(cmdFiltered.length-1, cmdSel+1); renderCmdList(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); cmdSel = Math.max(0, cmdSel-1); renderCmdList(); }
+      else if (e.key === 'Enter') { e.preventDefault(); runSelected(); }
+      else if (e.key === 'Escape') { e.preventDefault(); closeCmd(); }
+    });
+  }
+
+  A.openCmd = openCmd;
+  A.closeCmd = closeCmd;
+  A.wireCmd = wireCmd;
+
+  /* --- DETAIL DRAWER --- */
+  var currentDetail = null;
+  function openUnitDetail(unitId) {
+    var u = A.UNITS.filter(function(x){ return x.id === unitId; })[0]; if (!u) return;
+    currentDetail = { kind:'unit', ref: u };
+    var typeMap = { div:'Division', mlg:'MLG', reg:'Regiment', arm:'Armory', med:'Medical', mtr:'Motor Transport' };
+    var body = '<div class="dp-section">Unit Record</div>' +
+      '<div class="dp-row"><div class="dp-k">Tile ID</div><div class="dp-v"><code>' + A.esc(u.id) + '</code></div></div>' +
+      '<div class="dp-row"><div class="dp-k">Name</div><div class="dp-v">' + A.esc(u.name) + '</div></div>' +
+      '<div class="dp-row"><div class="dp-k">Echelon</div><div class="dp-v"><span class="chip-type chip-' + u.type + '"></span>' + A.esc(typeMap[u.type] || u.type) + '</div></div>' +
+      '<div class="dp-row"><div class="dp-k">Status</div><div class="dp-v">' + statusPill(u.status) + '</div></div>' +
+      '<div class="dp-section">Movement</div>' +
+      '<div class="dp-row"><div class="dp-k">Start Building</div><div class="dp-v">' + A.esc(u.startBldg) + '</div></div>' +
+      '<div class="dp-row"><div class="dp-k">End Building</div><div class="dp-v">' + A.esc(u.endBldg) + '</div></div>' +
+      '<div class="dp-row"><div class="dp-k">Phase</div><div class="dp-v">' + (u.phase === 0 ? 'No Move' : 'Phase ' + u.phase) + '</div></div>' +
+      '<div class="dp-row"><div class="dp-k">Date</div><div class="dp-v">' + A.esc(u.date) + '</div></div>' +
+      '<div class="dp-section">Notes</div>' +
+      '<div style="font-size:12px;color:var(--text);line-height:1.55;">' + A.esc(u.note) + '</div>';
+    document.getElementById('dp-title').textContent = u.name;
+    document.getElementById('dp-sub').textContent = u.id + ' - ' + (u.startBldg === u.endBldg ? 'Resident at ' + u.endBldg : u.startBldg + ' -> ' + u.endBldg);
+    document.getElementById('dp-body').innerHTML = body;
+    document.getElementById('detail-overlay').classList.add('open');
+  }
+
+  function openBuildingDetail(bldgId) {
+    var b = A.BUILDINGS.filter(function(x){ return x.id === bldgId; })[0]; if (!b) return;
+    currentDetail = { kind:'building', ref: b };
+    var occ = (b.occupants||[]).map(function(uid){
+      var u = A.UNITS.filter(function(x){ return x.id === uid; })[0];
+      return u ? u.name : uid;
+    });
+    var body = '<div class="dp-section">Building Record</div>' +
+      '<div class="dp-row"><div class="dp-k">Number</div><div class="dp-v">' + A.esc(b.num) + '</div></div>' +
+      '<div class="dp-row"><div class="dp-k">Label</div><div class="dp-v">' + A.esc(b.label) + '</div></div>' +
+      '<div class="dp-row"><div class="dp-k">Zone</div><div class="dp-v">' + A.esc(b.zone) + '</div></div>' +
+      '<div class="dp-row"><div class="dp-k">Status</div><div class="dp-v">' + bldgPill(b.status) + '</div></div>' +
+      '<div class="dp-section">Phasing</div>' +
+      '<div class="dp-row"><div class="dp-k">Phase In</div><div class="dp-v">' + (b.phaseIn || 'Initial') + '</div></div>' +
+      '<div class="dp-row"><div class="dp-k">Phase Out</div><div class="dp-v">' + (b.phaseOut ? 'Phase ' + b.phaseOut : 'N/A') + '</div></div>' +
+      '<div class="dp-section">Occupants</div>' +
+      '<div style="font-size:12px;color:var(--text);line-height:1.6;">' +
+      (occ.length ? occ.map(function(n){ return '<div style="padding:3px 0;">&bull; ' + A.esc(n) + '</div>'; }).join('') : '<em style="color:var(--text-muted);">None listed</em>') +
+      '</div>';
+    document.getElementById('dp-title').textContent = 'Bldg ' + b.num;
+    document.getElementById('dp-sub').textContent = b.label;
+    document.getElementById('dp-body').innerHTML = body;
+    document.getElementById('detail-overlay').classList.add('open');
+  }
+
+  function statusPill(s) {
+    var cls = 'pill-plan';
+    if (s === 'Permanent Move') cls = 'pill-move';
+    else if (s === 'Swing') cls = 'pill-swing';
+    else if (s === 'FRF Action') cls = 'pill-frf';
+    else if (s === 'Consolidation') cls = 'pill-final';
+    else if (s === 'Resident') cls = 'pill-resident';
+    else if (s === 'Pending') cls = 'pill-pending';
+    return '<span class="pill ' + cls + '">' + A.esc(s) + '</span>';
+  }
+  function bldgPill(s) {
+    var cls = 'pill-plan';
+    if (s === 'Active') cls = 'pill-active';
+    else if (s === 'Vacated') cls = 'pill-vacated';
+    else if (s === 'Demolish') cls = 'pill-demo';
+    else if (s === 'Pending') cls = 'pill-pending';
+    else if (s === 'Swing') cls = 'pill-swing';
+    else if (s === 'Converted') cls = 'pill-final';
+    return '<span class="pill ' + cls + '">' + A.esc(s) + '</span>';
+  }
+
+  function closeDetail() {
+    document.getElementById('detail-overlay').classList.remove('open');
+    currentDetail = null;
+  }
+
+  function wireDetail() {
+    var overlay = document.getElementById('detail-overlay');
+    if (!overlay) return;
+    overlay.addEventListener('click', function(e){ if (e.target === overlay) closeDetail(); });
+    var c1 = document.getElementById('dp-close'); if (c1) c1.addEventListener('click', closeDetail);
+    var c2 = document.getElementById('dp-close2'); if (c2) c2.addEventListener('click', closeDetail);
+    var cp = document.getElementById('dp-copy'); if (cp) cp.addEventListener('click', function(){
+      if (!currentDetail) return;
+      var r = currentDetail.ref;
+      var txt = currentDetail.kind === 'unit'
+        ? (r.name + ' (' + r.id + ')\nType: ' + r.type + '\nFrom ' + r.startBldg + ' -> ' + r.endBldg + '\nPhase ' + r.phase + ' / ' + r.date + '\nStatus: ' + r.status + '\n' + r.note)
+        : ('Bldg ' + r.num + ' - ' + r.label + '\nZone: ' + r.zone + '\nStatus: ' + r.status + '\nPhase In: ' + r.phaseIn + ' / Phase Out: ' + r.phaseOut + '\nOccupants: ' + (r.occupants||[]).join(', '));
+      try { navigator.clipboard.writeText(txt); A.toast('Copied to clipboard', 'success'); }
+      catch(e){ A.toast('Copy failed', 'error'); }
+    });
+    var pr = document.getElementById('dp-print'); if (pr) pr.addEventListener('click', function(){ window.print(); });
+    var ed = document.getElementById('dp-edit'); if (ed) ed.addEventListener('click', function(){
+      if (!currentDetail) return;
+      closeDetail();
+      var b = document.getElementById('edit-mode-btn'); if (b) b.click();
+      A.toast('Edit mode enabled', '');
+    });
+  }
+
+  A.openUnitDetail = openUnitDetail;
+  A.openBuildingDetail = openBuildingDetail;
+  A.closeDetail = closeDetail;
+  A.wireDetail = wireDetail;
+  A.statusPill = statusPill;
+  A.bldgPill = bldgPill;
+
+})();
+</script>
+
+<script>
+/* ============================================================
+   APEX OMEGA v6.0 - TABLE RENDERERS (Roster + Buildings)
+   ============================================================ */
+(function(){
+  'use strict';
+  var A = window.__APEX; if (!A) return;
+
+  var typeMap = { div:'Division', mlg:'MLG', reg:'Regiment', arm:'Armory', med:'Medical', mtr:'Motor Transport' };
+
+  function renderRoster() {
+    var body = document.getElementById('tbody-roster'); if (!body) return;
+    var rows = A.sortRows(A.filterUnits(), A.sortState.roster.key, A.sortState.roster.dir);
+    var html = rows.map(function(u){
+      return '<tr class="row-click" data-unit="' + A.esc(u.id) + '">' +
+        '<td><code>' + A.esc(u.id) + '</code></td>' +
+        '<td><strong>' + A.esc(u.name) + '</strong></td>' +
+        '<td><span class="chip-type chip-' + u.type + '"></span>' + A.esc(typeMap[u.type]||u.type) + '</td>' +
+        '<td>' + A.esc(u.startBldg) + '</td>' +
+        '<td>' + A.esc(u.endBldg) + '</td>' +
+        '<td class="cen">' + (u.phase === 0 ? '<span style="color:var(--text-muted);">&mdash;</span>' : u.phase) + '</td>' +
+        '<td>' + A.esc(u.date) + '</td>' +
+        '<td>' + A.statusPill(u.status) + '</td>' +
+        '</tr>';
+    }).join('');
+    body.innerHTML = html || '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted);">No units match current filters</td></tr>';
+    var cnt = document.getElementById('roster-count'); if (cnt) cnt.textContent = rows.length;
+  }
+
+  function renderBuildings() {
+    var body = document.getElementById('tbody-buildings'); if (!body) return;
+    var rows = A.sortRows(A.filterBuildings(), A.sortState.buildings.key, A.sortState.buildings.dir);
+    var html = rows.map(function(b){
+      var occ = (b.occupants||[]).map(function(uid){
+        var u = A.UNITS.filter(function(x){return x.id===uid;})[0];
+        return u ? u.name : uid;
+      }).join(', ') || '<em style="color:var(--text-muted);">None</em>';
+      return '<tr class="row-click" data-bldg="' + A.esc(b.id) + '">' +
+        '<td><strong>' + A.esc(b.num) + '</strong></td>' +
+        '<td>' + A.esc(b.label) + '</td>' +
+        '<td>' + A.esc(b.zone) + '</td>' +
+        '<td>' + A.bldgPill(b.status) + '</td>' +
+        '<td class="cen">' + (b.phaseIn || '<span style="color:var(--text-muted);">&mdash;</span>') + '</td>' +
+        '<td class="cen">' + (b.phaseOut || '<span style="color:var(--text-muted);">&mdash;</span>') + '</td>' +
+        '<td style="font-size:11px;">' + occ + '</td>' +
+        '</tr>';
+    }).join('');
+    body.innerHTML = html || '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-muted);">No buildings match current filters</td></tr>';
+    var cnt = document.getElementById('bldg-count'); if (cnt) cnt.textContent = rows.length;
+  }
+
+  function wireTables() {
+    var rt = document.getElementById('tbl-roster');
+    if (rt) rt.addEventListener('click', function(e){
+      var tr = e.target.closest('tr[data-unit]'); if (!tr) return;
+      A.openUnitDetail(tr.getAttribute('data-unit'));
+    });
+    var bt = document.getElementById('tbl-buildings');
+    if (bt) bt.addEventListener('click', function(e){
+      var tr = e.target.closest('tr[data-bldg]'); if (!tr) return;
+      A.openBuildingDetail(tr.getAttribute('data-bldg'));
+    });
+
+    // Wire CSV/JSON exports
+    var rc = document.getElementById('roster-export-csv'); if (rc) rc.addEventListener('click', function(){ A.exportCSV('units'); });
+    var rj = document.getElementById('roster-export-json'); if (rj) rj.addEventListener('click', function(){ A.exportJSON('units'); });
+    var bc = document.getElementById('bldg-export-csv'); if (bc) bc.addEventListener('click', function(){ A.exportCSV('buildings'); });
+    var bj = document.getElementById('bldg-export-json'); if (bj) bj.addEventListener('click', function(){ A.exportJSON('buildings'); });
+  }
+
+  A.renderRoster = renderRoster;
+  A.renderBuildings = renderBuildings;
+  A.wireTables = wireTables;
+  A.typeMap = typeMap;
+
+})();
+</script>
+
+<script>
+/* ============================================================
+   APEX OMEGA v6.0 - GANTT + CHARTS + OVERVIEW
+   ============================================================ */
+(function(){
+  'use strict';
+  var A = window.__APEX; if (!A) return;
+
+  /* --- GANTT TIMELINE --- */
+  // FY26 Q1..FY28 Q4 = 12 quarters
+  var QUARTERS = [
+    'Q1 FY26','Q2 FY26','Q3 FY26','Q4 FY26',
+    'Q1 FY27','Q2 FY27','Q3 FY27','Q4 FY27',
+    'Q1 FY28','Q2 FY28','Q3 FY28','Q4 FY28'
+  ];
+  function dateToCol(d) {
+    if (!d || d === 'Resident' || d === 'Pending GOJ') return -1;
+    var idx = QUARTERS.indexOf(d);
+    return idx;
+  }
+  function styleFor(u) {
+    if (u.status === 'FRF Action') return 'frf';
+    if (u.status === 'Swing') return 'swing';
+    if (u.status === 'Resident') return 'res';
+    if (u.status === 'Consolidation') return 'final';
+    if (u.status === 'Permanent Move') return 'move';
+    return 'move';
+  }
+
+  function renderGantt() {
+    var root = document.getElementById('gantt-root'); if (!root) return;
+    var units = A.filterUnits();
+
+    var html = '<div class="gantt-hdr unit">Unit</div>';
+    QUARTERS.forEach(function(q){ html += '<div class="gantt-hdr">' + A.esc(q) + '</div>'; });
+
+    units.forEach(function(u){
+      html += '<div class="gantt-row-lbl"><span class="chip-type chip-' + u.type + '"></span>' + A.esc(u.name) + '</div>';
+      var col = dateToCol(u.date);
+      var s = styleFor(u);
+      for (var i = 0; i < QUARTERS.length; i++) {
+        var bar = '';
+        if (u.status === 'Resident' || u.status === 'Pending') {
+          // Resident through all
+          bar = '<div class="gantt-bar ' + s + '">' + A.esc(u.startBldg) + '</div>';
+        } else if (i === col) {
+          bar = '<div class="gantt-bar ' + s + '" title="' + A.esc(u.name + ' - ' + u.date) + '">' + A.esc(u.endBldg) + '</div>';
+        } else if (u.id === 't-clb-com' && QUARTERS[i] === 'Q3 FY26') {
+          // CLB-4 COMM swing phase
+          bar = '<div class="gantt-bar swing">1024</div>';
+        }
+        html += '<div class="gantt-cell">' + bar + '</div>';
+      }
+    });
+
+    root.innerHTML = html;
+  }
+
+  /* --- SVG CHARTS --- */
+  function readCss(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function typeColor(t) {
+    return readCss('--tile-' + t, '#2E9BB5');
+  }
+
+  function barChart(svgEl, data, opts) {
+    if (!svgEl) return;
+    opts = opts || {};
+    var W = 340, H = 200, PAD = { l:40, r:10, t:10, b:40 };
+    var maxV = Math.max.apply(null, data.map(function(d){ return d.v; })) || 1;
+    var bw = (W - PAD.l - PAD.r) / data.length;
+    var axis = readCss('--text-muted','#8AA4BE');
+    var axisLt = readCss('--border','#1E3550');
+    var s = '<g font-family="Consolas,monospace" font-size="9.5" fill="' + axis + '">';
+    // Y gridlines
+    for (var gi = 0; gi <= 4; gi++) {
+      var y = PAD.t + (H - PAD.t - PAD.b) * (gi/4);
+      var v = Math.round(maxV * (1 - gi/4));
+      s += '<line x1="' + PAD.l + '" y1="' + y + '" x2="' + (W-PAD.r) + '" y2="' + y + '" stroke="' + axisLt + '" stroke-width="0.5"/>';
+      s += '<text x="' + (PAD.l-5) + '" y="' + (y+3) + '" text-anchor="end">' + v + '</text>';
+    }
+    // Bars
+    data.forEach(function(d, i){
+      var bh = maxV > 0 ? (d.v / maxV) * (H - PAD.t - PAD.b) : 0;
+      var x = PAD.l + i * bw + 4;
+      var y = H - PAD.b - bh;
+      var color = d.color || readCss('--accent','#2E9BB5');
+      s += '<rect x="' + x + '" y="' + y + '" width="' + (bw-8) + '" height="' + bh + '" fill="' + color + '" rx="2"/>';
+      s += '<text x="' + (x + (bw-8)/2) + '" y="' + (y-4) + '" text-anchor="middle" fill="' + readCss('--text','#E2EAF4') + '" font-weight="700">' + d.v + '</text>';
+      s += '<text x="' + (x + (bw-8)/2) + '" y="' + (H-PAD.b+14) + '" text-anchor="middle">' + A.esc(d.label) + '</text>';
+    });
+    s += '</g>';
+    svgEl.innerHTML = s;
+  }
+
+  function donutChart(svgEl, data) {
+    if (!svgEl) return;
+    var W = 340, H = 200, CX = 120, CY = H/2, R = 70, IR = 38;
+    var total = data.reduce(function(a,b){ return a + b.v; }, 0) || 1;
+    var start = -Math.PI/2;
+    var s = '<g>';
+    data.forEach(function(d){
+      var slice = (d.v / total) * Math.PI * 2;
+      var end = start + slice;
+      var x1 = CX + R * Math.cos(start), y1 = CY + R * Math.sin(start);
+      var x2 = CX + R * Math.cos(end),   y2 = CY + R * Math.sin(end);
+      var xi1 = CX + IR * Math.cos(end), yi1 = CY + IR * Math.sin(end);
+      var xi2 = CX + IR * Math.cos(start), yi2 = CY + IR * Math.sin(start);
+      var large = slice > Math.PI ? 1 : 0;
+      var path = 'M ' + x1 + ' ' + y1 + ' A ' + R + ' ' + R + ' 0 ' + large + ' 1 ' + x2 + ' ' + y2 +
+                 ' L ' + xi1 + ' ' + yi1 + ' A ' + IR + ' ' + IR + ' 0 ' + large + ' 0 ' + xi2 + ' ' + yi2 + ' Z';
+      s += '<path d="' + path + '" fill="' + d.color + '" stroke="' + readCss('--bg','#0D1E30') + '" stroke-width="1.5"/>';
+      start = end;
+    });
+    s += '<text x="' + CX + '" y="' + (CY-4) + '" text-anchor="middle" font-family="Consolas,monospace" font-size="22" font-weight="800" fill="' + readCss('--text','#E2EAF4') + '">' + total + '</text>';
+    s += '<text x="' + CX + '" y="' + (CY+14) + '" text-anchor="middle" font-size="9" fill="' + readCss('--text-muted','#8AA4BE') + '" letter-spacing="1">TOTAL</text>';
+    // Legend
+    var lx = 220, ly = 22;
+    data.forEach(function(d, i){
+      s += '<rect x="' + lx + '" y="' + (ly + i*20) + '" width="12" height="12" fill="' + d.color + '" rx="2"/>';
+      s += '<text x="' + (lx+18) + '" y="' + (ly + i*20 + 10) + '" font-size="10.5" fill="' + readCss('--text','#E2EAF4') + '">' + A.esc(d.label) + ' (' + d.v + ')</text>';
+    });
+    s += '</g>';
+    svgEl.innerHTML = s;
+  }
+
+  function renderCharts() {
+    // Moves per phase
+    var moves = [
+      { label:'P1 FY26', v: A.UNITS.filter(function(u){return u.phase===1;}).length, color: readCss('--ph1','#1E5080') },
+      { label:'P2 FY27', v: A.UNITS.filter(function(u){return u.phase===2;}).length, color: readCss('--ph2','#1A3A6C') },
+      { label:'P3 FY28', v: A.UNITS.filter(function(u){return u.phase===3;}).length, color: readCss('--ph3','#0E5530') },
+      { label:'P4 FRF',  v: A.UNITS.filter(function(u){return u.phase===4;}).length, color: readCss('--ph4','#7A0E12') },
+      { label:'Res',     v: A.UNITS.filter(function(u){return u.phase===0;}).length, color: readCss('--tile-mtr','#0E3A5C') }
+    ];
+    barChart(document.getElementById('chart-moves'), moves);
+
+    // Unit type distribution
+    var types = ['div','mlg','reg','arm','med','mtr'].map(function(t){
+      return { label: A.typeMap[t], v: A.UNITS.filter(function(u){return u.type===t;}).length, color: typeColor(t) };
+    }).filter(function(d){ return d.v > 0; });
+    donutChart(document.getElementById('chart-types'), types);
+
+    // Buildings by zone
+    var zones = ['Source','Swing','Final','FRF'].map(function(z){
+      var color = readCss('--accent','#2E9BB5');
+      if (z === 'FRF') color = readCss('--status-red','#C1272D');
+      else if (z === 'Swing') color = readCss('--swing-amber','#D4900A');
+      else if (z === 'Source') color = readCss('--tile-mtr','#0E3A5C');
+      return { label:z, v: A.BUILDINGS.filter(function(b){return b.zone===z;}).length, color: color };
+    });
+    barChart(document.getElementById('chart-bldg-zones'), zones);
+
+    // FRF countdown timeline (months remaining over time)
+    var svgCd = document.getElementById('chart-countdown');
+    if (svgCd) {
+      var now = new Date();
+      var monthsTotal = 32;
+      var monthsLeft = Math.max(0, Math.round((A.FRF_DATE - now) / (1000*60*60*24*30.44)));
+      var W = 340, H = 200, PAD = { l:40, r:10, t:20, b:40 };
+      var s = '<g font-family="Consolas,monospace" font-size="9.5" fill="' + readCss('--text-muted','#8AA4BE') + '">';
+      var points = [];
+      for (var m = 32; m >= 0; m--) { points.push({ m:m, pos:32-m }); }
+      var xScale = function(p){ return PAD.l + (p/32) * (W - PAD.l - PAD.r); };
+      var yScale = function(v){ return H - PAD.b - (v/32) * (H - PAD.t - PAD.b); };
+      // Axis
+      s += '<line x1="' + PAD.l + '" y1="' + (H-PAD.b) + '" x2="' + (W-PAD.r) + '" y2="' + (H-PAD.b) + '" stroke="' + readCss('--border','#1E3550') + '"/>';
+      s += '<line x1="' + PAD.l + '" y1="' + PAD.t + '" x2="' + PAD.l + '" y2="' + (H-PAD.b) + '" stroke="' + readCss('--border','#1E3550') + '"/>';
+      // Line
+      var line = 'M ' + xScale(0) + ' ' + yScale(32) + ' L ' + xScale(32) + ' ' + yScale(0);
+      s += '<path d="' + line + '" fill="none" stroke="' + readCss('--accent','#2E9BB5') + '" stroke-width="2"/>';
+      // Current marker
+      var curX = xScale(32 - monthsLeft);
+      var curY = yScale(monthsLeft);
+      s += '<circle cx="' + curX + '" cy="' + curY + '" r="6" fill="' + readCss('--status-red','#C1272D') + '" stroke="' + readCss('--bg','#0D1E30') + '" stroke-width="2"/>';
+      s += '<text x="' + curX + '" y="' + (curY-10) + '" text-anchor="middle" fill="' + readCss('--status-red','#C1272D') + '" font-weight="800">' + monthsLeft + ' mo</text>';
+      s += '<text x="' + PAD.l + '" y="' + (H-PAD.b+14) + '" fill="' + readCss('--text-muted','#8AA4BE') + '">FY26 Start</text>';
+      s += '<text x="' + (W-PAD.r) + '" y="' + (H-PAD.b+14) + '" text-anchor="end" fill="' + readCss('--status-red','#C1272D') + '" font-weight="700">FRF 1 Jun 2028</text>';
+      s += '</g>';
+      svgCd.innerHTML = s;
+    }
+  }
+
+  /* --- OVERVIEW --- */
+  function renderOverview() {
+    // Echelon chart
+    var types = ['div','mlg','reg','arm','med','mtr'].map(function(t){
+      return { label: A.typeMap[t], v: A.UNITS.filter(function(u){return u.type===t;}).length, color: typeColor(t) };
+    }).filter(function(d){ return d.v > 0; });
+    donutChart(document.getElementById('chart-echelon'), types);
+
+    // Zones chart
+    var zones = ['Source','Swing','Final','FRF'].map(function(z){
+      var color = readCss('--accent','#2E9BB5');
+      if (z === 'FRF') color = readCss('--status-red','#C1272D');
+      else if (z === 'Swing') color = readCss('--swing-amber','#D4900A');
+      return { label:z, v: A.BUILDINGS.filter(function(b){return b.zone===z;}).length, color: color };
+    });
+    barChart(document.getElementById('chart-zones'), zones);
+
+    // Phase list
+    var plist = document.getElementById('ov-phase-list'); if (plist) {
+      var html = '';
+      var phaseMeta = [
+        { p:1, name:'FY26 Start',  color:'--ph1' },
+        { p:2, name:'FY27 Moves',  color:'--ph2' },
+        { p:3, name:'FY28 Finals', color:'--ph3' },
+        { p:4, name:'FRF Vacation',color:'--ph4' }
+      ];
+      phaseMeta.forEach(function(pm){
+        var count = A.UNITS.filter(function(u){return u.phase === pm.p;}).length;
+        html += '<div style="display:flex;align-items:center;gap:8px;font-size:11px;">' +
+          '<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(' + pm.color + ');"></span>' +
+          '<span style="flex:1;color:var(--text);">Phase ' + pm.p + ': ' + pm.name + '</span>' +
+          '<strong style="color:var(--accent-bright);font-family:var(--font-mono);">' + count + '</strong>' +
+          '</div>';
+      });
+      plist.innerHTML = html;
+    }
+
+    // Countdown mini
+    var now = new Date();
+    var diff = A.FRF_DATE - now;
+    var total = A.FRF_DATE - A.PROG_START;
+    var pct = Math.max(0, Math.min(100, ((total - diff) / total) * 100));
+    var days = Math.max(0, Math.floor(diff / 86400000));
+    var hours = Math.max(0, Math.floor((diff % 86400000) / 3600000));
+    var mins = Math.max(0, Math.floor((diff % 3600000) / 60000));
+    var big = document.getElementById('ov-countdown-big'); if (big) big.textContent = days + 'd ' + hours + 'h ' + mins + 'm';
+    var prog = document.getElementById('ov-countdown-prog'); if (prog) {
+      prog.style.width = pct + '%';
+      prog.classList.remove('green','amber','red');
+      if (pct > 85) prog.classList.add('red');
+      else if (pct > 60) prog.classList.add('amber');
+      else prog.classList.add('green');
+    }
+    var pctLbl = document.getElementById('ov-countdown-pct'); if (pctLbl) pctLbl.textContent = pct.toFixed(1) + '%';
+  }
+
+  A.renderGantt = renderGantt;
+  A.renderCharts = renderCharts;
+  A.renderOverview = renderOverview;
+
+})();
+</script>
+
+<script>
+/* ============================================================
+   APEX OMEGA v6.0 - EDITOR + EXPORT + INIT
+   ============================================================ */
+(function(){
+  'use strict';
+  var A = window.__APEX; if (!A) return;
+
+  var TYPES = ['div','mlg','reg','arm','med','mtr'];
+  var ZONES = ['Source','Swing','Final','FRF'];
+  var STATUSES_U = ['Permanent Move','Swing','FRF Action','Consolidation','Resident','Pending'];
+  var STATUSES_B = ['Active','Vacated','Demolish','Pending','Swing','Converted'];
+
+  /* --- EDITOR UNITS TABLE --- */
+  function renderEditor() {
+    var body = document.getElementById('tbody-ed-units'); if (body) {
+      var html = A.UNITS.map(function(u, idx){
+        return '<tr data-idx="' + idx + '">' +
+          '<td><input data-k="id" value="' + A.esc(u.id) + '" style="font-family:var(--font-mono);"></td>' +
+          '<td><input data-k="name" value="' + A.esc(u.name) + '"></td>' +
+          '<td>' + typeSelect('type', u.type) + '</td>' +
+          '<td><input data-k="startBldg" value="' + A.esc(u.startBldg) + '" style="font-family:var(--font-mono);"></td>' +
+          '<td><input data-k="endBldg" value="' + A.esc(u.endBldg) + '" style="font-family:var(--font-mono);"></td>' +
+          '<td><input data-k="phase" type="number" min="0" max="5" value="' + u.phase + '" style="width:50px;text-align:center;"></td>' +
+          '<td><input data-k="date" value="' + A.esc(u.date) + '"></td>' +
+          '<td>' + statusSelect('status', u.status, STATUSES_U) + '</td>' +
+          '<td><span class="row-act"><button class="row-act-btn del" data-act="del-u" data-idx="' + idx + '" type="button">Del</button></span></td>' +
+          '</tr>';
+      }).join('');
+      body.innerHTML = html;
+    }
+    var bbody = document.getElementById('tbody-ed-bldgs'); if (bbody) {
+      var bh = A.BUILDINGS.map(function(b, idx){
+        return '<tr data-idx="' + idx + '">' +
+          '<td><input data-k="id" value="' + A.esc(b.id) + '" style="font-family:var(--font-mono);"></td>' +
+          '<td><input data-k="num" value="' + A.esc(b.num) + '"></td>' +
+          '<td><input data-k="label" value="' + A.esc(b.label) + '"></td>' +
+          '<td>' + zoneSelect('zone', b.zone) + '</td>' +
+          '<td>' + statusSelect('status', b.status, STATUSES_B) + '</td>' +
+          '<td><input data-k="phaseIn" type="number" min="0" max="5" value="' + b.phaseIn + '" style="width:50px;text-align:center;"></td>' +
+          '<td><input data-k="phaseOut" type="number" min="0" max="5" value="' + b.phaseOut + '" style="width:50px;text-align:center;"></td>' +
+          '<td><span class="row-act"><button class="row-act-btn del" data-act="del-b" data-idx="' + idx + '" type="button">Del</button></span></td>' +
+          '</tr>';
+      }).join('');
+      bbody.innerHTML = bh;
+    }
+  }
+  function typeSelect(k, v) {
+    return '<select data-k="' + k + '">' + TYPES.map(function(t){
+      return '<option value="' + t + '"' + (t===v?' selected':'') + '>' + A.esc(A.typeMap[t]) + '</option>';
+    }).join('') + '</select>';
+  }
+  function zoneSelect(k, v) {
+    return '<select data-k="' + k + '">' + ZONES.map(function(z){
+      return '<option value="' + z + '"' + (z===v?' selected':'') + '>' + A.esc(z) + '</option>';
+    }).join('') + '</select>';
+  }
+  function statusSelect(k, v, list) {
+    return '<select data-k="' + k + '">' + list.map(function(s){
+      return '<option value="' + A.esc(s) + '"' + (s===v?' selected':'') + '>' + A.esc(s) + '</option>';
+    }).join('') + '</select>';
+  }
+
+  function commitEditor(which) {
+    var src = which === 'u' ? A.UNITS : A.BUILDINGS;
+    var rows = document.querySelectorAll('#tbody-ed-' + (which==='u' ? 'units' : 'bldgs') + ' tr');
+    Array.prototype.forEach.call(rows, function(tr){
+      var idx = parseInt(tr.getAttribute('data-idx'), 10);
+      if (isNaN(idx) || !src[idx]) return;
+      Array.prototype.forEach.call(tr.querySelectorAll('[data-k]'), function(inp){
+        var k = inp.getAttribute('data-k');
+        var val = inp.value;
+        if (k === 'phase' || k === 'phaseIn' || k === 'phaseOut') val = parseInt(val, 10) || 0;
+        src[idx][k] = val;
+      });
+    });
+  }
+
+  function wireEditor() {
+    // Delegated delete
+    document.addEventListener('click', function(e){
+      var btn = e.target.closest('[data-act]'); if (!btn) return;
+      var act = btn.getAttribute('data-act');
+      var idx = parseInt(btn.getAttribute('data-idx'), 10);
+      if (act === 'del-u' && !isNaN(idx)) {
+        if (confirm('Delete unit "' + A.UNITS[idx].name + '"?')) {
+          A.UNITS.splice(idx, 1);
+          renderEditor(); A.toast('Unit deleted', 'warning');
+        }
+      } else if (act === 'del-b' && !isNaN(idx)) {
+        if (confirm('Delete building "' + A.BUILDINGS[idx].num + '"?')) {
+          A.BUILDINGS.splice(idx, 1);
+          renderEditor(); A.toast('Building deleted', 'warning');
+        }
+      }
+    });
+
+    var addU = document.getElementById('ed-add-unit');
+    if (addU) addU.addEventListener('click', function(){
+      A.UNITS.push({ id:'t-new-' + Date.now().toString(36).slice(-4), name:'New Unit',
+        type:'div', startBldg:'----', endBldg:'----', phase:0, date:'TBD', status:'Permanent Move', note:'' });
+      renderEditor(); A.toast('Unit added', 'success');
+    });
+    var addB = document.getElementById('ed-add-bldg');
+    if (addB) addB.addEventListener('click', function(){
+      A.BUILDINGS.push({ id:'b-' + Date.now().toString(36).slice(-4), num:'----',
+        label:'New Building', zone:'Source', status:'Active', phaseIn:0, phaseOut:0, occupants:[] });
+      renderEditor(); A.toast('Building added', 'success');
+    });
+    var saveU = document.getElementById('ed-save-units');
+    if (saveU) saveU.addEventListener('click', function(){
+      commitEditor('u'); persistData(); A.toast('Units saved', 'success');
+      A.renderRoster(); A.renderGantt();
+    });
+    var saveB = document.getElementById('ed-save-bldgs');
+    if (saveB) saveB.addEventListener('click', function(){
+      commitEditor('b'); persistData(); A.toast('Buildings saved', 'success');
+      A.renderBuildings();
+    });
+    var resU = document.getElementById('ed-reset-units');
+    if (resU) resU.addEventListener('click', function(){
+      if (confirm('Reset units table to currently saved state?')) { renderEditor(); A.toast('Reset'); }
+    });
+    var resB = document.getElementById('ed-reset-bldgs');
+    if (resB) resB.addEventListener('click', function(){
+      if (confirm('Reset buildings table to currently saved state?')) { renderEditor(); A.toast('Reset'); }
+    });
+    var expAll = document.getElementById('ed-export-all');
+    if (expAll) expAll.addEventListener('click', function(){ exportJSON('all'); });
+    var expH = document.getElementById('ed-export-html');
+    if (expH) expH.addEventListener('click', function(){
+      var b = document.getElementById('eb-export'); if (b) b.click();
+    });
+    var clr = document.getElementById('ed-clear-all');
+    if (clr) clr.addEventListener('click', function(){
+      if (confirm('Clear all localStorage overrides? Reload to restore original data.')) {
+        try { localStorage.removeItem('4thMAR_edits_v1');
+              localStorage.removeItem('4thMAR_data_v1');
+              A.toast('Cleared - reload to reset', 'warning'); }
+        catch(e){ A.toast('Clear failed: ' + e.message, 'error'); }
+      }
+    });
+    var imp = document.getElementById('ed-import');
+    if (imp) imp.addEventListener('click', function(){
+      var txt = prompt('Paste JSON (exported from Export All JSON):');
+      if (!txt) return;
+      try {
+        var data = JSON.parse(txt);
+        if (data.UNITS) A.UNITS.splice(0, A.UNITS.length); (data.UNITS||[]).forEach(function(u){ A.UNITS.push(u); });
+        if (data.BUILDINGS) A.BUILDINGS.splice(0, A.BUILDINGS.length); (data.BUILDINGS||[]).forEach(function(b){ A.BUILDINGS.push(b); });
+        renderEditor(); A.renderRoster(); A.renderBuildings(); A.renderGantt(); A.renderCharts(); A.renderOverview();
+        A.toast('Imported', 'success');
+      } catch(e){ A.toast('Invalid JSON: ' + e.message, 'error'); }
+    });
+  }
+
+  /* --- EXPORT FUNCTIONS --- */
+  function download(name, content, mime) {
+    try {
+      var blob = new Blob([content], { type: mime });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href = url; a.download = name;
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ if (a.parentNode) a.parentNode.removeChild(a); URL.revokeObjectURL(url); }, 500);
+    } catch(e){ A.toast('Export failed: ' + e.message, 'error'); }
+  }
+  function csvEscape(v) {
+    var s = String(v == null ? '' : v);
+    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+  function exportCSV(kind) {
+    var today = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    if (kind === 'units') {
+      var cols = ['id','name','type','startBldg','endBldg','phase','date','status','note'];
+      var rows = [cols.join(',')];
+      A.UNITS.forEach(function(u){
+        rows.push(cols.map(function(c){ return csvEscape(u[c]); }).join(','));
+      });
+      download('4thMAR_units_' + today + '.csv', rows.join('\n'), 'text/csv');
+      A.toast('Units CSV exported', 'success');
+    } else if (kind === 'buildings') {
+      var colsB = ['id','num','label','zone','status','phaseIn','phaseOut','occupants'];
+      var rowsB = [colsB.join(',')];
+      A.BUILDINGS.forEach(function(b){
+        rowsB.push(colsB.map(function(c){
+          return csvEscape(c === 'occupants' ? (b[c]||[]).join(';') : b[c]);
+        }).join(','));
+      });
+      download('4thMAR_buildings_' + today + '.csv', rowsB.join('\n'), 'text/csv');
+      A.toast('Buildings CSV exported', 'success');
+    }
+  }
+  function exportJSON(kind) {
+    var today = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    var data;
+    if (kind === 'units') { data = { UNITS: A.UNITS }; }
+    else if (kind === 'buildings') { data = { BUILDINGS: A.BUILDINGS }; }
+    else { data = { UNITS: A.UNITS, BUILDINGS: A.BUILDINGS, exportedAt: new Date().toISOString(), version: 'APEX OMEGA v6.0' }; }
+    download('4thMAR_' + (kind||'all') + '_' + today + '.json', JSON.stringify(data, null, 2), 'application/json');
+    A.toast('JSON exported', 'success');
+  }
+
+  function persistData() {
+    try {
+      localStorage.setItem('4thMAR_data_v1', JSON.stringify({ UNITS: A.UNITS, BUILDINGS: A.BUILDINGS }));
+    } catch(e){}
+  }
+  function loadData() {
+    try {
+      var raw = localStorage.getItem('4thMAR_data_v1');
+      if (!raw) return;
+      var d = JSON.parse(raw);
+      if (d.UNITS && d.UNITS.length) { A.UNITS.splice(0, A.UNITS.length); d.UNITS.forEach(function(u){ A.UNITS.push(u); }); }
+      if (d.BUILDINGS && d.BUILDINGS.length) { A.BUILDINGS.splice(0, A.BUILDINGS.length); d.BUILDINGS.forEach(function(b){ A.BUILDINGS.push(b); }); }
+    } catch(e){}
+  }
+
+  A.renderEditor = renderEditor;
+  A.exportCSV = exportCSV;
+  A.exportJSON = exportJSON;
+
+  /* --- GLOBAL KEYBOARD SHORTCUTS --- */
+  function wireKeys() {
+    document.addEventListener('keydown', function(e){
+      var tag = e.target.tagName;
+      var inInput = (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable);
+
+      // Ctrl/Cmd+K always opens command palette
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault(); A.openCmd(); return;
+      }
+
+      if (inInput) return;
+
+      // Number keys 1-9 = tab jump
+      if (/^[1-9]$/.test(e.key)) {
+        var names = ['overview','map','phases','roster','buildings','timeline','charts','editor','help'];
+        var idx = parseInt(e.key, 10) - 1;
+        if (names[idx]) { A.switchTab(names[idx]); e.preventDefault(); return; }
+      }
+
+      if (e.key === 't' || e.key === 'T') { A.toggleTheme(); e.preventDefault(); }
+      else if (e.key === 'k' || e.key === 'K') { A.toggleSidebar(); e.preventDefault(); }
+      else if (e.key === 'Escape') {
+        if (document.getElementById('cmd-overlay').classList.contains('open')) A.closeCmd();
+        else if (document.getElementById('detail-overlay').classList.contains('open')) A.closeDetail();
+      }
+    });
+  }
+
+  /* --- MAP TILE/BUILDING CLICK -> DETAIL DRAWER (non-edit mode) --- */
+  function wireMapDetail() {
+    document.addEventListener('click', function(e){
+      if (document.body.classList.contains('edit-mode')) return;
+      var tile = e.target.closest('.tile[id^="t-"]');
+      if (tile && tile.id) { A.openUnitDetail(tile.id); return; }
+      var bldg = e.target.closest('.m-bldg[id^="b-"]');
+      if (bldg && bldg.id) { A.openBuildingDetail(bldg.id); return; }
+    });
+  }
+
+  /* --- INITIALIZE EVERYTHING --- */
+  function init() {
+    loadData();
+    if (A.wireNav) A.wireNav();
+    if (A.wireCmd) A.wireCmd();
+    if (A.wireDetail) A.wireDetail();
+    if (A.wireTables) A.wireTables();
+    wireEditor();
+    wireKeys();
+    wireMapDetail();
+
+    // Initial table sort indicators
+    var hR = document.querySelector('#tbl-roster th[data-sort="phase"]'); if (hR) hR.setAttribute('aria-sort','ascending');
+    var hB = document.querySelector('#tbl-buildings th[data-sort="num"]'); if (hB) hB.setAttribute('aria-sort','ascending');
+
+    if (A.sortState) {
+      A.sortState.roster = { key:'phase', dir:'asc' };
+      A.sortState.buildings = { key:'num', dir:'asc' };
+    }
+
+    // Wire sort headers (delegated is simpler here)
+    Array.prototype.forEach.call(document.querySelectorAll('#tbl-roster th[data-sort]'), function(th){
+      th.addEventListener('click', function(){
+        var k = th.getAttribute('data-sort');
+        var s = A.sortState.roster;
+        s.dir = (s.key === k && s.dir === 'asc') ? 'desc' : 'asc';
+        s.key = k;
+        Array.prototype.forEach.call(document.querySelectorAll('#tbl-roster th'), function(t){ t.removeAttribute('aria-sort'); });
+        th.setAttribute('aria-sort', s.dir === 'asc' ? 'ascending' : 'descending');
+        A.renderRoster();
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#tbl-buildings th[data-sort]'), function(th){
+      th.addEventListener('click', function(){
+        var k = th.getAttribute('data-sort');
+        var s = A.sortState.buildings;
+        s.dir = (s.key === k && s.dir === 'asc') ? 'desc' : 'asc';
+        s.key = k;
+        Array.prototype.forEach.call(document.querySelectorAll('#tbl-buildings th'), function(t){ t.removeAttribute('aria-sort'); });
+        th.setAttribute('aria-sort', s.dir === 'asc' ? 'ascending' : 'descending');
+        A.renderBuildings();
+      });
+    });
+
+    // Initial renders
+    A.renderOverview();
+
+    // Pause clocks when tab hidden (perf)
+    document.addEventListener('visibilitychange', function(){});
+
+    // Refresh overview every minute
+    setInterval(function(){ if (document.getElementById('tab-overview') && document.getElementById('tab-overview').classList.contains('active')) A.renderOverview(); }, 60000);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
+
 
 <!-- ============================================================
      OMEGA APEX v6.0 - EDIT SYSTEM UI
@@ -2435,11 +4469,11 @@ body.edit-mode .tile:hover { outline: 2px solid #7B4FBE; }
 <!-- Edit Mode Bar -->
 <div id="edit-bar" role="toolbar" aria-label="Edit Mode Controls">
   <span id="edit-bar-label">&#9998; Edit Mode Active</span>
-  <div id="edit-bar-sep"></div>
+  <div class="edit-bar-sep"></div>
   <button class="eb-btn primary" id="eb-save" title="Save to localStorage" aria-label="Save changes">SAVE</button>
   <button class="eb-btn success" id="eb-export" title="Export as updated HTML file" aria-label="Export HTML">EXPORT HTML</button>
   <button class="eb-btn" id="eb-clear" title="Clear all saved edits and reload defaults" aria-label="Clear saved edits">CLEAR SAVES</button>
-  <div id="edit-bar-sep"></div>
+  <div class="edit-bar-sep"></div>
   <button class="eb-btn" id="eb-undo" title="Undo last change (Ctrl+Z)" aria-label="Undo">UNDO</button>
   <span id="edit-unsaved">&#9679; Unsaved changes</span>
   <span id="edit-bar-hint">Click any element to edit &bull; Drag tiles to reposition &bull; E to exit</span>

@@ -1,4 +1,4 @@
-/* admin.js — editor for installations, programs, columns, enums, viewer. */
+/* admin.js - editor for installations, programs, columns, enums, viewer. */
 window.Sections = window.Sections || {};
 
 (function () {
@@ -132,7 +132,7 @@ window.Sections = window.Sections || {};
       tr.appendChild($("td", {}, [$("input", { value: c.unit || "", onchange: (e) => store.updateSchemaColumn?.(c.key, { unit: e.target.value || null }) })]));
       tr.appendChild($("td", {}, [$("input", { type: "checkbox", checked: !c.hidden, onchange: (e) => store.updateSchemaColumn?.(c.key, { hidden: !e.target.checked }) })]));
       tr.appendChild($("td", { text: c.userDefined ? "" : "✓" }));
-      tr.appendChild($("td", {}, [c.userDefined ? $("button", { class: "btn btn-ghost", text: "✕", onclick: () => { if (confirm("Delete column " + c.key + "?")) store.removeSchemaColumn(c.key); } }) : $("span", { class: "u-muted", text: "—" })]));
+      tr.appendChild($("td", {}, [c.userDefined ? $("button", { class: "btn btn-ghost", text: "✕", onclick: () => { if (confirm("Delete column " + c.key + "?")) store.removeSchemaColumn(c.key); } }) : $("span", { class: "u-muted", text: "-" })]));
       tbody.appendChild(tr);
     });
     tbl.appendChild(tbody); host.appendChild(tbl);

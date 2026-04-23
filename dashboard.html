@@ -607,13 +607,125 @@ body.layout-brief .app-header{background:#1E3F5C;color:#fff;}
 /* Skip link visibility */
 .skip-link:focus{top:30px !important;left:10px !important;background:#1E3F5C !important;color:#fff;padding:6px 12px;border-radius:3px;z-index:10000;}
 
+/* ==== Rework to OMEGA APEX quality - DPRI-inspired header + horizontal KPI strip ==== */
+
+/* Header - 3 rows like DPRI */
+.app-header{display:flex;flex-direction:column;gap:0;padding:0;background:#FFFFFF;border-bottom:1px solid #CDD5DE;}
+.hdr-row-1{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 14px 8px;gap:20px;border-bottom:1px solid #E4E9EF;}
+.hdr-row-2{display:flex;align-items:center;gap:10px;padding:6px 14px;background:#F7F9FB;border-bottom:1px solid #E4E9EF;overflow-x:auto;}
+.hdr-row-3{display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:5px 14px;background:#FFFFFF;border-bottom:1px solid #E4E9EF;}
+.hdr-left{display:flex;flex-direction:column;line-height:1.25;flex:1 1 auto;min-width:0;}
+.hdr-org{font-size:10px;font-weight:800;letter-spacing:.14em;color:#1E3F5C;text-transform:uppercase;margin-bottom:1px;}
+.hdr-title{font-size:18px;font-weight:800;color:#0D1E30;line-height:1.2;}
+.hdr-sub{font-size:11px;color:#546270;margin-top:2px;}
+.hdr-attr{font-size:10px;color:#8A98A8;margin-top:2px;letter-spacing:.02em;}
+
+/* World clocks */
+.hdr-clocks{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.clock-item{display:flex;flex-direction:column;align-items:center;min-width:54px;padding:3px 6px;background:#0D1E30;border-radius:4px;}
+.clock-tz{font-size:9px;font-weight:700;color:#8AA4BE;letter-spacing:.1em;}
+.clock-time{font-size:13px;font-weight:700;color:#E2EAF4;font-family:ui-monospace,Menlo,monospace;}
+.clk-sep{width:1px;height:22px;background:#E4E9EF;}
+
+/* Installation tabs (row 2) - DPRI pattern */
+.inst-tabs{display:flex;gap:2px;flex-shrink:0;}
+.inst-tab{--c:#546270;padding:5px 11px;border:1px solid #CDD5DE;border-radius:3px;background:#fff;color:#546270;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.inst-tab:hover{border-color:var(--c);color:var(--c);}
+.inst-tab.active{background:var(--c);color:#fff;border-color:var(--c);}
+.hdr-divider{width:1px;height:20px;background:#CDD5DE;margin:0 4px;}
+.prog-tabs{display:flex;gap:2px;flex-shrink:0;}
+.prog-tab{--c:#546270;padding:5px 10px;border:1px solid #E4E9EF;border-radius:3px;background:#fff;color:var(--c);font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.02em;white-space:nowrap;}
+.prog-tab.active{background:var(--c);color:#fff;border-color:var(--c);}
+.prog-tab:hover{border-color:var(--c);}
+
+/* Action buttons on row 3 (tb-btn namespace from DPRI) */
+.tb-btn{padding:4px 10px;border:1px solid #CDD5DE;background:#fff;color:#1B2535;font-size:11px;font-weight:600;cursor:pointer;border-radius:3px;letter-spacing:.02em;}
+.tb-btn:hover{background:#F2F4F6;border-color:#2E91AE;}
+.tb-btn-danger{color:#8C2B0B;border-color:#E0C5BF;}
+.tb-btn-danger:hover{background:#FFF0ED;}
+
+.viewer-chip{padding:4px 10px;background:#EDF0F4;border:1px solid #CDD5DE;border-radius:3px;font-size:11px;font-weight:600;color:#1E3F5C;cursor:pointer;}
+.viewer-chip:hover{background:#E0E7EE;}
+
+/* Search input */
+.search-inp{padding:5px 10px;border:1px solid #CDD5DE;border-radius:3px;font-size:12px;min-width:260px;}
+.search-inp:focus{outline:none;border-color:#2E91AE;box-shadow:0 0 0 2px rgba(46,145,174,0.15);}
+
+/* ==== Overview KPI strip (ov-* namespace) ==== */
+.ov-kpi-bar{display:flex;align-items:stretch;gap:0;padding:12px 10px;background:#FFFFFF;border:1px solid #CDD5DE;border-radius:6px;margin-bottom:14px;overflow-x:auto;}
+.ov-kpi{display:flex;flex-direction:column;padding:4px 14px;min-width:120px;justify-content:center;}
+.ov-kpi.clickable{cursor:pointer;}
+.ov-kpi.clickable:hover{background:#F7F9FB;}
+.ov-kpi.warn .ov-kpi-val{color:#8C2B0B;}
+.ov-kpi-val{font-size:24px;font-weight:800;color:#1E3F5C;line-height:1.1;letter-spacing:-.01em;}
+.ov-kpi-lbl{font-size:10px;font-weight:700;color:#1B2535;text-transform:uppercase;letter-spacing:.1em;margin-top:3px;}
+.ov-kpi-sub{font-size:10px;color:#546270;margin-top:2px;line-height:1.3;}
+.ov-kpi-sep{width:1px;background:#E4E9EF;margin:6px 4px;}
+
+/* Inline phase grid */
+.ov-phase{display:flex;flex-direction:column;padding:4px 10px;min-width:180px;}
+.ov-chart-lbl{font-size:10px;font-weight:700;color:#1B2535;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.ov-phase-grid{display:flex;align-items:flex-end;gap:4px;height:58px;}
+.ov-phase-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:22px;}
+.ov-phase-bar{width:100%;min-height:2px;background:#2E91AE;border-radius:2px 2px 0 0;}
+.ov-phase-val{font-size:10px;font-weight:700;color:#1B2535;}
+.ov-phase-lbl{font-size:9px;color:#546270;}
+
+/* Inline installation burst (radial) */
+.ov-burst{display:flex;flex-direction:column;padding:4px 10px;min-width:220px;}
+.ov-burst-row{display:flex;align-items:center;gap:10px;margin-top:4px;}
+.ov-burst-svg{width:80px;height:80px;flex-shrink:0;}
+.ov-burst-legend{display:flex;flex-direction:column;gap:2px;flex:1;font-size:10px;}
+.ov-burst-leg{display:flex;align-items:center;gap:5px;}
+.ov-burst-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.ov-burst-name{flex:1;color:#1B2535;}
+.ov-burst-ct{font-weight:700;color:#1E3F5C;}
+
+/* Timeline */
+.ov-section{margin:18px 0;}
+.ov-section-h{font-size:12px;font-weight:800;color:#1E3F5C;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;border-bottom:2px solid #E4E9EF;padding-bottom:4px;}
+.ov-timeline-wrap{background:#fff;border:1px solid #CDD5DE;border-radius:6px;padding:10px 8px;}
+.ov-timeline-svg{display:block;width:100%;}
+
+/* Matrix table */
+.ov-matrix{width:100%;border-collapse:collapse;background:#fff;border:1px solid #CDD5DE;border-radius:6px;overflow:hidden;}
+.ov-matrix th,.ov-matrix td{padding:8px 12px;font-size:12px;text-align:center;border-right:1px solid #E4E9EF;}
+.ov-matrix th:first-child,.ov-matrix td:first-child{text-align:left;}
+.ov-matrix thead th{background:#EDF0F4;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#1E3F5C;font-weight:700;}
+.ov-matrix tbody tr:hover{background:#F7F9FB;}
+.ov-matrix td:last-child,.ov-matrix th:last-child{background:#F7F9FB;}
+
+/* Open items */
+.ov-open-list{list-style:none;padding:0;margin:0;background:#FFF8E5;border:1px solid #F0E0A0;border-radius:6px;padding:10px 14px;font-size:13px;}
+.ov-open-list li{padding:3px 0;}
+.ov-open-list li.u-muted{color:#546270;background:none;}
+.ov-open-ct{font-weight:800;color:#7A5900;}
+.ov-open-list a{color:#1E3F5C;font-weight:600;text-decoration:underline;}
+
+/* Banner updates */
+.banner{font-size:11px;letter-spacing:.14em;}
+
+/* Heatmap host expansion */
+.hm-host{padding:12px 8px;}
+.hm-svg{min-width:100%;height:auto;}
+.hm-controls{padding:8px 10px;}
+.hm-slider{padding:10px 12px;background:#fff;border:1px solid #CDD5DE;border-radius:6px;margin-top:10px;}
+.hm-slider-wrap{gap:14px;}
+.hm-year-lbl{font-size:18px;}
+
+/* Make main wider - less whitespace on edges */
+.main{padding:14px 16px;}
+
+/* Trim old styles that conflict */
+.kpi-grid{display:none;}
+
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to main content</a>
-<div class="banner banner-top" role="note" aria-label="Handling caveat">FOR OFFICIAL USE ONLY</div>
+<div class="banner banner-top" role="note" aria-label="Handling caveat">UNCLASSIFIED // FOR OFFICIAL USE ONLY</div>
 <div id="app" role="application"></div>
-<div class="banner banner-bottom" role="note" aria-label="Handling caveat">FOR OFFICIAL USE ONLY</div>
+<div class="banner banner-bottom" role="note" aria-label="Handling caveat">UNCLASSIFIED // FOUO / MCIPAC G-F / PPE / MCB Camp S.D. Butler, Okinawa</div>
 
 <!-- Icon sprite (inline SVG symbols) -->
 <?xml version="1.0" encoding="UTF-8"?>
@@ -36169,7 +36281,7 @@ License: MIT
 
 <!-- App modules (load order matters: dataStore & persistence first, shell last before app) -->
 <script>/**
- * DataStore — single source of truth for the dashboard at runtime.
+ * DataStore - single source of truth for the dashboard at runtime.
  * Holds projects, ccn catalog, installations, programs, schema, viewer.
  * Every mutation snapshots to a 20-state history ring buffer, writes
  * through to localStorage, and emits a 'change' event.
@@ -36195,7 +36307,7 @@ window.DataStore = (function () {
 
   // Undo/redo: `history` holds past snapshots; `future` holds states popped
   // by undo() so they can be reapplied by redo(). Any fresh mutation clears
-  // `future` — the usual editor semantics.
+  // `future` - the usual editor semantics.
   var history = [];
   var future = [];
 
@@ -36321,7 +36433,7 @@ window.DataStore = (function () {
     state.schema        = { columns: deepCopy(BUILTIN_COLUMNS) };
     state.viewer        = '';
 
-    // localStorage wins — it represents the edited version the user expects
+    // localStorage wins - it represents the edited version the user expects
     // to see when they reopen the file.
     try {
       var raw = localStorage.getItem(LS_KEY);
@@ -36532,7 +36644,7 @@ window.DataStore = (function () {
     return deepCopy(state.installations);
   };
 
-  // Projects store installation by canonical NAME ("Camp Hansen"), not id —
+  // Projects store installation by canonical NAME ("Camp Hansen"), not id -
   // so we resolve both forms when comparing.
   var installationMatchesId = function (projectInstallation, installId) {
     if (!projectInstallation) return false;
@@ -36630,7 +36742,7 @@ window.DataStore = (function () {
     var columns = state.schema.columns;
     for (var i = 0; i < columns.length; i++) {
       if (columns[i].key === key) {
-        // Built-in columns mirror canonical fields and must not be deleted —
+        // Built-in columns mirror canonical fields and must not be deleted -
         // the schema editor should offer "hide" instead.
         if (columns[i].userDefined === false) {
           return { blocked: true, reason: 'builtin' };
@@ -36776,7 +36888,7 @@ window.DataStore = (function () {
 })();
 </script>
 <script>/**
- * Persistence — JSON/CSV/HTML export, JSON import, viewer prompt.
+ * Persistence - JSON/CSV/HTML export, JSON import, viewer prompt.
  * Bridges DataStore state to the filesystem via Blob + anchor downloads.
  * All exports carry the FOUO watermark with viewer + date per §7.
  */
@@ -36812,7 +36924,7 @@ window.Persistence = (function () {
 
   const viewerName = () => (window.DataStore && window.DataStore.getViewer && window.DataStore.getViewer()) || 'Unknown Viewer';
 
-  const fouoHeaderLine = () => 'FOUO — Prepared by ' + viewerName() + ' on ' + isoDate();
+  const fouoHeaderLine = () => 'FOUO - Prepared by ' + viewerName() + ' on ' + isoDate();
 
   /** Trigger a browser download of `blob` as `filename`. */
   const downloadBlob = (blob, filename) => {
@@ -36907,7 +37019,7 @@ window.Persistence = (function () {
 
   // --- CSV export -----------------------------------------------------------
 
-  /** Flatten a project row for CSV — scalar columns only, nested objects JSON-stringified. */
+  /** Flatten a project row for CSV - scalar columns only, nested objects JSON-stringified. */
   const flattenProjectForCSV = (p) => {
     const row = {};
     Object.keys(p).forEach((k) => {
@@ -36986,7 +37098,7 @@ window.Persistence = (function () {
    */
   const replaceEmbeddedScript = (html, id, jsonText) => {
     // Escape JSON for embedding inside <\/script>-safe block. JSON cannot contain
-    // a literal <\/script>, but JSON can contain the substring — we break it up.
+    // a literal <\/script>, but JSON can contain the substring - we break it up.
     const safe = jsonText.replace(/<\/script>/gi, '<\\/script>');
     // Case-insensitive, minimal match; tolerate attribute order and whitespace.
     const re = new RegExp(
@@ -37024,7 +37136,7 @@ window.Persistence = (function () {
       html = html.replace(/(<head\b[^>]*>)/i, '$1\n' + metaTag);
     }
 
-    // The current page wraps outerHTML with <html> but omits the doctype —
+    // The current page wraps outerHTML with <html> but omits the doctype -
     // re-add it so the shipped file opens in standards mode.
     const doctype = '<!DOCTYPE html>\n';
     if (!/^\s*<!DOCTYPE/i.test(html)) html = doctype + html;
@@ -37039,7 +37151,7 @@ window.Persistence = (function () {
   const buildViewerDialog = (onSubmit) => {
     const dlg = document.createElement('dialog');
     dlg.setAttribute('data-dashboard-role', 'viewer-prompt');
-    // Minimal inline styling — the app stylesheet can override.
+    // Minimal inline styling - the app stylesheet can override.
     dlg.style.padding = '20px 22px';
     dlg.style.border = '1px solid #CDD5DE';
     dlg.style.borderRadius = '6px';
@@ -37149,7 +37261,7 @@ window.Persistence = (function () {
           window.DataStore.setViewer(name);
           try { localStorage.setItem(LS_VIEWER_KEY, name); } catch (err) { /* ignore */ }
         }
-        // Tidy up — dialogs are single-use here.
+        // Tidy up - dialogs are single-use here.
         if (parts.dialog.parentNode) parts.dialog.parentNode.removeChild(parts.dialog);
         resolve(name || '');
       });
@@ -37157,7 +37269,7 @@ window.Persistence = (function () {
       if (typeof parts.dialog.showModal === 'function') {
         parts.dialog.showModal();
       } else {
-        // Legacy fallback — render inline if <dialog> isn't supported.
+        // Legacy fallback - render inline if <dialog> isn't supported.
         parts.dialog.setAttribute('open', '');
       }
       parts.input.focus();
@@ -37176,7 +37288,7 @@ window.Persistence = (function () {
   };
 })();
 </script>
-<script>/* shell.js — app chrome, routing, header filters, tooltips, keyboard shortcuts. */
+<script>/* shell.js - app chrome, routing, header filters, tooltips, keyboard shortcuts. */
 window.Shell = (function () {
   "use strict";
 
@@ -37225,50 +37337,124 @@ window.Shell = (function () {
     const umbrellas = ["DPRI", "12th MLR", "3/12", "Other"];
     const progs = store.listPrograms();
     const umbColor = (u) => (progs.find(p => p.umbrella === u) || {}).color || "#546270";
+    const umbCount = (u) => progs.filter(p => p.umbrella === u).length;
+    const projCt = store.getProjects().length;
 
-    const chips = $("div", { class: "umb-chips" }, umbrellas.map(u => $("button", {
-      class: "umb-chip" + (window.FilterState.umbrella === u ? " active" : ""),
+    // Installation tabs (DPRI-style)
+    const installs = store.listInstallations();
+    const instTabs = $("div", { class: "inst-tabs", role: "tablist" });
+    const allTab = $("button", {
+      class: "inst-tab" + (!window.FilterState.installation ? " active" : ""),
+      role: "tab",
+      "data-tip": "All installations",
+      onclick: () => { window.FilterState.installation = null; renderHeader(); dispatchFilter(); },
+      text: `All (${projCt})`
+    });
+    instTabs.appendChild(allTab);
+    installs.forEach(i => {
+      const count = store.getProjects({ installation: i.name }).length;
+      if (count === 0) return;
+      const short = i.name.replace("Camp ", "");
+      instTabs.appendChild($("button", {
+        class: "inst-tab" + (window.FilterState.installation === i.name ? " active" : ""),
+        role: "tab",
+        style: `--c:${i.color}`,
+        "data-tip": `${i.name}: ${count} projects`,
+        onclick: () => { window.FilterState.installation = window.FilterState.installation === i.name ? null : i.name; renderHeader(); dispatchFilter(); },
+        text: `${short} (${count})`
+      }));
+    });
+
+    // Program tabs (secondary)
+    const progTabs = $("div", { class: "prog-tabs" }, umbrellas.map(u => $("button", {
+      class: "prog-tab" + (window.FilterState.umbrella === u ? " active" : ""),
       style: `--c:${umbColor(u)}`,
-      "data-tip": `Filter to ${u} only`,
+      "data-tip": `Filter to ${u} projects`,
       onclick: () => {
         window.FilterState.umbrella = window.FilterState.umbrella === u ? null : u;
-        renderHeader();
-        dispatchFilter();
+        renderHeader(); dispatchFilter();
       },
       text: u
     })));
 
-    const installSel = $("select", { class: "inst-sel", onchange: (e) => { window.FilterState.installation = e.target.value || null; dispatchFilter(); } }, [
-      $("option", { value: "", text: "All installations" }),
-      ...store.listInstallations().map(i => {
-        const opt = $("option", { value: i.name, text: i.name });
-        if (window.FilterState.installation === i.name) opt.selected = true;
-        return opt;
-      })
-    ]);
+    const searchInp = $("input", { class: "search-inp", type: "search", placeholder: "Search project, ID, building...", value: window.FilterState.search, oninput: (e) => { window.FilterState.search = e.target.value; dispatchFilter(); } });
 
-    const searchInp = $("input", { class: "search-inp", type: "search", placeholder: "Search…", value: window.FilterState.search, oninput: (e) => { window.FilterState.search = e.target.value; dispatchFilter(); } });
+    const vwBtn = $("button", { class: "viewer-chip", "data-tip": "Change viewer name (stamped on exports)", onclick: () => promptViewerChange(), text: viewer ? "Viewer: " + viewer : "Set Viewer" });
 
-    const vwBtn = $("button", { class: "viewer-chip", "data-tip": "Click to change viewer name (used on exports)", onclick: () => promptViewerChange(), text: viewer ? "👤 " + viewer : "👤 Set viewer" });
+    // Clocks (JST / HST / EST / PST / ZULU)
+    const clocks = $("div", { class: "hdr-clocks" });
+    const tzList = [
+      { tz: "JST", iana: "Asia/Tokyo" },
+      { tz: "HST", iana: "Pacific/Honolulu" },
+      { tz: "EST", iana: "America/New_York" },
+      { tz: "PST", iana: "America/Los_Angeles" },
+      { tz: "ZULU", iana: "UTC" }
+    ];
+    tzList.forEach(({ tz, iana }, idx) => {
+      const item = $("div", { class: "clock-item", "data-tip": iana }, [
+        $("div", { class: "clock-tz", text: tz }),
+        $("div", { class: "clock-time", id: "clk-" + tz.toLowerCase(), text: "--:--" })
+      ]);
+      clocks.appendChild(item);
+      if (idx < tzList.length - 1) clocks.appendChild($("div", { class: "clk-sep" }));
+    });
 
     const actions = $("div", { class: "hdr-actions" }, [
-      $("button", { class: "btn btn-ghost", "data-tip": "Undo (Ctrl+Z)", onclick: () => window.DataStore.undo() }, [icon("chevron-left"), document.createTextNode(" Undo")]),
-      $("button", { class: "btn btn-ghost", "data-tip": "Redo (Ctrl+Shift+Z)", onclick: () => window.DataStore.redo() }, [icon("chevron-right"), document.createTextNode(" Redo")]),
-      $("button", { class: "btn", "data-tip": "Export all data as JSON", onclick: () => window.Persistence.exportJSON() }, [icon("download"), document.createTextNode(" JSON")]),
-      $("button", { class: "btn", "data-tip": "Download a fresh self-contained HTML with current edits", onclick: () => window.Persistence.downloadUpdatedHTML() }, [icon("download"), document.createTextNode(" HTML")]),
-      $("button", { class: "btn", "data-tip": "Switch to client-facing Brief layout", onclick: () => toggleBriefLayout() }, [icon("eye"), document.createTextNode(" Brief")]),
+      $("button", { class: "tb-btn", "data-tip": "Undo last edit (Ctrl+Z)", onclick: () => window.DataStore.undo(), text: "Undo" }),
+      $("button", { class: "tb-btn", "data-tip": "Redo (Ctrl+Shift+Z)", onclick: () => window.DataStore.redo(), text: "Redo" }),
+      $("button", { class: "tb-btn", "data-tip": "Export data as JSON", onclick: () => window.Persistence.exportJSON(), text: "JSON" }),
+      $("button", { class: "tb-btn", "data-tip": "Download self-contained HTML with current edits", onclick: () => window.Persistence.downloadUpdatedHTML(), text: "HTML" }),
+      $("button", { class: "tb-btn", "data-tip": "Print or save as PDF", onclick: () => window.print(), text: "Print" }),
+      $("button", { class: "tb-btn", "data-tip": "Client briefing layout", onclick: () => toggleBriefLayout(), text: "Brief" }),
+      $("button", { class: "tb-btn tb-btn-danger", "data-tip": "Clear all filters", onclick: () => { window.FilterState = { umbrella: null, installation: null, search: "" }; renderHeader(); dispatchFilter(); }, text: "Clear" })
     ]);
 
     const header = $("header", { class: "app-header" }, [
-      $("div", { class: "hdr-left" }, [
-        $("div", { class: "hdr-title" }, [$("strong", { text: "DPRI / 12th MLR / 3/12" }), $("span", { class: "hdr-sub u-muted", text: "Long-Range Facility Plan · FOUO" })]),
-        vwBtn,
+      $("div", { class: "hdr-row-1" }, [
+        $("div", { class: "hdr-left" }, [
+          $("div", { class: "hdr-org", text: "MCIPAC G-F / PPE" }),
+          $("div", { class: "hdr-title", text: "DPRI / 12th MLR / 3/12 Long-Range Facility Plan" }),
+          $("div", { class: "hdr-sub", text: "Defense Policy Review Initiative / 12th Marine Littoral Regiment / 3d Bn 12th Marines" }),
+          $("div", { class: "hdr-attr", text: `${projCt} projects / ${store.listCCNs().length} CCN catalog entries / Source: FC 2-000-05N Appendix A` })
+        ]),
+        clocks
       ]),
-      $("div", { class: "hdr-center" }, [chips, installSel, searchInp]),
-      actions
+      $("div", { class: "hdr-row-2" }, [
+        instTabs,
+        $("div", { class: "hdr-divider" }),
+        progTabs,
+        $("div", { class: "u-grow" }),
+        searchInp,
+        vwBtn
+      ]),
+      $("div", { class: "hdr-row-3" }, [
+        actions
+      ])
     ]);
     const old = layoutEl.querySelector(".app-header");
     if (old) old.replaceWith(header); else layoutEl.appendChild(header);
+    startClocks();
+  }
+
+  let clockInterval = null;
+  function startClocks() {
+    if (clockInterval) return;
+    const update = () => {
+      const now = new Date();
+      const map = {
+        jst: "Asia/Tokyo", hst: "Pacific/Honolulu",
+        est: "America/New_York", pst: "America/Los_Angeles", zulu: "UTC"
+      };
+      for (const id in map) {
+        const el = document.getElementById("clk-" + id);
+        if (!el) continue;
+        try {
+          el.textContent = now.toLocaleTimeString("en-US", { timeZone: map[id], hour: "2-digit", minute: "2-digit", hour12: false });
+        } catch (e) { /* ignore */ }
+      }
+    };
+    update();
+    clockInterval = setInterval(update, 30000);
   }
 
   function renderSidebar() {
@@ -37382,7 +37568,7 @@ window.Shell = (function () {
   return { mount, go, toggleBriefLayout, promptViewerChange };
 })();
 </script>
-<script>/* grid.js — Projects grid (Tabulator-backed)
+<script>/* grid.js - Projects grid (Tabulator-backed)
  * Registers window.Sections.projects. Fully editable: row add/edit/delete,
  * column add/remove/hide, bulk CSV paste, row detail panel with CCN sub-grid,
  * live footer totals, tooltips, cross-walk highlighting, filter-aware.
@@ -37562,7 +37748,7 @@ window.Sections = window.Sections || {};
     ctx.store.upsertProject(copy);
   }
   function deleteRow(row, ctx) {
-    if (!confirm(`Delete project ${row.id} — ${row.title || ""}?\nThis cannot be undone except via Undo (Ctrl+Z).`)) return;
+    if (!confirm(`Delete project ${row.id} - ${row.title || ""}?\nThis cannot be undone except via Undo (Ctrl+Z).`)) return;
     ctx.store.deleteProject(row.id);
   }
 
@@ -37716,7 +37902,7 @@ window.Sections = window.Sections || {};
   };
 })();
 </script>
-<script>/* ccn.js — CCN Catalog view, CCN Assignment manager, and a sub-grid for per-project assignments. */
+<script>/* ccn.js - CCN Catalog view, CCN Assignment manager, and a sub-grid for per-project assignments. */
 window.Sections = window.Sections || {};
 
 (function () {
@@ -37827,7 +38013,7 @@ window.Sections = window.Sections || {};
       $("label", {}, [$("span", { text: "Code" }), $("input", { id: "ccn-new-code", placeholder: "e.g. 21410" })]),
       $("label", {}, [$("span", { text: "Title" }), $("input", { id: "ccn-new-title" })]),
       $("label", {}, [$("span", { text: "UM" }), $("input", { id: "ccn-new-um", placeholder: "SF / EA / LF" })]),
-      $("label", {}, [$("span", { text: "Category" }), $("input", { id: "ccn-new-cat", placeholder: "200 — Maintenance and Production Facilities" })]),
+      $("label", {}, [$("span", { text: "Category" }), $("input", { id: "ccn-new-cat", placeholder: "200 - Maintenance and Production Facilities" })]),
     ]);
     const save = $("button", { class: "btn btn-primary", text: "Add", onclick: () => {
       const code = document.getElementById("ccn-new-code").value.trim();
@@ -37979,7 +38165,7 @@ window.Sections = window.Sections || {};
   window.CcnAssignmentSubGrid = { render: renderAssignmentPanel };
 })();
 </script>
-<script>/* heatmap.js — time-phased CCN sqft visualization. D3 v7.
+<script>/* heatmap.js - time-phased CCN sqft visualization. D3 v7.
  * Modes: annual | cumulative. Basis: net (DEMO subtracts, REPLACEMENT swaps) | gross.
  * Year slider with play/pause. Click cell → drill-down. Axis toggle install×category.
  */
@@ -38111,7 +38297,7 @@ window.Sections = window.Sections || {};
     const rows = Object.entries(byProj).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]));
     const totalSF = filtered.reduce((a,s)=>a+s.sf,0);
     dlg.appendChild($("div", { class: "det-head" }, [
-      $("strong", { text: `${row} × ${col} — ${mode === "cumulative" ? "through " : ""}FY${currentYear}` }),
+      $("strong", { text: `${row} × ${col} - ${mode === "cumulative" ? "through " : ""}FY${currentYear}` }),
       $("span", { class: "foumark", text: "FOUO" }),
       $("button", { class: "btn btn-ghost", text: "✕", onclick: () => { dlg.close(); dlg.remove(); } })
     ]));
@@ -38185,9 +38371,13 @@ window.Sections = window.Sections || {};
 
     function drawHeatmap(agg) {
       gridHost.innerHTML = "";
-      const cellW = 100, cellH = 32, labelW = 160;
-      const width = labelW + agg.cols.length * cellW + 40, height = 30 + agg.rows.length * cellH + 40;
-      const svg = window.d3.select(gridHost).append("svg").attr("viewBox", `0 0 ${width} ${height}`).attr("class", "hm-svg");
+      const hostW = Math.max(gridHost.clientWidth || 1200, 900);
+      const labelW = 170;
+      const cellW = Math.max(80, Math.floor((hostW - labelW - 40) / Math.max(1, agg.cols.length)));
+      const cellH = 56;
+      const width = labelW + agg.cols.length * cellW + 40;
+      const height = 44 + agg.rows.length * cellH + 20;
+      const svg = window.d3.select(gridHost).append("svg").attr("viewBox", `0 0 ${width} ${height}`).attr("preserveAspectRatio", "none").attr("width", "100%").attr("height", String(height)).attr("class", "hm-svg");
       let maxAbs = 0;
       agg.rows.forEach(r => agg.cols.forEach(c => { maxAbs = Math.max(maxAbs, Math.abs(agg.matrix[r]?.[c] || 0)); }));
       const pos = window.d3.scaleSequential(window.d3.interpolateBlues).domain([0, maxAbs || 1]);
@@ -38195,26 +38385,30 @@ window.Sections = window.Sections || {};
       // Column headers
       agg.cols.forEach((c, i) => {
         const label = state.axis === "install-x-category" ? (CATEGORY_LABEL[c] || c) : c;
-        svg.append("text").attr("x", labelW + i * cellW + cellW / 2).attr("y", 22).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "#1B2535").text(label);
+        svg.append("text").attr("x", labelW + i * cellW + cellW / 2).attr("y", 28).attr("text-anchor", "middle").attr("font-size", 12).attr("font-weight", 600).attr("fill", "#1B2535").text(label);
       });
       agg.rows.forEach((r, rIdx) => {
         const label = state.axis === "install-x-category" ? r : (CATEGORY_LABEL[r] || r);
-        svg.append("text").attr("x", labelW - 8).attr("y", 30 + rIdx * cellH + cellH / 2 + 4).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#1B2535").text(label);
+        svg.append("text").attr("x", labelW - 10).attr("y", 44 + rIdx * cellH + cellH / 2 + 4).attr("text-anchor", "end").attr("font-size", 12).attr("font-weight", 600).attr("fill", "#1B2535").text(label);
         agg.cols.forEach((c, cIdx) => {
           const v = agg.matrix[r]?.[c] || 0;
           const color = v === 0 ? "#EDF0F4" : (v > 0 ? pos(Math.abs(v)) : neg(Math.abs(v)));
           svg.append("rect")
-            .attr("x", labelW + cIdx * cellW + 2).attr("y", 30 + rIdx * cellH + 2)
-            .attr("width", cellW - 4).attr("height", cellH - 4)
-            .attr("rx", 3).attr("fill", color)
-            .attr("data-tip", `${r} × ${c}: ${Math.round(v).toLocaleString()} SF`)
+            .attr("x", labelW + cIdx * cellW + 3).attr("y", 44 + rIdx * cellH + 3)
+            .attr("width", cellW - 6).attr("height", cellH - 6)
+            .attr("rx", 4).attr("fill", color)
+            .attr("stroke", "#CDD5DE").attr("stroke-width", 0.5)
+            .attr("data-tip", `${r} / ${c}: ${Math.round(v).toLocaleString()} SF`)
             .style("cursor", "pointer")
             .on("click", () => drillDown(agg.stream, r, c, state.mode, state.currentYear, state.axis));
           if (Math.abs(v) >= 1) {
-            svg.append("text").attr("x", labelW + cIdx * cellW + cellW / 2).attr("y", 30 + rIdx * cellH + cellH / 2 + 4)
-              .attr("text-anchor", "middle").attr("font-size", 10)
+            svg.append("text").attr("x", labelW + cIdx * cellW + cellW / 2).attr("y", 44 + rIdx * cellH + cellH / 2 + 5)
+              .attr("text-anchor", "middle").attr("font-size", 13).attr("font-weight", 700)
               .attr("fill", Math.abs(v) > maxAbs * 0.5 ? "#fff" : "#1B2535")
               .text(Math.round(v / 1000) + "k");
+          } else if (v === 0) {
+            svg.append("text").attr("x", labelW + cIdx * cellW + cellW / 2).attr("y", 44 + rIdx * cellH + cellH / 2 + 4)
+              .attr("text-anchor", "middle").attr("font-size", 10).attr("fill", "#8A98A8").text("-");
           }
         });
       });
@@ -38284,7 +38478,7 @@ window.Sections = window.Sections || {};
   };
 })();
 </script>
-<script>/* admin.js — editor for installations, programs, columns, enums, viewer. */
+<script>/* admin.js - editor for installations, programs, columns, enums, viewer. */
 window.Sections = window.Sections || {};
 
 (function () {
@@ -38418,7 +38612,7 @@ window.Sections = window.Sections || {};
       tr.appendChild($("td", {}, [$("input", { value: c.unit || "", onchange: (e) => store.updateSchemaColumn?.(c.key, { unit: e.target.value || null }) })]));
       tr.appendChild($("td", {}, [$("input", { type: "checkbox", checked: !c.hidden, onchange: (e) => store.updateSchemaColumn?.(c.key, { hidden: !e.target.checked }) })]));
       tr.appendChild($("td", { text: c.userDefined ? "" : "✓" }));
-      tr.appendChild($("td", {}, [c.userDefined ? $("button", { class: "btn btn-ghost", text: "✕", onclick: () => { if (confirm("Delete column " + c.key + "?")) store.removeSchemaColumn(c.key); } }) : $("span", { class: "u-muted", text: "—" })]));
+      tr.appendChild($("td", {}, [c.userDefined ? $("button", { class: "btn btn-ghost", text: "✕", onclick: () => { if (confirm("Delete column " + c.key + "?")) store.removeSchemaColumn(c.key); } }) : $("span", { class: "u-muted", text: "-" })]));
       tbody.appendChild(tr);
     });
     tbl.appendChild(tbody); host.appendChild(tbl);
@@ -38450,7 +38644,7 @@ window.Sections = window.Sections || {};
   }
 })();
 </script>
-<script>/* overview.js — KPI cards + per-umbrella summary + todo list. */
+<script>/* overview.js - DPRI-style horizontal KPI strip with phase grid + installation burst + BOD timeline. */
 window.Sections = window.Sections || {};
 
 (function () {
@@ -38464,70 +38658,174 @@ window.Sections = window.Sections || {};
       else if (k.startsWith("on") && typeof attrs[k] === "function") el.addEventListener(k.slice(2), attrs[k]);
       else el.setAttribute(k, attrs[k]);
     }
-    (children || []).forEach(c => el.appendChild(typeof c === "string" ? document.createTextNode(c) : c));
+    (children || []).forEach(c => { if (c != null) el.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
     return el;
   };
-  const fmtCur = (n) => (n == null || isNaN(n)) ? "—" : "$" + Math.round(n).toLocaleString("en-US");
-  const fmtSF = (n) => (n == null || isNaN(n)) ? "0" : Math.round(n).toLocaleString("en-US") + " SF";
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = (tag, attrs) => {
+    const el = document.createElementNS(svgNS, tag);
+    if (attrs) for (const k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  };
+
+  const fmtCur = (n) => (n == null || isNaN(n)) ? "0" : "$" + Math.round(n).toLocaleString("en-US");
+  const fmtCurShort = (n) => {
+    if (n == null || isNaN(n) || n === 0) return "$0";
+    const a = Math.abs(n);
+    if (a >= 1e9) return "$" + (n / 1e9).toFixed(1) + "B";
+    if (a >= 1e6) return "$" + (n / 1e6).toFixed(0) + "M";
+    if (a >= 1e3) return "$" + (n / 1e3).toFixed(0) + "K";
+    return "$" + n;
+  };
+  const fmtSF = (n) => (n == null || isNaN(n)) ? "0" : Math.round(n).toLocaleString("en-US");
   const fmtInt = (n) => Number(n || 0).toLocaleString("en-US");
 
   function aggregate(store) {
     const projects = store.getProjects();
     const catalog = {}; (store.listCCNs?.() || []).forEach(c => { catalog[c.codeNormalized || c.code] = c; });
     const umbrellas = { DPRI: 0, "12th MLR": 0, "3/12": 0, Other: 0 };
+    const phaseCounts = { 0:0, 1:0, 2:0, 3:0, 4:0, 5:0 };
+    const installCounts = {};
     let totalCost = 0, totalSF = 0, withBOD = 0, missingCCN = 0;
+    let bodMinYear = Infinity, bodMaxYear = -Infinity;
     const progMeta = {}; store.listPrograms().forEach(p => progMeta[p.id] = p);
     projects.forEach(p => {
       const u = progMeta[p.program]?.umbrella || "Other";
       umbrellas[u] = (umbrellas[u] || 0) + 1;
+      if (p.phase != null && phaseCounts[p.phase] != null) phaseCounts[p.phase]++;
+      const inst = p.installation || "Unknown";
+      installCounts[inst] = (installCounts[inst] || 0) + 1;
       if (p.totalCost) totalCost += p.totalCost;
       else if (p.fyPlan) totalCost += Object.values(p.fyPlan).reduce((a, b) => a + (b || 0), 0);
-      const sf = (p.ccns || []).reduce((acc, a) => {
+      (p.ccns || []).forEach(a => {
         const c = catalog[a.ccn] || catalog[(a.ccn || "").replace(/\s/g, "")];
-        return acc + (c && c.um === "SF" ? (a.qty || 0) : 0);
-      }, 0);
-      totalSF += sf;
+        if (c && c.um === "SF") totalSF += a.qty || 0;
+      });
       const bod = p.bodFYOverride ?? p.bodFY ?? null;
-      if (bod != null) withBOD++;
+      if (bod != null) {
+        withBOD++;
+        if (bod < bodMinYear) bodMinYear = bod;
+        if (bod > bodMaxYear) bodMaxYear = bod;
+      }
       if (!p.ccns || p.ccns.length === 0) missingCCN++;
     });
-    return { projects, umbrellas, totalCost, totalSF, withBOD, missingCCN, progMeta };
+    if (!isFinite(bodMinYear)) bodMinYear = null;
+    if (!isFinite(bodMaxYear)) bodMaxYear = null;
+    return { projects, umbrellas, phaseCounts, installCounts, totalCost, totalSF, withBOD, missingCCN, progMeta, bodMinYear, bodMaxYear };
   }
 
-  function card(label, value, sub, onClick) {
-    const c = $("div", { class: "kpi-card" + (onClick ? " kpi-clickable" : ""), onclick: onClick || null }, [
-      $("div", { class: "kpi-label", text: label }),
-      $("div", { class: "kpi-value", text: value }),
-      sub ? $("div", { class: "kpi-sub u-muted", text: sub }) : null
-    ]);
-    return c;
+  function phaseGrid(phaseCounts) {
+    const wrap = $("div", { class: "ov-phase" });
+    const label = $("div", { class: "ov-chart-lbl", text: "Phase Distribution" });
+    wrap.appendChild(label);
+    const host = $("div", { class: "ov-phase-grid" });
+    const max = Math.max(1, ...Object.values(phaseCounts));
+    for (let i = 0; i <= 5; i++) {
+      const v = phaseCounts[i] || 0;
+      const h = Math.round((v / max) * 36) + 2;
+      const bar = $("div", { class: "ov-phase-col", "data-tip": `Phase ${i}: ${v} projects` }, [
+        $("div", { class: "ov-phase-bar", style: `height:${h}px` }),
+        $("div", { class: "ov-phase-val", text: String(v) }),
+        $("div", { class: "ov-phase-lbl", text: "P" + i })
+      ]);
+      host.appendChild(bar);
+    }
+    wrap.appendChild(host);
+    return wrap;
   }
 
-  function bodSparkline(projects) {
+  function installBurst(installCounts, installs) {
+    const wrap = $("div", { class: "ov-burst" });
+    wrap.appendChild($("div", { class: "ov-chart-lbl", text: "By Installation" }));
+    const ordered = installs.map(i => [i.name, installCounts[i.name] || 0, i.color]);
+    const total = ordered.reduce((a, [,v]) => a + v, 0) || 1;
+    const s = svg("svg", { viewBox: "0 0 90 90", class: "ov-burst-svg" });
+    const cx = 45, cy = 45, r = 36, rInner = 14;
+    let acc = 0;
+    ordered.forEach(([name, v, color]) => {
+      if (!v) return;
+      const a0 = (acc / total) * Math.PI * 2 - Math.PI / 2;
+      const a1 = ((acc + v) / total) * Math.PI * 2 - Math.PI / 2;
+      const large = (a1 - a0) > Math.PI ? 1 : 0;
+      const p0 = [cx + Math.cos(a0) * r, cy + Math.sin(a0) * r];
+      const p1 = [cx + Math.cos(a1) * r, cy + Math.sin(a1) * r];
+      const pi1 = [cx + Math.cos(a1) * rInner, cy + Math.sin(a1) * rInner];
+      const pi0 = [cx + Math.cos(a0) * rInner, cy + Math.sin(a0) * rInner];
+      const d = `M${p0[0]} ${p0[1]} A${r} ${r} 0 ${large} 1 ${p1[0]} ${p1[1]} L${pi1[0]} ${pi1[1]} A${rInner} ${rInner} 0 ${large} 0 ${pi0[0]} ${pi0[1]} Z`;
+      const path = svg("path", { d, fill: color || "#546270" });
+      path.setAttribute("data-tip", `${name}: ${v}`);
+      s.appendChild(path);
+      acc += v;
+    });
+    const legend = $("div", { class: "ov-burst-legend" },
+      ordered.filter(([,v]) => v).map(([name, v, color]) =>
+        $("div", { class: "ov-burst-leg" }, [
+          $("span", { class: "ov-burst-dot", style: `background:${color}` }),
+          $("span", { class: "ov-burst-name", text: name.replace("Camp ", "") }),
+          $("span", { class: "ov-burst-ct", text: String(v) })
+        ])));
+    const row = $("div", { class: "ov-burst-row" }, [s, legend]);
+    wrap.appendChild(row);
+    return wrap;
+  }
+
+  function bodTimeline(projects) {
     const byYear = {};
     projects.forEach(p => {
       const y = p.bodFYOverride ?? p.bodFY ?? null;
       if (y != null) byYear[y] = (byYear[y] || 0) + 1;
     });
     const years = Object.keys(byYear).map(Number).sort((a, b) => a - b);
-    if (!years.length) return $("div", { class: "u-muted", text: "No BOD data." });
-    const max = Math.max(...Object.values(byYear));
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", `0 0 ${years.length * 28} 80`);
-    svg.setAttribute("class", "sparkline");
-    years.forEach((y, i) => {
-      const v = byYear[y]; const h = Math.round((v / max) * 60);
-      const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-      r.setAttribute("x", i * 28 + 4); r.setAttribute("y", 70 - h); r.setAttribute("width", 20); r.setAttribute("height", h);
-      r.setAttribute("fill", "#2E91AE"); r.setAttribute("data-tip", `FY${y}: ${v} projects BOD`);
-      svg.appendChild(r);
-      const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      t.setAttribute("x", i * 28 + 14); t.setAttribute("y", 78); t.setAttribute("text-anchor", "middle");
-      t.setAttribute("font-size", "9"); t.setAttribute("fill", "#546270");
-      t.textContent = String(y).slice(2);
-      svg.appendChild(t);
+    if (!years.length) return $("div", { class: "u-muted", text: "No BOD data on projects yet." });
+    const minY = years[0], maxY = years[years.length - 1];
+    const full = [];
+    for (let y = minY; y <= maxY; y++) full.push([y, byYear[y] || 0]);
+    const max = Math.max(1, ...full.map(([,v]) => v));
+    const wrap = $("div", { class: "ov-timeline-wrap" });
+    const h = 130, leftPad = 40, rightPad = 20, topPad = 14, botPad = 30;
+    const s = svg("svg", { viewBox: `0 0 1000 ${h}`, preserveAspectRatio: "none", class: "ov-timeline-svg" });
+    s.setAttribute("width", "100%");
+    s.setAttribute("height", String(h));
+    const plotW = 1000 - leftPad - rightPad;
+    const plotH = h - topPad - botPad;
+    const bw = plotW / full.length;
+    // grid lines
+    for (let i = 0; i <= 4; i++) {
+      const yy = topPad + (plotH * i / 4);
+      s.appendChild(svg("line", { x1: leftPad, x2: 1000 - rightPad, y1: yy, y2: yy, stroke: "#E4E9EF", "stroke-width": 1 }));
+    }
+    // y-axis labels
+    [0, max].forEach((v, i) => {
+      const yy = topPad + plotH * (1 - i);
+      const t = svg("text", { x: leftPad - 6, y: yy + 3, "text-anchor": "end", "font-size": 10, fill: "#546270" });
+      t.textContent = String(v);
+      s.appendChild(t);
     });
-    return svg;
+    full.forEach(([y, v], i) => {
+      const bh = (v / max) * plotH;
+      const x = leftPad + i * bw + bw * 0.15;
+      const w = bw * 0.7;
+      const yy = topPad + (plotH - bh);
+      const rect = svg("rect", { x, y: yy, width: w, height: bh, fill: v > 0 ? "#2E91AE" : "#EDF0F4", rx: 2 });
+      rect.setAttribute("data-tip", `FY${y}: ${v} project${v === 1 ? "" : "s"} BOD`);
+      s.appendChild(rect);
+      if (i % Math.max(1, Math.floor(full.length / 24)) === 0 || y === minY || y === maxY) {
+        const t = svg("text", { x: x + w/2, y: h - botPad + 14, "text-anchor": "middle", "font-size": 10, fill: "#546270" });
+        t.textContent = String(y).slice(-2);
+        s.appendChild(t);
+      }
+      if (v > 0) {
+        const tv = svg("text", { x: x + w/2, y: yy - 3, "text-anchor": "middle", "font-size": 9, fill: "#1B2535", "font-weight": 600 });
+        tv.textContent = String(v);
+        s.appendChild(tv);
+      }
+    });
+    // x-axis title
+    const ax = svg("text", { x: 1000/2, y: h - 4, "text-anchor": "middle", "font-size": 10, fill: "#546270" });
+    ax.textContent = `Fiscal Year (${minY} to ${maxY})`;
+    s.appendChild(ax);
+    wrap.appendChild(s);
+    return wrap;
   }
 
   window.Sections.overview = function (container) {
@@ -38539,21 +38837,45 @@ window.Sections = window.Sections || {};
 
       const go = (sec, filter) => { Object.assign(window.FilterState || {}, filter || {}); if (window.Shell) window.Shell.go(sec); };
 
-      const cards = $("div", { class: "kpi-grid" }, [
-        card("Total projects", fmtInt(agg.projects.length),
-          `DPRI ${agg.umbrellas.DPRI} · 12th MLR ${agg.umbrellas["12th MLR"]} · 3/12 ${agg.umbrellas["3/12"]} · Other ${agg.umbrellas.Other}`,
-          () => go("projects")),
-        card("Total cost (where set)", fmtCur(agg.totalCost), "Sum of totalCost + fyPlan", () => go("projects")),
-        card("CCN square footage", fmtSF(agg.totalSF), "Across all assigned CCNs (UM=SF)", () => go("heatmap")),
-        card("Projects with BOD set", `${agg.withBOD} / ${agg.projects.length}`, `${Math.round(100 * agg.withBOD / Math.max(1, agg.projects.length))}% coverage`, () => go("projects")),
-        card("Projects missing CCN data", fmtInt(agg.missingCCN), "Add assignments to light them up on the heatmap", () => go("assignment")),
+      // KPI bar - DPRI-style horizontal strip
+      const bar = $("div", { class: "ov-kpi-bar" });
+      const kpi = (cls, val, lbl, sub, tip, onClick) => {
+        const el = $("div", { class: "ov-kpi " + (cls||"") + (onClick ? " clickable" : ""), "data-tip": tip || "", onclick: onClick || null }, [
+          $("div", { class: "ov-kpi-val", text: val }),
+          $("div", { class: "ov-kpi-lbl", text: lbl }),
+          sub ? $("div", { class: "ov-kpi-sub", text: sub }) : null
+        ]);
+        return el;
+      };
+      bar.appendChild(kpi("", fmtInt(agg.projects.length), "Total Projects",
+        `DPRI ${agg.umbrellas.DPRI} · 12th MLR ${agg.umbrellas["12th MLR"]} · 3/12 ${agg.umbrellas["3/12"]} · Other ${agg.umbrellas.Other}`,
+        "All projects across all programs", () => go("projects")));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      const span = (agg.bodMinYear && agg.bodMaxYear) ? (agg.bodMaxYear - agg.bodMinYear) + " yr" : "-";
+      const spanSub = (agg.bodMinYear && agg.bodMaxYear) ? `FY${agg.bodMinYear} to FY${agg.bodMaxYear}` : "set BOD dates";
+      bar.appendChild(kpi("", span, "Schedule Span", spanSub, "BOD earliest to latest"));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      bar.appendChild(kpi("", fmtCurShort(agg.totalCost), "Programmed Cost", "total + FY plan", "Cost programmed across all projects", () => go("projects")));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      bar.appendChild(kpi("", fmtSF(agg.totalSF), "CCN Sq Ft", agg.totalSF === 0 ? "no CCN data yet" : "from CCN assignments", "Sum of SF from all CCN assignments", () => go("heatmap")));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      bar.appendChild(kpi("", `${agg.withBOD}/${agg.projects.length}`, "BOD Set", `${Math.round(100 * agg.withBOD / Math.max(1, agg.projects.length))}% coverage`, "Projects with Beneficial Occupancy Date"));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      bar.appendChild(kpi("warn", fmtInt(agg.missingCCN), "No CCNs", "pending assignment", "Projects that need CCN data entered", () => go("assignment")));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      bar.appendChild(phaseGrid(agg.phaseCounts));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      bar.appendChild(installBurst(agg.installCounts, store.listInstallations()));
+      container.appendChild(bar);
+
+      // BOD timeline - full width
+      const tlSection = $("section", { class: "ov-section" }, [
+        $("h3", { class: "ov-section-h", text: "Beneficial Occupancy by Fiscal Year" }),
+        bodTimeline(agg.projects)
       ]);
-      container.appendChild(cards);
+      container.appendChild(tlSection);
 
-      container.appendChild($("h3", { class: "section-h3", text: "Beneficial Occupancy by FY" }));
-      container.appendChild(bodSparkline(agg.projects));
-
-      // Program × Installation table
+      // Program × Installation matrix
       const installs = store.listInstallations();
       const progs = store.listPrograms();
       const matrix = {};
@@ -38563,14 +38885,16 @@ window.Sections = window.Sections || {};
         matrix[u] = matrix[u] || {};
         matrix[u][i] = (matrix[u][i] || 0) + 1;
       });
-      const tbl = $("table", { class: "summary-table" });
-      const thead = $("thead"), trh = $("tr"); trh.appendChild($("th", { text: "Umbrella / Installation" }));
-      installs.forEach(i => trh.appendChild($("th", { text: i.name })));
+      const tbl = $("table", { class: "ov-matrix" });
+      const thead = $("thead"), trh = $("tr");
+      trh.appendChild($("th", { text: "Program" }));
+      installs.forEach(i => trh.appendChild($("th", { text: i.name.replace("Camp ", "") })));
       trh.appendChild($("th", { text: "Total" }));
       thead.appendChild(trh); tbl.appendChild(thead);
       const tbody = $("tbody");
       ["DPRI", "12th MLR", "3/12", "Other"].forEach(u => {
-        const tr = $("tr"); tr.appendChild($("td", { class: "u-strong", text: u }));
+        const tr = $("tr");
+        tr.appendChild($("td", { class: "u-strong", text: u }));
         let total = 0;
         installs.forEach(i => {
           const c = (matrix[u] && matrix[u][i.name]) || 0;
@@ -38581,19 +38905,35 @@ window.Sections = window.Sections || {};
         tbody.appendChild(tr);
       });
       tbl.appendChild(tbody);
-      container.appendChild($("h3", { class: "section-h3", text: "Projects by Umbrella × Installation" }));
-      container.appendChild(tbl);
+      const matrixSection = $("section", { class: "ov-section" }, [
+        $("h3", { class: "ov-section-h", text: "Projects by Program and Installation" }),
+        tbl
+      ]);
+      container.appendChild(matrixSection);
 
-      // Next actions
-      container.appendChild($("h3", { class: "section-h3", text: "Suggested next actions" }));
-      const nextList = $("ul", { class: "next-list" });
-      if (agg.missingCCN) nextList.appendChild($("li", {}, [document.createTextNode(`${agg.missingCCN} projects have no CCN assignments — `), $("a", { href: "#assignment", text: "start assigning", onclick: (e) => { e.preventDefault(); go("assignment"); } })]));
+      // Open Items
+      const openList = $("ul", { class: "ov-open-list" });
+      if (agg.missingCCN) openList.appendChild($("li", {}, [
+        $("span", { class: "ov-open-ct", text: String(agg.missingCCN) }),
+        document.createTextNode(" projects lack CCN assignments. "),
+        $("a", { href: "#assignment", onclick: (e) => { e.preventDefault(); go("assignment"); }, text: "Open Assignment view." })
+      ]));
       const noBod = agg.projects.filter(p => (p.bodFYOverride ?? p.bodFY) == null).length;
-      if (noBod) nextList.appendChild($("li", { text: `${noBod} projects have no BOD FY set — set bodFYOverride so they appear in the heatmap.` }));
+      if (noBod) openList.appendChild($("li", {}, [
+        $("span", { class: "ov-open-ct", text: String(noBod) }),
+        document.createTextNode(" projects have no BOD FY. "),
+        $("a", { href: "#projects", onclick: (e) => { e.preventDefault(); go("projects"); }, text: "Set bodFYOverride per row." })
+      ]));
       const unk = agg.projects.filter(p => p.unknownInstallation).length;
-      if (unk) nextList.appendChild($("li", { text: `${unk} projects are on an Unknown installation (mostly SACO orphans) — reassign to a real camp.` }));
-      if (!nextList.children.length) nextList.appendChild($("li", { text: "Nothing flagged. Good shape." }));
-      container.appendChild(nextList);
+      if (unk) openList.appendChild($("li", {}, [
+        $("span", { class: "ov-open-ct", text: String(unk) }),
+        document.createTextNode(" projects on Unknown installation (SACO orphans). Reassign in Projects view.")
+      ]));
+      if (!openList.children.length) openList.appendChild($("li", { class: "u-muted", text: "No open items." }));
+      container.appendChild($("section", { class: "ov-section" }, [
+        $("h3", { class: "ov-section-h", text: "Open Items" }),
+        openList
+      ]));
     };
     render();
     const onChange = () => render();
@@ -38603,7 +38943,7 @@ window.Sections = window.Sections || {};
   };
 })();
 </script>
-<script>/* crosswalk.js — pick a project, see all other projects on the same installation grouped by umbrella. */
+<script>/* crosswalk.js - pick a project, see all other projects on the same installation grouped by umbrella. */
 window.Sections = window.Sections || {};
 
 (function () {
@@ -38654,7 +38994,7 @@ window.Sections = window.Sections || {};
       right.innerHTML = "";
       if (!p) return;
       right.appendChild($("h3", { class: "section-h3", text: p.title || p.id }));
-      right.appendChild($("div", { class: "u-muted", text: `${p.installation || "Unknown"} · ${progs[p.program]?.label || p.program} · BOD FY${p.bodFYOverride ?? p.bodFY ?? "—"}` }));
+      right.appendChild($("div", { class: "u-muted", text: `${p.installation || "Unknown"} · ${progs[p.program]?.label || p.program} · BOD FY${p.bodFYOverride ?? p.bodFY ?? "-"}` }));
 
       // Related on same installation grouped by umbrella
       const peers = store.getProjects().filter(x => x.id !== pid && x.installation === p.installation);
@@ -38696,9 +39036,9 @@ window.Sections = window.Sections || {};
     }
 
     function buildBrief(p, peers, progs) {
-      let md = `# ${p.installation || "Unknown"} — Installation Brief (FOUO)\n\n`;
+      let md = `# ${p.installation || "Unknown"} - Installation Brief (FOUO)\n\n`;
       md += `**Focal project:** ${p.title} (${p.id})  \n`;
-      md += `Program: ${progs[p.program]?.label} · BOD FY${p.bodFYOverride ?? p.bodFY ?? "—"}\n\n`;
+      md += `Program: ${progs[p.program]?.label} · BOD FY${p.bodFYOverride ?? p.bodFY ?? "-"}\n\n`;
       md += `## Adjacent projects\n\n`;
       peers.slice(0, 50).forEach(x => { md += `- [${progs[x.program]?.umbrella || "Other"}] ${x.title || x.id}\n`; });
       return md;
@@ -38714,7 +39054,7 @@ window.Sections = window.Sections || {};
   };
 })();
 </script>
-<script>/* brief.js — client-facing single-scroll layout. */
+<script>/* brief.js - client-facing single-scroll layout. */
 window.Sections = window.Sections || {};
 
 (function () {
@@ -38742,7 +39082,7 @@ window.Sections = window.Sections || {};
       $("div", { class: "foumark", text: "FOR OFFICIAL USE ONLY" }),
       $("h1", { text: "DPRI / 12th MLR / 3/12" }),
       $("h2", { text: "Long-Range Facility Plan" }),
-      $("div", { class: "brief-meta u-muted", text: `Prepared by ${store.getViewer?.() || "—"} · ${new Date().toLocaleDateString()}` }),
+      $("div", { class: "brief-meta u-muted", text: `Prepared by ${store.getViewer?.() || "-"} · ${new Date().toLocaleDateString()}` }),
       $("button", { class: "btn", text: "Exit Brief (Esc)", onclick: () => { document.body.classList.remove("layout-brief"); window.Shell && window.Shell.go("overview"); } }),
       $("button", { class: "btn", text: "Print / PDF", onclick: () => window.print() })
     ]);
@@ -38793,7 +39133,7 @@ window.Sections = window.Sections || {};
   };
 })();
 </script>
-<script>/* app.js — boot. Robust to timing; surfaces errors instead of failing silently. */
+<script>/* app.js - boot. Robust to timing; surfaces errors instead of failing silently. */
 (function () {
   "use strict";
 
@@ -38806,7 +39146,7 @@ window.Sections = window.Sections || {};
     else document.body.appendChild(box);
   }
 
-  // Global error trap — any unhandled error while booting surfaces visibly.
+  // Global error trap - any unhandled error while booting surfaces visibly.
   window.addEventListener("error", function (e) {
     showFatal((e.error && e.error.stack) || e.message || "Unknown error");
   });

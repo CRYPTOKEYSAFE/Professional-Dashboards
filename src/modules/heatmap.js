@@ -1,4 +1,4 @@
-/* heatmap.js — time-phased CCN sqft visualization. D3 v7.
+/* heatmap.js - time-phased CCN sqft visualization. D3 v7.
  * Modes: annual | cumulative. Basis: net (DEMO subtracts, REPLACEMENT swaps) | gross.
  * Year slider with play/pause. Click cell → drill-down. Axis toggle install×category.
  */
@@ -130,7 +130,7 @@ window.Sections = window.Sections || {};
     const rows = Object.entries(byProj).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]));
     const totalSF = filtered.reduce((a,s)=>a+s.sf,0);
     dlg.appendChild($("div", { class: "det-head" }, [
-      $("strong", { text: `${row} × ${col} — ${mode === "cumulative" ? "through " : ""}FY${currentYear}` }),
+      $("strong", { text: `${row} × ${col} - ${mode === "cumulative" ? "through " : ""}FY${currentYear}` }),
       $("span", { class: "foumark", text: "FOUO" }),
       $("button", { class: "btn btn-ghost", text: "✕", onclick: () => { dlg.close(); dlg.remove(); } })
     ]));
@@ -204,9 +204,13 @@ window.Sections = window.Sections || {};
 
     function drawHeatmap(agg) {
       gridHost.innerHTML = "";
-      const cellW = 100, cellH = 32, labelW = 160;
-      const width = labelW + agg.cols.length * cellW + 40, height = 30 + agg.rows.length * cellH + 40;
-      const svg = window.d3.select(gridHost).append("svg").attr("viewBox", `0 0 ${width} ${height}`).attr("class", "hm-svg");
+      const hostW = Math.max(gridHost.clientWidth || 1200, 900);
+      const labelW = 170;
+      const cellW = Math.max(80, Math.floor((hostW - labelW - 40) / Math.max(1, agg.cols.length)));
+      const cellH = 56;
+      const width = labelW + agg.cols.length * cellW + 40;
+      const height = 44 + agg.rows.length * cellH + 20;
+      const svg = window.d3.select(gridHost).append("svg").attr("viewBox", `0 0 ${width} ${height}`).attr("preserveAspectRatio", "none").attr("width", "100%").attr("height", String(height)).attr("class", "hm-svg");
       let maxAbs = 0;
       agg.rows.forEach(r => agg.cols.forEach(c => { maxAbs = Math.max(maxAbs, Math.abs(agg.matrix[r]?.[c] || 0)); }));
       const pos = window.d3.scaleSequential(window.d3.interpolateBlues).domain([0, maxAbs || 1]);
@@ -214,26 +218,30 @@ window.Sections = window.Sections || {};
       // Column headers
       agg.cols.forEach((c, i) => {
         const label = state.axis === "install-x-category" ? (CATEGORY_LABEL[c] || c) : c;
-        svg.append("text").attr("x", labelW + i * cellW + cellW / 2).attr("y", 22).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "#1B2535").text(label);
+        svg.append("text").attr("x", labelW + i * cellW + cellW / 2).attr("y", 28).attr("text-anchor", "middle").attr("font-size", 12).attr("font-weight", 600).attr("fill", "#1B2535").text(label);
       });
       agg.rows.forEach((r, rIdx) => {
         const label = state.axis === "install-x-category" ? r : (CATEGORY_LABEL[r] || r);
-        svg.append("text").attr("x", labelW - 8).attr("y", 30 + rIdx * cellH + cellH / 2 + 4).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#1B2535").text(label);
+        svg.append("text").attr("x", labelW - 10).attr("y", 44 + rIdx * cellH + cellH / 2 + 4).attr("text-anchor", "end").attr("font-size", 12).attr("font-weight", 600).attr("fill", "#1B2535").text(label);
         agg.cols.forEach((c, cIdx) => {
           const v = agg.matrix[r]?.[c] || 0;
           const color = v === 0 ? "#EDF0F4" : (v > 0 ? pos(Math.abs(v)) : neg(Math.abs(v)));
           svg.append("rect")
-            .attr("x", labelW + cIdx * cellW + 2).attr("y", 30 + rIdx * cellH + 2)
-            .attr("width", cellW - 4).attr("height", cellH - 4)
-            .attr("rx", 3).attr("fill", color)
-            .attr("data-tip", `${r} × ${c}: ${Math.round(v).toLocaleString()} SF`)
+            .attr("x", labelW + cIdx * cellW + 3).attr("y", 44 + rIdx * cellH + 3)
+            .attr("width", cellW - 6).attr("height", cellH - 6)
+            .attr("rx", 4).attr("fill", color)
+            .attr("stroke", "#CDD5DE").attr("stroke-width", 0.5)
+            .attr("data-tip", `${r} / ${c}: ${Math.round(v).toLocaleString()} SF`)
             .style("cursor", "pointer")
             .on("click", () => drillDown(agg.stream, r, c, state.mode, state.currentYear, state.axis));
           if (Math.abs(v) >= 1) {
-            svg.append("text").attr("x", labelW + cIdx * cellW + cellW / 2).attr("y", 30 + rIdx * cellH + cellH / 2 + 4)
-              .attr("text-anchor", "middle").attr("font-size", 10)
+            svg.append("text").attr("x", labelW + cIdx * cellW + cellW / 2).attr("y", 44 + rIdx * cellH + cellH / 2 + 5)
+              .attr("text-anchor", "middle").attr("font-size", 13).attr("font-weight", 700)
               .attr("fill", Math.abs(v) > maxAbs * 0.5 ? "#fff" : "#1B2535")
               .text(Math.round(v / 1000) + "k");
+          } else if (v === 0) {
+            svg.append("text").attr("x", labelW + cIdx * cellW + cellW / 2).attr("y", 44 + rIdx * cellH + cellH / 2 + 4)
+              .attr("text-anchor", "middle").attr("font-size", 10).attr("fill", "#8A98A8").text("-");
           }
         });
       });

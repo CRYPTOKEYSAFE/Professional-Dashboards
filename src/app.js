@@ -1,4 +1,4 @@
-/* app.js — boot. Robust to timing; surfaces errors instead of failing silently. */
+/* app.js - boot. Robust to timing; surfaces errors instead of failing silently. */
 (function () {
   "use strict";
 
@@ -11,7 +11,7 @@
     else document.body.appendChild(box);
   }
 
-  // Global error trap — any unhandled error while booting surfaces visibly.
+  // Global error trap - any unhandled error while booting surfaces visibly.
   window.addEventListener("error", function (e) {
     showFatal((e.error && e.error.stack) || e.message || "Unknown error");
   });

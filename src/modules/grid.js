@@ -1,4 +1,4 @@
-/* grid.js — Projects grid (Tabulator-backed)
+/* grid.js - Projects grid (Tabulator-backed)
  * Registers window.Sections.projects. Fully editable: row add/edit/delete,
  * column add/remove/hide, bulk CSV paste, row detail panel with CCN sub-grid,
  * live footer totals, tooltips, cross-walk highlighting, filter-aware.
@@ -178,7 +178,7 @@ window.Sections = window.Sections || {};
     ctx.store.upsertProject(copy);
   }
   function deleteRow(row, ctx) {
-    if (!confirm(`Delete project ${row.id} — ${row.title || ""}?\nThis cannot be undone except via Undo (Ctrl+Z).`)) return;
+    if (!confirm(`Delete project ${row.id} - ${row.title || ""}?\nThis cannot be undone except via Undo (Ctrl+Z).`)) return;
     ctx.store.deleteProject(row.id);
   }
 

@@ -1,5 +1,5 @@
 /**
- * Persistence — JSON/CSV/HTML export, JSON import, viewer prompt.
+ * Persistence - JSON/CSV/HTML export, JSON import, viewer prompt.
  * Bridges DataStore state to the filesystem via Blob + anchor downloads.
  * All exports carry the FOUO watermark with viewer + date per §7.
  */
@@ -35,7 +35,7 @@ window.Persistence = (function () {
 
   const viewerName = () => (window.DataStore && window.DataStore.getViewer && window.DataStore.getViewer()) || 'Unknown Viewer';
 
-  const fouoHeaderLine = () => 'FOUO — Prepared by ' + viewerName() + ' on ' + isoDate();
+  const fouoHeaderLine = () => 'FOUO - Prepared by ' + viewerName() + ' on ' + isoDate();
 
   /** Trigger a browser download of `blob` as `filename`. */
   const downloadBlob = (blob, filename) => {
@@ -130,7 +130,7 @@ window.Persistence = (function () {
 
   // --- CSV export -----------------------------------------------------------
 
-  /** Flatten a project row for CSV — scalar columns only, nested objects JSON-stringified. */
+  /** Flatten a project row for CSV - scalar columns only, nested objects JSON-stringified. */
   const flattenProjectForCSV = (p) => {
     const row = {};
     Object.keys(p).forEach((k) => {
@@ -209,7 +209,7 @@ window.Persistence = (function () {
    */
   const replaceEmbeddedScript = (html, id, jsonText) => {
     // Escape JSON for embedding inside </script>-safe block. JSON cannot contain
-    // a literal </script>, but JSON can contain the substring — we break it up.
+    // a literal </script>, but JSON can contain the substring - we break it up.
     const safe = jsonText.replace(/<\/script>/gi, '<\\/script>');
     // Case-insensitive, minimal match; tolerate attribute order and whitespace.
     const re = new RegExp(
@@ -247,7 +247,7 @@ window.Persistence = (function () {
       html = html.replace(/(<head\b[^>]*>)/i, '$1\n' + metaTag);
     }
 
-    // The current page wraps outerHTML with <html> but omits the doctype —
+    // The current page wraps outerHTML with <html> but omits the doctype -
     // re-add it so the shipped file opens in standards mode.
     const doctype = '<!DOCTYPE html>\n';
     if (!/^\s*<!DOCTYPE/i.test(html)) html = doctype + html;
@@ -262,7 +262,7 @@ window.Persistence = (function () {
   const buildViewerDialog = (onSubmit) => {
     const dlg = document.createElement('dialog');
     dlg.setAttribute('data-dashboard-role', 'viewer-prompt');
-    // Minimal inline styling — the app stylesheet can override.
+    // Minimal inline styling - the app stylesheet can override.
     dlg.style.padding = '20px 22px';
     dlg.style.border = '1px solid #CDD5DE';
     dlg.style.borderRadius = '6px';
@@ -372,7 +372,7 @@ window.Persistence = (function () {
           window.DataStore.setViewer(name);
           try { localStorage.setItem(LS_VIEWER_KEY, name); } catch (err) { /* ignore */ }
         }
-        // Tidy up — dialogs are single-use here.
+        // Tidy up - dialogs are single-use here.
         if (parts.dialog.parentNode) parts.dialog.parentNode.removeChild(parts.dialog);
         resolve(name || '');
       });
@@ -380,7 +380,7 @@ window.Persistence = (function () {
       if (typeof parts.dialog.showModal === 'function') {
         parts.dialog.showModal();
       } else {
-        // Legacy fallback — render inline if <dialog> isn't supported.
+        // Legacy fallback - render inline if <dialog> isn't supported.
         parts.dialog.setAttribute('open', '');
       }
       parts.input.focus();

@@ -1,5 +1,5 @@
 /**
- * DataStore — single source of truth for the dashboard at runtime.
+ * DataStore - single source of truth for the dashboard at runtime.
  * Holds projects, ccn catalog, installations, programs, schema, viewer.
  * Every mutation snapshots to a 20-state history ring buffer, writes
  * through to localStorage, and emits a 'change' event.
@@ -25,7 +25,7 @@ window.DataStore = (function () {
 
   // Undo/redo: `history` holds past snapshots; `future` holds states popped
   // by undo() so they can be reapplied by redo(). Any fresh mutation clears
-  // `future` — the usual editor semantics.
+  // `future` - the usual editor semantics.
   var history = [];
   var future = [];
 
@@ -151,7 +151,7 @@ window.DataStore = (function () {
     state.schema        = { columns: deepCopy(BUILTIN_COLUMNS) };
     state.viewer        = '';
 
-    // localStorage wins — it represents the edited version the user expects
+    // localStorage wins - it represents the edited version the user expects
     // to see when they reopen the file.
     try {
       var raw = localStorage.getItem(LS_KEY);
@@ -362,7 +362,7 @@ window.DataStore = (function () {
     return deepCopy(state.installations);
   };
 
-  // Projects store installation by canonical NAME ("Camp Hansen"), not id —
+  // Projects store installation by canonical NAME ("Camp Hansen"), not id -
   // so we resolve both forms when comparing.
   var installationMatchesId = function (projectInstallation, installId) {
     if (!projectInstallation) return false;
@@ -460,7 +460,7 @@ window.DataStore = (function () {
     var columns = state.schema.columns;
     for (var i = 0; i < columns.length; i++) {
       if (columns[i].key === key) {
-        // Built-in columns mirror canonical fields and must not be deleted —
+        // Built-in columns mirror canonical fields and must not be deleted -
         // the schema editor should offer "hide" instead.
         if (columns[i].userDefined === false) {
           return { blocked: true, reason: 'builtin' };

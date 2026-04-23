@@ -1,4 +1,4 @@
-/* shell.js — app chrome, routing, header filters, tooltips, keyboard shortcuts. */
+/* shell.js - app chrome, routing, header filters, tooltips, keyboard shortcuts. */
 window.Shell = (function () {
   "use strict";
 
@@ -47,50 +47,124 @@ window.Shell = (function () {
     const umbrellas = ["DPRI", "12th MLR", "3/12", "Other"];
     const progs = store.listPrograms();
     const umbColor = (u) => (progs.find(p => p.umbrella === u) || {}).color || "#546270";
+    const umbCount = (u) => progs.filter(p => p.umbrella === u).length;
+    const projCt = store.getProjects().length;
 
-    const chips = $("div", { class: "umb-chips" }, umbrellas.map(u => $("button", {
-      class: "umb-chip" + (window.FilterState.umbrella === u ? " active" : ""),
+    // Installation tabs (DPRI-style)
+    const installs = store.listInstallations();
+    const instTabs = $("div", { class: "inst-tabs", role: "tablist" });
+    const allTab = $("button", {
+      class: "inst-tab" + (!window.FilterState.installation ? " active" : ""),
+      role: "tab",
+      "data-tip": "All installations",
+      onclick: () => { window.FilterState.installation = null; renderHeader(); dispatchFilter(); },
+      text: `All (${projCt})`
+    });
+    instTabs.appendChild(allTab);
+    installs.forEach(i => {
+      const count = store.getProjects({ installation: i.name }).length;
+      if (count === 0) return;
+      const short = i.name.replace("Camp ", "");
+      instTabs.appendChild($("button", {
+        class: "inst-tab" + (window.FilterState.installation === i.name ? " active" : ""),
+        role: "tab",
+        style: `--c:${i.color}`,
+        "data-tip": `${i.name}: ${count} projects`,
+        onclick: () => { window.FilterState.installation = window.FilterState.installation === i.name ? null : i.name; renderHeader(); dispatchFilter(); },
+        text: `${short} (${count})`
+      }));
+    });
+
+    // Program tabs (secondary)
+    const progTabs = $("div", { class: "prog-tabs" }, umbrellas.map(u => $("button", {
+      class: "prog-tab" + (window.FilterState.umbrella === u ? " active" : ""),
       style: `--c:${umbColor(u)}`,
-      "data-tip": `Filter to ${u} only`,
+      "data-tip": `Filter to ${u} projects`,
       onclick: () => {
         window.FilterState.umbrella = window.FilterState.umbrella === u ? null : u;
-        renderHeader();
-        dispatchFilter();
+        renderHeader(); dispatchFilter();
       },
       text: u
     })));
 
-    const installSel = $("select", { class: "inst-sel", onchange: (e) => { window.FilterState.installation = e.target.value || null; dispatchFilter(); } }, [
-      $("option", { value: "", text: "All installations" }),
-      ...store.listInstallations().map(i => {
-        const opt = $("option", { value: i.name, text: i.name });
-        if (window.FilterState.installation === i.name) opt.selected = true;
-        return opt;
-      })
-    ]);
+    const searchInp = $("input", { class: "search-inp", type: "search", placeholder: "Search project, ID, building...", value: window.FilterState.search, oninput: (e) => { window.FilterState.search = e.target.value; dispatchFilter(); } });
 
-    const searchInp = $("input", { class: "search-inp", type: "search", placeholder: "Search…", value: window.FilterState.search, oninput: (e) => { window.FilterState.search = e.target.value; dispatchFilter(); } });
+    const vwBtn = $("button", { class: "viewer-chip", "data-tip": "Change viewer name (stamped on exports)", onclick: () => promptViewerChange(), text: viewer ? "Viewer: " + viewer : "Set Viewer" });
 
-    const vwBtn = $("button", { class: "viewer-chip", "data-tip": "Click to change viewer name (used on exports)", onclick: () => promptViewerChange(), text: viewer ? "👤 " + viewer : "👤 Set viewer" });
+    // Clocks (JST / HST / EST / PST / ZULU)
+    const clocks = $("div", { class: "hdr-clocks" });
+    const tzList = [
+      { tz: "JST", iana: "Asia/Tokyo" },
+      { tz: "HST", iana: "Pacific/Honolulu" },
+      { tz: "EST", iana: "America/New_York" },
+      { tz: "PST", iana: "America/Los_Angeles" },
+      { tz: "ZULU", iana: "UTC" }
+    ];
+    tzList.forEach(({ tz, iana }, idx) => {
+      const item = $("div", { class: "clock-item", "data-tip": iana }, [
+        $("div", { class: "clock-tz", text: tz }),
+        $("div", { class: "clock-time", id: "clk-" + tz.toLowerCase(), text: "--:--" })
+      ]);
+      clocks.appendChild(item);
+      if (idx < tzList.length - 1) clocks.appendChild($("div", { class: "clk-sep" }));
+    });
 
     const actions = $("div", { class: "hdr-actions" }, [
-      $("button", { class: "btn btn-ghost", "data-tip": "Undo (Ctrl+Z)", onclick: () => window.DataStore.undo() }, [icon("chevron-left"), document.createTextNode(" Undo")]),
-      $("button", { class: "btn btn-ghost", "data-tip": "Redo (Ctrl+Shift+Z)", onclick: () => window.DataStore.redo() }, [icon("chevron-right"), document.createTextNode(" Redo")]),
-      $("button", { class: "btn", "data-tip": "Export all data as JSON", onclick: () => window.Persistence.exportJSON() }, [icon("download"), document.createTextNode(" JSON")]),
-      $("button", { class: "btn", "data-tip": "Download a fresh self-contained HTML with current edits", onclick: () => window.Persistence.downloadUpdatedHTML() }, [icon("download"), document.createTextNode(" HTML")]),
-      $("button", { class: "btn", "data-tip": "Switch to client-facing Brief layout", onclick: () => toggleBriefLayout() }, [icon("eye"), document.createTextNode(" Brief")]),
+      $("button", { class: "tb-btn", "data-tip": "Undo last edit (Ctrl+Z)", onclick: () => window.DataStore.undo(), text: "Undo" }),
+      $("button", { class: "tb-btn", "data-tip": "Redo (Ctrl+Shift+Z)", onclick: () => window.DataStore.redo(), text: "Redo" }),
+      $("button", { class: "tb-btn", "data-tip": "Export data as JSON", onclick: () => window.Persistence.exportJSON(), text: "JSON" }),
+      $("button", { class: "tb-btn", "data-tip": "Download self-contained HTML with current edits", onclick: () => window.Persistence.downloadUpdatedHTML(), text: "HTML" }),
+      $("button", { class: "tb-btn", "data-tip": "Print or save as PDF", onclick: () => window.print(), text: "Print" }),
+      $("button", { class: "tb-btn", "data-tip": "Client briefing layout", onclick: () => toggleBriefLayout(), text: "Brief" }),
+      $("button", { class: "tb-btn tb-btn-danger", "data-tip": "Clear all filters", onclick: () => { window.FilterState = { umbrella: null, installation: null, search: "" }; renderHeader(); dispatchFilter(); }, text: "Clear" })
     ]);
 
     const header = $("header", { class: "app-header" }, [
-      $("div", { class: "hdr-left" }, [
-        $("div", { class: "hdr-title" }, [$("strong", { text: "DPRI / 12th MLR / 3/12" }), $("span", { class: "hdr-sub u-muted", text: "Long-Range Facility Plan · FOUO" })]),
-        vwBtn,
+      $("div", { class: "hdr-row-1" }, [
+        $("div", { class: "hdr-left" }, [
+          $("div", { class: "hdr-org", text: "MCIPAC G-F / PPE" }),
+          $("div", { class: "hdr-title", text: "DPRI / 12th MLR / 3/12 Long-Range Facility Plan" }),
+          $("div", { class: "hdr-sub", text: "Defense Policy Review Initiative / 12th Marine Littoral Regiment / 3d Bn 12th Marines" }),
+          $("div", { class: "hdr-attr", text: `${projCt} projects / ${store.listCCNs().length} CCN catalog entries / Source: FC 2-000-05N Appendix A` })
+        ]),
+        clocks
       ]),
-      $("div", { class: "hdr-center" }, [chips, installSel, searchInp]),
-      actions
+      $("div", { class: "hdr-row-2" }, [
+        instTabs,
+        $("div", { class: "hdr-divider" }),
+        progTabs,
+        $("div", { class: "u-grow" }),
+        searchInp,
+        vwBtn
+      ]),
+      $("div", { class: "hdr-row-3" }, [
+        actions
+      ])
     ]);
     const old = layoutEl.querySelector(".app-header");
     if (old) old.replaceWith(header); else layoutEl.appendChild(header);
+    startClocks();
+  }
+
+  let clockInterval = null;
+  function startClocks() {
+    if (clockInterval) return;
+    const update = () => {
+      const now = new Date();
+      const map = {
+        jst: "Asia/Tokyo", hst: "Pacific/Honolulu",
+        est: "America/New_York", pst: "America/Los_Angeles", zulu: "UTC"
+      };
+      for (const id in map) {
+        const el = document.getElementById("clk-" + id);
+        if (!el) continue;
+        try {
+          el.textContent = now.toLocaleTimeString("en-US", { timeZone: map[id], hour: "2-digit", minute: "2-digit", hour12: false });
+        } catch (e) { /* ignore */ }
+      }
+    };
+    update();
+    clockInterval = setInterval(update, 30000);
   }
 
   function renderSidebar() {

@@ -1,4 +1,4 @@
-/* crosswalk.js — pick a project, see all other projects on the same installation grouped by umbrella. */
+/* crosswalk.js - pick a project, see all other projects on the same installation grouped by umbrella. */
 window.Sections = window.Sections || {};
 
 (function () {
@@ -49,7 +49,7 @@ window.Sections = window.Sections || {};
       right.innerHTML = "";
       if (!p) return;
       right.appendChild($("h3", { class: "section-h3", text: p.title || p.id }));
-      right.appendChild($("div", { class: "u-muted", text: `${p.installation || "Unknown"} · ${progs[p.program]?.label || p.program} · BOD FY${p.bodFYOverride ?? p.bodFY ?? "—"}` }));
+      right.appendChild($("div", { class: "u-muted", text: `${p.installation || "Unknown"} · ${progs[p.program]?.label || p.program} · BOD FY${p.bodFYOverride ?? p.bodFY ?? "-"}` }));
 
       // Related on same installation grouped by umbrella
       const peers = store.getProjects().filter(x => x.id !== pid && x.installation === p.installation);
@@ -91,9 +91,9 @@ window.Sections = window.Sections || {};
     }
 
     function buildBrief(p, peers, progs) {
-      let md = `# ${p.installation || "Unknown"} — Installation Brief (FOUO)\n\n`;
+      let md = `# ${p.installation || "Unknown"} - Installation Brief (FOUO)\n\n`;
       md += `**Focal project:** ${p.title} (${p.id})  \n`;
-      md += `Program: ${progs[p.program]?.label} · BOD FY${p.bodFYOverride ?? p.bodFY ?? "—"}\n\n`;
+      md += `Program: ${progs[p.program]?.label} · BOD FY${p.bodFYOverride ?? p.bodFY ?? "-"}\n\n`;
       md += `## Adjacent projects\n\n`;
       peers.slice(0, 50).forEach(x => { md += `- [${progs[x.program]?.umbrella || "Other"}] ${x.title || x.id}\n`; });
       return md;

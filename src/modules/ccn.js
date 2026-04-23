@@ -1,4 +1,4 @@
-/* ccn.js — CCN Catalog view, CCN Assignment manager, and a sub-grid for per-project assignments. */
+/* ccn.js - CCN Catalog view, CCN Assignment manager, and a sub-grid for per-project assignments. */
 window.Sections = window.Sections || {};
 
 (function () {
@@ -109,7 +109,7 @@ window.Sections = window.Sections || {};
       $("label", {}, [$("span", { text: "Code" }), $("input", { id: "ccn-new-code", placeholder: "e.g. 21410" })]),
       $("label", {}, [$("span", { text: "Title" }), $("input", { id: "ccn-new-title" })]),
       $("label", {}, [$("span", { text: "UM" }), $("input", { id: "ccn-new-um", placeholder: "SF / EA / LF" })]),
-      $("label", {}, [$("span", { text: "Category" }), $("input", { id: "ccn-new-cat", placeholder: "200 — Maintenance and Production Facilities" })]),
+      $("label", {}, [$("span", { text: "Category" }), $("input", { id: "ccn-new-cat", placeholder: "200 - Maintenance and Production Facilities" })]),
     ]);
     const save = $("button", { class: "btn btn-primary", text: "Add", onclick: () => {
       const code = document.getElementById("ccn-new-code").value.trim();

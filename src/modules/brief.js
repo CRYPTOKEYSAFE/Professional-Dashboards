@@ -1,4 +1,4 @@
-/* brief.js — client-facing single-scroll layout. */
+/* brief.js - client-facing single-scroll layout. */
 window.Sections = window.Sections || {};
 
 (function () {
@@ -26,7 +26,7 @@ window.Sections = window.Sections || {};
       $("div", { class: "foumark", text: "FOR OFFICIAL USE ONLY" }),
       $("h1", { text: "DPRI / 12th MLR / 3/12" }),
       $("h2", { text: "Long-Range Facility Plan" }),
-      $("div", { class: "brief-meta u-muted", text: `Prepared by ${store.getViewer?.() || "—"} · ${new Date().toLocaleDateString()}` }),
+      $("div", { class: "brief-meta u-muted", text: `Prepared by ${store.getViewer?.() || "-"} · ${new Date().toLocaleDateString()}` }),
       $("button", { class: "btn", text: "Exit Brief (Esc)", onclick: () => { document.body.classList.remove("layout-brief"); window.Shell && window.Shell.go("overview"); } }),
       $("button", { class: "btn", text: "Print / PDF", onclick: () => window.print() })
     ]);

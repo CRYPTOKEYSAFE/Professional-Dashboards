@@ -1,4 +1,4 @@
-/* overview.js — KPI cards + per-umbrella summary + todo list. */
+/* overview.js - DPRI-style horizontal KPI strip with phase grid + installation burst + BOD timeline. */
 window.Sections = window.Sections || {};
 
 (function () {
@@ -12,70 +12,174 @@ window.Sections = window.Sections || {};
       else if (k.startsWith("on") && typeof attrs[k] === "function") el.addEventListener(k.slice(2), attrs[k]);
       else el.setAttribute(k, attrs[k]);
     }
-    (children || []).forEach(c => el.appendChild(typeof c === "string" ? document.createTextNode(c) : c));
+    (children || []).forEach(c => { if (c != null) el.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
     return el;
   };
-  const fmtCur = (n) => (n == null || isNaN(n)) ? "—" : "$" + Math.round(n).toLocaleString("en-US");
-  const fmtSF = (n) => (n == null || isNaN(n)) ? "0" : Math.round(n).toLocaleString("en-US") + " SF";
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = (tag, attrs) => {
+    const el = document.createElementNS(svgNS, tag);
+    if (attrs) for (const k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  };
+
+  const fmtCur = (n) => (n == null || isNaN(n)) ? "0" : "$" + Math.round(n).toLocaleString("en-US");
+  const fmtCurShort = (n) => {
+    if (n == null || isNaN(n) || n === 0) return "$0";
+    const a = Math.abs(n);
+    if (a >= 1e9) return "$" + (n / 1e9).toFixed(1) + "B";
+    if (a >= 1e6) return "$" + (n / 1e6).toFixed(0) + "M";
+    if (a >= 1e3) return "$" + (n / 1e3).toFixed(0) + "K";
+    return "$" + n;
+  };
+  const fmtSF = (n) => (n == null || isNaN(n)) ? "0" : Math.round(n).toLocaleString("en-US");
   const fmtInt = (n) => Number(n || 0).toLocaleString("en-US");
 
   function aggregate(store) {
     const projects = store.getProjects();
     const catalog = {}; (store.listCCNs?.() || []).forEach(c => { catalog[c.codeNormalized || c.code] = c; });
     const umbrellas = { DPRI: 0, "12th MLR": 0, "3/12": 0, Other: 0 };
+    const phaseCounts = { 0:0, 1:0, 2:0, 3:0, 4:0, 5:0 };
+    const installCounts = {};
     let totalCost = 0, totalSF = 0, withBOD = 0, missingCCN = 0;
+    let bodMinYear = Infinity, bodMaxYear = -Infinity;
     const progMeta = {}; store.listPrograms().forEach(p => progMeta[p.id] = p);
     projects.forEach(p => {
       const u = progMeta[p.program]?.umbrella || "Other";
       umbrellas[u] = (umbrellas[u] || 0) + 1;
+      if (p.phase != null && phaseCounts[p.phase] != null) phaseCounts[p.phase]++;
+      const inst = p.installation || "Unknown";
+      installCounts[inst] = (installCounts[inst] || 0) + 1;
       if (p.totalCost) totalCost += p.totalCost;
       else if (p.fyPlan) totalCost += Object.values(p.fyPlan).reduce((a, b) => a + (b || 0), 0);
-      const sf = (p.ccns || []).reduce((acc, a) => {
+      (p.ccns || []).forEach(a => {
         const c = catalog[a.ccn] || catalog[(a.ccn || "").replace(/\s/g, "")];
-        return acc + (c && c.um === "SF" ? (a.qty || 0) : 0);
-      }, 0);
-      totalSF += sf;
+        if (c && c.um === "SF") totalSF += a.qty || 0;
+      });
       const bod = p.bodFYOverride ?? p.bodFY ?? null;
-      if (bod != null) withBOD++;
+      if (bod != null) {
+        withBOD++;
+        if (bod < bodMinYear) bodMinYear = bod;
+        if (bod > bodMaxYear) bodMaxYear = bod;
+      }
       if (!p.ccns || p.ccns.length === 0) missingCCN++;
     });
-    return { projects, umbrellas, totalCost, totalSF, withBOD, missingCCN, progMeta };
+    if (!isFinite(bodMinYear)) bodMinYear = null;
+    if (!isFinite(bodMaxYear)) bodMaxYear = null;
+    return { projects, umbrellas, phaseCounts, installCounts, totalCost, totalSF, withBOD, missingCCN, progMeta, bodMinYear, bodMaxYear };
   }
 
-  function card(label, value, sub, onClick) {
-    const c = $("div", { class: "kpi-card" + (onClick ? " kpi-clickable" : ""), onclick: onClick || null }, [
-      $("div", { class: "kpi-label", text: label }),
-      $("div", { class: "kpi-value", text: value }),
-      sub ? $("div", { class: "kpi-sub u-muted", text: sub }) : null
-    ]);
-    return c;
+  function phaseGrid(phaseCounts) {
+    const wrap = $("div", { class: "ov-phase" });
+    const label = $("div", { class: "ov-chart-lbl", text: "Phase Distribution" });
+    wrap.appendChild(label);
+    const host = $("div", { class: "ov-phase-grid" });
+    const max = Math.max(1, ...Object.values(phaseCounts));
+    for (let i = 0; i <= 5; i++) {
+      const v = phaseCounts[i] || 0;
+      const h = Math.round((v / max) * 36) + 2;
+      const bar = $("div", { class: "ov-phase-col", "data-tip": `Phase ${i}: ${v} projects` }, [
+        $("div", { class: "ov-phase-bar", style: `height:${h}px` }),
+        $("div", { class: "ov-phase-val", text: String(v) }),
+        $("div", { class: "ov-phase-lbl", text: "P" + i })
+      ]);
+      host.appendChild(bar);
+    }
+    wrap.appendChild(host);
+    return wrap;
   }
 
-  function bodSparkline(projects) {
+  function installBurst(installCounts, installs) {
+    const wrap = $("div", { class: "ov-burst" });
+    wrap.appendChild($("div", { class: "ov-chart-lbl", text: "By Installation" }));
+    const ordered = installs.map(i => [i.name, installCounts[i.name] || 0, i.color]);
+    const total = ordered.reduce((a, [,v]) => a + v, 0) || 1;
+    const s = svg("svg", { viewBox: "0 0 90 90", class: "ov-burst-svg" });
+    const cx = 45, cy = 45, r = 36, rInner = 14;
+    let acc = 0;
+    ordered.forEach(([name, v, color]) => {
+      if (!v) return;
+      const a0 = (acc / total) * Math.PI * 2 - Math.PI / 2;
+      const a1 = ((acc + v) / total) * Math.PI * 2 - Math.PI / 2;
+      const large = (a1 - a0) > Math.PI ? 1 : 0;
+      const p0 = [cx + Math.cos(a0) * r, cy + Math.sin(a0) * r];
+      const p1 = [cx + Math.cos(a1) * r, cy + Math.sin(a1) * r];
+      const pi1 = [cx + Math.cos(a1) * rInner, cy + Math.sin(a1) * rInner];
+      const pi0 = [cx + Math.cos(a0) * rInner, cy + Math.sin(a0) * rInner];
+      const d = `M${p0[0]} ${p0[1]} A${r} ${r} 0 ${large} 1 ${p1[0]} ${p1[1]} L${pi1[0]} ${pi1[1]} A${rInner} ${rInner} 0 ${large} 0 ${pi0[0]} ${pi0[1]} Z`;
+      const path = svg("path", { d, fill: color || "#546270" });
+      path.setAttribute("data-tip", `${name}: ${v}`);
+      s.appendChild(path);
+      acc += v;
+    });
+    const legend = $("div", { class: "ov-burst-legend" },
+      ordered.filter(([,v]) => v).map(([name, v, color]) =>
+        $("div", { class: "ov-burst-leg" }, [
+          $("span", { class: "ov-burst-dot", style: `background:${color}` }),
+          $("span", { class: "ov-burst-name", text: name.replace("Camp ", "") }),
+          $("span", { class: "ov-burst-ct", text: String(v) })
+        ])));
+    const row = $("div", { class: "ov-burst-row" }, [s, legend]);
+    wrap.appendChild(row);
+    return wrap;
+  }
+
+  function bodTimeline(projects) {
     const byYear = {};
     projects.forEach(p => {
       const y = p.bodFYOverride ?? p.bodFY ?? null;
       if (y != null) byYear[y] = (byYear[y] || 0) + 1;
     });
     const years = Object.keys(byYear).map(Number).sort((a, b) => a - b);
-    if (!years.length) return $("div", { class: "u-muted", text: "No BOD data." });
-    const max = Math.max(...Object.values(byYear));
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", `0 0 ${years.length * 28} 80`);
-    svg.setAttribute("class", "sparkline");
-    years.forEach((y, i) => {
-      const v = byYear[y]; const h = Math.round((v / max) * 60);
-      const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-      r.setAttribute("x", i * 28 + 4); r.setAttribute("y", 70 - h); r.setAttribute("width", 20); r.setAttribute("height", h);
-      r.setAttribute("fill", "#2E91AE"); r.setAttribute("data-tip", `FY${y}: ${v} projects BOD`);
-      svg.appendChild(r);
-      const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      t.setAttribute("x", i * 28 + 14); t.setAttribute("y", 78); t.setAttribute("text-anchor", "middle");
-      t.setAttribute("font-size", "9"); t.setAttribute("fill", "#546270");
-      t.textContent = String(y).slice(2);
-      svg.appendChild(t);
+    if (!years.length) return $("div", { class: "u-muted", text: "No BOD data on projects yet." });
+    const minY = years[0], maxY = years[years.length - 1];
+    const full = [];
+    for (let y = minY; y <= maxY; y++) full.push([y, byYear[y] || 0]);
+    const max = Math.max(1, ...full.map(([,v]) => v));
+    const wrap = $("div", { class: "ov-timeline-wrap" });
+    const h = 130, leftPad = 40, rightPad = 20, topPad = 14, botPad = 30;
+    const s = svg("svg", { viewBox: `0 0 1000 ${h}`, preserveAspectRatio: "none", class: "ov-timeline-svg" });
+    s.setAttribute("width", "100%");
+    s.setAttribute("height", String(h));
+    const plotW = 1000 - leftPad - rightPad;
+    const plotH = h - topPad - botPad;
+    const bw = plotW / full.length;
+    // grid lines
+    for (let i = 0; i <= 4; i++) {
+      const yy = topPad + (plotH * i / 4);
+      s.appendChild(svg("line", { x1: leftPad, x2: 1000 - rightPad, y1: yy, y2: yy, stroke: "#E4E9EF", "stroke-width": 1 }));
+    }
+    // y-axis labels
+    [0, max].forEach((v, i) => {
+      const yy = topPad + plotH * (1 - i);
+      const t = svg("text", { x: leftPad - 6, y: yy + 3, "text-anchor": "end", "font-size": 10, fill: "#546270" });
+      t.textContent = String(v);
+      s.appendChild(t);
     });
-    return svg;
+    full.forEach(([y, v], i) => {
+      const bh = (v / max) * plotH;
+      const x = leftPad + i * bw + bw * 0.15;
+      const w = bw * 0.7;
+      const yy = topPad + (plotH - bh);
+      const rect = svg("rect", { x, y: yy, width: w, height: bh, fill: v > 0 ? "#2E91AE" : "#EDF0F4", rx: 2 });
+      rect.setAttribute("data-tip", `FY${y}: ${v} project${v === 1 ? "" : "s"} BOD`);
+      s.appendChild(rect);
+      if (i % Math.max(1, Math.floor(full.length / 24)) === 0 || y === minY || y === maxY) {
+        const t = svg("text", { x: x + w/2, y: h - botPad + 14, "text-anchor": "middle", "font-size": 10, fill: "#546270" });
+        t.textContent = String(y).slice(-2);
+        s.appendChild(t);
+      }
+      if (v > 0) {
+        const tv = svg("text", { x: x + w/2, y: yy - 3, "text-anchor": "middle", "font-size": 9, fill: "#1B2535", "font-weight": 600 });
+        tv.textContent = String(v);
+        s.appendChild(tv);
+      }
+    });
+    // x-axis title
+    const ax = svg("text", { x: 1000/2, y: h - 4, "text-anchor": "middle", "font-size": 10, fill: "#546270" });
+    ax.textContent = `Fiscal Year (${minY} to ${maxY})`;
+    s.appendChild(ax);
+    wrap.appendChild(s);
+    return wrap;
   }
 
   window.Sections.overview = function (container) {
@@ -87,21 +191,45 @@ window.Sections = window.Sections || {};
 
       const go = (sec, filter) => { Object.assign(window.FilterState || {}, filter || {}); if (window.Shell) window.Shell.go(sec); };
 
-      const cards = $("div", { class: "kpi-grid" }, [
-        card("Total projects", fmtInt(agg.projects.length),
-          `DPRI ${agg.umbrellas.DPRI} · 12th MLR ${agg.umbrellas["12th MLR"]} · 3/12 ${agg.umbrellas["3/12"]} · Other ${agg.umbrellas.Other}`,
-          () => go("projects")),
-        card("Total cost (where set)", fmtCur(agg.totalCost), "Sum of totalCost + fyPlan", () => go("projects")),
-        card("CCN square footage", fmtSF(agg.totalSF), "Across all assigned CCNs (UM=SF)", () => go("heatmap")),
-        card("Projects with BOD set", `${agg.withBOD} / ${agg.projects.length}`, `${Math.round(100 * agg.withBOD / Math.max(1, agg.projects.length))}% coverage`, () => go("projects")),
-        card("Projects missing CCN data", fmtInt(agg.missingCCN), "Add assignments to light them up on the heatmap", () => go("assignment")),
+      // KPI bar - DPRI-style horizontal strip
+      const bar = $("div", { class: "ov-kpi-bar" });
+      const kpi = (cls, val, lbl, sub, tip, onClick) => {
+        const el = $("div", { class: "ov-kpi " + (cls||"") + (onClick ? " clickable" : ""), "data-tip": tip || "", onclick: onClick || null }, [
+          $("div", { class: "ov-kpi-val", text: val }),
+          $("div", { class: "ov-kpi-lbl", text: lbl }),
+          sub ? $("div", { class: "ov-kpi-sub", text: sub }) : null
+        ]);
+        return el;
+      };
+      bar.appendChild(kpi("", fmtInt(agg.projects.length), "Total Projects",
+        `DPRI ${agg.umbrellas.DPRI} · 12th MLR ${agg.umbrellas["12th MLR"]} · 3/12 ${agg.umbrellas["3/12"]} · Other ${agg.umbrellas.Other}`,
+        "All projects across all programs", () => go("projects")));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      const span = (agg.bodMinYear && agg.bodMaxYear) ? (agg.bodMaxYear - agg.bodMinYear) + " yr" : "-";
+      const spanSub = (agg.bodMinYear && agg.bodMaxYear) ? `FY${agg.bodMinYear} to FY${agg.bodMaxYear}` : "set BOD dates";
+      bar.appendChild(kpi("", span, "Schedule Span", spanSub, "BOD earliest to latest"));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      bar.appendChild(kpi("", fmtCurShort(agg.totalCost), "Programmed Cost", "total + FY plan", "Cost programmed across all projects", () => go("projects")));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      bar.appendChild(kpi("", fmtSF(agg.totalSF), "CCN Sq Ft", agg.totalSF === 0 ? "no CCN data yet" : "from CCN assignments", "Sum of SF from all CCN assignments", () => go("heatmap")));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      bar.appendChild(kpi("", `${agg.withBOD}/${agg.projects.length}`, "BOD Set", `${Math.round(100 * agg.withBOD / Math.max(1, agg.projects.length))}% coverage`, "Projects with Beneficial Occupancy Date"));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      bar.appendChild(kpi("warn", fmtInt(agg.missingCCN), "No CCNs", "pending assignment", "Projects that need CCN data entered", () => go("assignment")));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      bar.appendChild(phaseGrid(agg.phaseCounts));
+      bar.appendChild($("div", { class: "ov-kpi-sep" }));
+      bar.appendChild(installBurst(agg.installCounts, store.listInstallations()));
+      container.appendChild(bar);
+
+      // BOD timeline - full width
+      const tlSection = $("section", { class: "ov-section" }, [
+        $("h3", { class: "ov-section-h", text: "Beneficial Occupancy by Fiscal Year" }),
+        bodTimeline(agg.projects)
       ]);
-      container.appendChild(cards);
+      container.appendChild(tlSection);
 
-      container.appendChild($("h3", { class: "section-h3", text: "Beneficial Occupancy by FY" }));
-      container.appendChild(bodSparkline(agg.projects));
-
-      // Program × Installation table
+      // Program × Installation matrix
       const installs = store.listInstallations();
       const progs = store.listPrograms();
       const matrix = {};
@@ -111,14 +239,16 @@ window.Sections = window.Sections || {};
         matrix[u] = matrix[u] || {};
         matrix[u][i] = (matrix[u][i] || 0) + 1;
       });
-      const tbl = $("table", { class: "summary-table" });
-      const thead = $("thead"), trh = $("tr"); trh.appendChild($("th", { text: "Umbrella / Installation" }));
-      installs.forEach(i => trh.appendChild($("th", { text: i.name })));
+      const tbl = $("table", { class: "ov-matrix" });
+      const thead = $("thead"), trh = $("tr");
+      trh.appendChild($("th", { text: "Program" }));
+      installs.forEach(i => trh.appendChild($("th", { text: i.name.replace("Camp ", "") })));
       trh.appendChild($("th", { text: "Total" }));
       thead.appendChild(trh); tbl.appendChild(thead);
       const tbody = $("tbody");
       ["DPRI", "12th MLR", "3/12", "Other"].forEach(u => {
-        const tr = $("tr"); tr.appendChild($("td", { class: "u-strong", text: u }));
+        const tr = $("tr");
+        tr.appendChild($("td", { class: "u-strong", text: u }));
         let total = 0;
         installs.forEach(i => {
           const c = (matrix[u] && matrix[u][i.name]) || 0;
@@ -129,19 +259,35 @@ window.Sections = window.Sections || {};
         tbody.appendChild(tr);
       });
       tbl.appendChild(tbody);
-      container.appendChild($("h3", { class: "section-h3", text: "Projects by Umbrella × Installation" }));
-      container.appendChild(tbl);
+      const matrixSection = $("section", { class: "ov-section" }, [
+        $("h3", { class: "ov-section-h", text: "Projects by Program and Installation" }),
+        tbl
+      ]);
+      container.appendChild(matrixSection);
 
-      // Next actions
-      container.appendChild($("h3", { class: "section-h3", text: "Suggested next actions" }));
-      const nextList = $("ul", { class: "next-list" });
-      if (agg.missingCCN) nextList.appendChild($("li", {}, [document.createTextNode(`${agg.missingCCN} projects have no CCN assignments — `), $("a", { href: "#assignment", text: "start assigning", onclick: (e) => { e.preventDefault(); go("assignment"); } })]));
+      // Open Items
+      const openList = $("ul", { class: "ov-open-list" });
+      if (agg.missingCCN) openList.appendChild($("li", {}, [
+        $("span", { class: "ov-open-ct", text: String(agg.missingCCN) }),
+        document.createTextNode(" projects lack CCN assignments. "),
+        $("a", { href: "#assignment", onclick: (e) => { e.preventDefault(); go("assignment"); }, text: "Open Assignment view." })
+      ]));
       const noBod = agg.projects.filter(p => (p.bodFYOverride ?? p.bodFY) == null).length;
-      if (noBod) nextList.appendChild($("li", { text: `${noBod} projects have no BOD FY set — set bodFYOverride so they appear in the heatmap.` }));
+      if (noBod) openList.appendChild($("li", {}, [
+        $("span", { class: "ov-open-ct", text: String(noBod) }),
+        document.createTextNode(" projects have no BOD FY. "),
+        $("a", { href: "#projects", onclick: (e) => { e.preventDefault(); go("projects"); }, text: "Set bodFYOverride per row." })
+      ]));
       const unk = agg.projects.filter(p => p.unknownInstallation).length;
-      if (unk) nextList.appendChild($("li", { text: `${unk} projects are on an Unknown installation (mostly SACO orphans) — reassign to a real camp.` }));
-      if (!nextList.children.length) nextList.appendChild($("li", { text: "Nothing flagged. Good shape." }));
-      container.appendChild(nextList);
+      if (unk) openList.appendChild($("li", {}, [
+        $("span", { class: "ov-open-ct", text: String(unk) }),
+        document.createTextNode(" projects on Unknown installation (SACO orphans). Reassign in Projects view.")
+      ]));
+      if (!openList.children.length) openList.appendChild($("li", { class: "u-muted", text: "No open items." }));
+      container.appendChild($("section", { class: "ov-section" }, [
+        $("h3", { class: "ov-section-h", text: "Open Items" }),
+        openList
+      ]));
     };
     render();
     const onChange = () => render();

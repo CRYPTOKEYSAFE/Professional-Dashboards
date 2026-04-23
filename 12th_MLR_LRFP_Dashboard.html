@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12th MLR / 3d Bn 12th MAR - Long-Range Facility Planning</title>
+<style>
+:root{--primary:#0D2240;--primary-mid:#1A3A5C;--accent:#2E9BB5;--accent-light:#4BACC6;--accent-bright:#69C7DE;--bg:#0D1E30;--bg-card:#1A2E44;--bg-panel:#1E3350;--bg-section:#101E2E;--text:#E2EAF4;--text-muted:#8AA4BE;--text-light:#5A7A98;--border:#1E3550;--border-light:#253F5A;--is:#2EACC4;--is-bg:#0B3A48;--dp:#C9A227;--dp-bg:#3A2E00;--ns:#5A7A98;--ns-bg:#0F1E2E;--crit:#E05040;--crit-bg:#3A1208;--warn:#E0A030;--success:#30C090;--success-bg:#0A2E1E;--sidebar-w:230px;--banner-h:26px;--fsrm:#4BACC6;--milcon:#C9A227;--modcamp:#7A8EE0;}
+[data-theme=light]{
+
+.fsb-f{background:rgba(13,122,140,.12);color:#0D7A8C;border-color:rgba(13,122,140,.3);}
+.fsb-m{background:rgba(122,90,0,.08);color:#7A5900;border-color:rgba(122,90,0,.2);}
+.fsb-mc{background:rgba(58,58,158,.08);color:#3A3A9E;border-color:rgba(58,58,158,.2);}
+.b-ip{background:#FFF3CC;color:#7A5900;}
+.b-cp{background:#DBF0F8;color:#0B6E8C;}
+.b-ns{background:#E8ECF2;color:#5a6375;}
+.fyc.has{background:rgba(13,122,140,.12);color:#0A6678;border-color:rgba(13,122,140,.3);}
+.proj-card:hover{box-shadow:0 4px 14px rgba(13,122,140,.15);}
+.fy-bar-fill{background:var(--accent);}
+--primary:#1E4D8C;--primary-mid:#2962B0;--accent:#0D7A8C;--accent-light:#2E9BB5;--accent-bright:#0A6678;--bg:#F4F6F8;--bg-card:#FFFFFF;--bg-panel:#EEF1F5;--bg-section:#F0F3F7;--text:#1a1f2e;--text-muted:#5a6375;--text-light:#8a93a8;--border:#d0d6e2;--border-light:#e8ecf2;--is:#0B6E8C;--is-bg:#DBF0F8;--dp:#7A5900;--dp-bg:#FFF3CC;--ns:#5a6375;--ns-bg:#E8ECF2;--crit:#8C2B0B;--crit-bg:#F8E0DB;--warn:#7A5900;--success:#0B6E4C;--success-bg:#D4F4E8;--fsrm:#0B6E8C;--milcon:#7A5900;--modcamp:#3A3A9E;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;overflow-x:hidden;}
+.skip-link{position:fixed;top:-40px;left:0;background:var(--accent);color:#fff;padding:6px 14px;z-index:9999;border-radius:0 0 6px 0;font-size:12px;font-weight:700;}
+.skip-link:focus{top:var(--banner-h);}
+.banner{position:fixed;left:0;right:0;height:var(--banner-h);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;z-index:2000;background:#8C2B0B;color:#fff;}
+.banner-top{top:0;}.banner-bottom{bottom:0;}
+.app{display:flex;min-height:calc(100vh - 52px);margin-top:var(--banner-h);margin-bottom:var(--banner-h);}
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--primary);position:fixed;top:var(--banner-h);bottom:var(--banner-h);left:0;z-index:900;display:flex;flex-direction:column;overflow:hidden;transition:width .25s cubic-bezier(.4,0,.2,1),min-width .25s cubic-bezier(.4,0,.2,1);}
+.sidebar.collapsed{width:52px;min-width:52px;}
+.sb-hdr{padding:12px 10px 10px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sb-logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:32px;height:32px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;flex-shrink:0;}
+.logo-text{font-size:11px;font-weight:700;line-height:1.3;color:var(--text);white-space:nowrap;overflow:hidden;}
+.logo-sub{font-size:8px;opacity:.6;text-transform:uppercase;letter-spacing:.07em;}
+.sidebar.collapsed .logo-text{display:none;}
+.nav-grp{padding:6px 0;border-bottom:1px solid var(--border);}
+.nav-grp-lbl{font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-light);padding:3px 12px 2px;white-space:nowrap;}
+.sidebar.collapsed .nav-grp-lbl{display:none;}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:7px 12px;cursor:pointer;border:none;background:none;color:var(--text-muted);font-size:11px;font-weight:600;width:100%;text-align:left;border-left:3px solid transparent;transition:all .15s;white-space:nowrap;}
+.nav-btn:hover{background:rgba(255,255,255,.06);color:var(--text);}
+.nav-btn.active{background:rgba(46,155,181,.15);color:var(--accent-bright);border-left-color:var(--accent);}
+.nav-icon{font-size:14px;flex-shrink:0;width:20px;text-align:center;}
+.nav-label{white-space:nowrap;overflow:hidden;}
+.sidebar.collapsed .nav-label{display:none;}
+.sb-footer{margin-top:auto;padding:8px 10px;border-top:1px solid var(--border);flex-shrink:0;}
+.sf-btn{display:flex;align-items:center;gap:8px;padding:5px 8px;border:1px solid var(--border-light);border-radius:5px;background:none;color:var(--text-muted);font-size:10px;cursor:pointer;width:100%;margin-bottom:5px;transition:all .15s;}
+.sf-btn:hover{color:var(--text);border-color:var(--accent);}
+.sidebar.collapsed .sf-lbl{display:none;}
+.ver{font-size:8px;color:var(--text-light);text-align:center;padding:2px 0;}
+.sidebar.collapsed .ver{display:none;}
+.main-content{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-width:0;transition:margin-left .25s cubic-bezier(.4,0,.2,1);}
+.sidebar.collapsed ~ .main-content{margin-left:52px;}
+.hdr{background:var(--primary-mid);padding:10px 18px 9px;position:sticky;top:var(--banner-h);z-index:800;border-bottom:2px solid var(--accent);}
+.hdr-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+.hdr-title h1{font-size:16px;font-weight:800;line-height:1.2;color:var(--text);}
+.hdr-sub{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.hdr-attr{font-size:8px;color:var(--text-light);margin-top:2px;text-transform:uppercase;letter-spacing:.07em;}
+.hdr-right{display:flex;gap:8px;align-items:flex-start;flex-shrink:0;}
+.clocks-row{display:flex;gap:6px;}
+.ck{background:rgba(255,255,255,.07);border:1px solid var(--border-light);border-radius:5px;padding:5px 8px;text-align:center;min-width:58px;}
+.ck-tz{font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);}
+.ck-time{font-family:'Consolas','Courier New',monospace;font-size:13px;font-weight:700;line-height:1;color:var(--accent-bright);}
+.ck-date{font-size:7px;color:var(--text-light);margin-top:1px;}
+.ck.zulu .ck-time{color:var(--dp);}
+.cal-block{background:rgba(255,255,255,.07);border:1px solid var(--border-light);border-radius:5px;padding:5px 7px;min-width:162px;}
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;}
+.cal-hdr span{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text);}
+.cal-nav{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:12px;padding:0 3px;}
+.cal-nav:hover{color:var(--accent);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;text-align:center;}
+.cal-dow{font-size:7px;text-transform:uppercase;color:var(--text-light);padding-bottom:2px;}
+.cal-day{font-size:8px;padding:2px 0;border-radius:2px;color:var(--text-muted);line-height:1.4;}
+.cal-day.today{background:var(--accent);font-weight:800;color:#fff;}
+.cal-day.other-month{opacity:.3;}
+.kpi-bar{background:var(--bg-card);border-bottom:1px solid var(--border);padding:7px 14px;display:flex;gap:7px;overflow-x:auto;flex-shrink:0;}
+.kpi{background:var(--bg-panel);border-radius:6px;padding:8px 12px;min-width:110px;border-left:3px solid var(--accent);cursor:pointer;transition:all .15s;flex-shrink:0;}
+.kpi:hover{box-shadow:0 3px 10px rgba(46,155,181,.2);transform:translateY(-1px);}
+.kpi.active{border-left-color:var(--accent-bright);background:var(--is-bg);}
+.kpi-val{font-family:'Consolas','Courier New',monospace;font-size:17px;font-weight:800;color:var(--accent-bright);line-height:1;}
+.kpi-lbl{font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-top:2px;}
+.kpi-sub{font-size:9px;color:var(--text-light);margin-top:2px;}
+.toolbar{background:var(--bg-card);border-bottom:1px solid var(--border);padding:6px 12px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;position:sticky;top:calc(var(--banner-h) + var(--hdr-h,104px));z-index:700;}
+.tb-input{border:1px solid var(--border-light);border-radius:5px;padding:5px 8px;font-size:11px;background:var(--bg);color:var(--text);outline:none;min-width:150px;}
+.tb-input:focus{border-color:var(--accent);}
+.tb-sel{border:1px solid var(--border-light);border-radius:5px;padding:5px 6px;font-size:11px;background:var(--bg);color:var(--text);outline:none;cursor:pointer;}
+.tb-sel:focus{border-color:var(--accent);}
+.tb-btn{border:1px solid var(--border-light);border-radius:5px;padding:5px 9px;font-size:10px;background:var(--bg-panel);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:4px;font-weight:600;white-space:nowrap;transition:all .15s;}
+.tb-btn:hover{background:var(--bg);border-color:var(--accent);color:var(--text);}
+.tb-btn.add-btn{border-color:var(--success);color:var(--success);}
+.tb-btn.add-btn:hover{background:var(--success-bg);}
+.tb-sep{width:1px;height:20px;background:var(--border);flex-shrink:0;}
+.tb-right{margin-left:auto;display:flex;gap:6px;align-items:center;}
+.content{flex:1;padding:12px 16px;overflow-y:auto;}
+.tab-strip{display:flex;gap:3px;margin-bottom:10px;border-bottom:2px solid var(--border);}
+.tab-btn{background:none;border:none;padding:6px 12px;font-size:10px;font-weight:700;color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--accent-bright);border-bottom-color:var(--accent);}
+.tbl-wrap{overflow-x:auto;border-radius:7px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;min-width:1320px;}
+thead th{background:var(--primary-mid);color:var(--text-muted);font-size:8px;text-transform:uppercase;letter-spacing:.09em;padding:7px 8px;text-align:left;white-space:nowrap;position:sticky;top:0;cursor:pointer;user-select:none;border-bottom:2px solid var(--accent);}
+thead th:hover{color:var(--text);}
+thead th.sort-asc::after{content:' \25B2';font-size:7px;color:var(--accent);}
+thead th.sort-desc::after{content:' \25BC';font-size:7px;color:var(--accent);}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
+tbody tr:hover{background:rgba(46,155,181,.07);}
+tbody td{padding:6px 8px;font-size:11px;color:var(--text);vertical-align:middle;}
+tbody td[contenteditable=true]{cursor:text;position:relative;}
+tbody td[contenteditable=true]:hover::after{content:'';position:absolute;inset:2px;border:1px dashed var(--accent);border-radius:3px;pointer-events:none;}
+.cc{font-family:'Consolas','Courier New',monospace;font-size:10px;text-align:right;white-space:nowrap;}
+.fy-f{color:var(--accent-bright);font-weight:700;}
+.fy-z{color:var(--text-light);opacity:.35;}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:10px;font-size:8px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;}
+.b-ip{background:var(--dp-bg);color:var(--dp);}
+.b-cp{background:var(--is-bg);color:var(--is);}
+.b-ns{background:var(--ns-bg);color:var(--ns);}
+.bdot{width:4px;height:4px;border-radius:50%;background:currentColor;display:inline-block;}
+.fsb{display:inline-block;padding:1px 5px;border-radius:3px;font-size:8px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+.fsb-f{background:rgba(75,172,198,.15);color:var(--fsrm);border:1px solid rgba(75,172,198,.3);}
+.fsb-m{background:rgba(201,162,39,.12);color:var(--milcon);border:1px solid rgba(201,162,39,.25);}
+.fsb-mc{background:rgba(122,142,224,.12);color:var(--modcamp);border:1px solid rgba(122,142,224,.25);}
+.lk{font-size:10px;cursor:pointer;padding:2px 4px;border-radius:3px;transition:all .15s;}
+.lk.locked{color:var(--warn);}
+.lk.unlocked{color:var(--text-light);opacity:.35;}
+.lk:hover{opacity:1;color:var(--accent);}
+.ra{display:flex;gap:3px;opacity:0;transition:opacity .15s;}
+tbody tr:hover .ra{opacity:1;}
+.ra-btn{background:none;border:none;cursor:pointer;font-size:11px;padding:2px 3px;border-radius:3px;color:var(--text-muted);}
+.ra-btn:hover{background:rgba(255,255,255,.1);color:var(--text);}
+.ra-del{color:var(--crit) !important;}
+.ra-del:hover{background:var(--crit-bg) !important;}
+.tot-row td{background:var(--primary-mid);font-weight:700;color:var(--accent-bright);font-size:10px;border-top:2px solid var(--accent);}
+.tot-row td:first-child{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);font-family:'Segoe UI',system-ui,sans-serif;}
+.grand-row td{background:var(--primary);font-weight:800;color:var(--accent-bright);font-size:11px;font-family:'Consolas','Courier New',monospace;border-top:3px solid var(--accent-bright);}
+.grand-row td:first-child{font-family:'Segoe UI',system-ui,sans-serif;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;font-size:9px;}
+.tbl-ft{padding:6px 0;font-size:10px;color:var(--text-muted);display:flex;gap:14px;}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;}
+.proj-card{background:var(--bg-card);border:1px solid var(--border);border-radius:7px;padding:12px;cursor:pointer;transition:all .15s;}
+.proj-card:hover{box-shadow:0 4px 14px rgba(46,155,181,.15);border-color:var(--accent);transform:translateY(-2px);}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:7px;}
+.card-id{font-size:8px;color:var(--text-light);text-transform:uppercase;letter-spacing:.07em;}
+.card-title{font-size:12px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:4px;}
+.card-meta{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-bottom:7px;}
+.card-camp{font-size:8px;background:var(--bg-panel);color:var(--text-muted);padding:2px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:.05em;}
+.card-total{font-family:'Consolas','Courier New',monospace;font-size:15px;font-weight:800;color:var(--accent-bright);margin-bottom:7px;}
+.card-fy{display:flex;gap:3px;flex-wrap:wrap;}
+.fyc{font-size:8px;padding:2px 5px;border-radius:3px;font-weight:700;}
+.fyc.has{background:rgba(46,155,181,.2);color:var(--accent-bright);border:1px solid rgba(46,155,181,.35);}
+.fyc.no{background:var(--bg-panel);color:var(--text-light);opacity:.4;}
+.card-note{font-size:9px;color:var(--text-muted);margin-top:7px;line-height:1.4;font-style:italic;}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.chart-card{background:var(--bg-card);border:1px solid var(--border);border-radius:7px;padding:14px;}
+.chart-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);margin-bottom:10px;}
+.chart-full{grid-column:1/-1;}
+.sum-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:9px;margin-bottom:14px;}
+.sum-card{background:var(--bg-card);border:1px solid var(--border);border-radius:7px;padding:12px;}
+.sum-val{font-family:'Consolas','Courier New',monospace;font-size:20px;font-weight:800;color:var(--accent-bright);}
+.sum-lbl{font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);margin-top:3px;}
+.fy-bar-sec{background:var(--bg-card);border:1px solid var(--border);border-radius:7px;padding:14px;margin-bottom:12px;}
+.fy-bar-row{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+.fy-bar-lbl{font-size:9px;font-weight:700;color:var(--text-muted);width:34px;flex-shrink:0;text-transform:uppercase;}
+.fy-bar-track{flex:1;height:20px;background:var(--bg-panel);border-radius:4px;overflow:hidden;}
+.fy-bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .5s ease;display:flex;align-items:center;padding-left:7px;}
+.fy-bar-val{font-family:'Consolas','Courier New',monospace;font-size:9px;font-weight:700;color:#fff;white-space:nowrap;}
+.fy-bar-cnt{font-size:9px;color:var(--text-light);width:55px;text-align:right;flex-shrink:0;}
+.det-ov{position:fixed;inset:var(--banner-h) 0 var(--banner-h) 0;z-index:1100;display:none;pointer-events:none;}
+.det-ov.open{display:flex;pointer-events:auto;}
+.det-back{flex:1;background:rgba(0,0,0,.5);cursor:pointer;}
+.det-panel{width:500px;background:var(--bg-card);border-left:2px solid var(--accent);display:flex;flex-direction:column;overflow:hidden;}
+.p-hdr{background:var(--primary-mid);padding:12px 14px;flex-shrink:0;border-bottom:1px solid var(--border);}
+.p-hdr-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.p-title{font-size:13px;font-weight:800;color:var(--text);line-height:1.3;}
+.p-id{font-size:9px;color:var(--text-muted);margin-top:2px;}
+.p-close{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:18px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:5px;flex-shrink:0;}
+.p-close:hover{background:rgba(255,255,255,.1);color:var(--text);}
+.p-body{flex:1;overflow-y:auto;min-height:0;padding:14px;}
+.p-foot{flex-shrink:0;background:var(--bg-panel);border-top:2px solid var(--border);padding:9px 14px;display:flex;gap:7px;align-items:center;}
+.pf{margin-bottom:10px;}
+.pl{font-size:8px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-light);margin-bottom:3px;}
+.pi{width:100%;border:1px solid var(--border-light);border-radius:4px;padding:5px 9px;font-size:11px;background:var(--bg);color:var(--text);outline:none;}
+.pi:focus{border-color:var(--accent);}
+.ps{width:100%;border:1px solid var(--border-light);border-radius:4px;padding:5px 9px;font-size:11px;background:var(--bg);color:var(--text);outline:none;cursor:pointer;}
+.ps:focus{border-color:var(--accent);}
+.p-sec{font-size:8px;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);margin:12px 0 7px;font-weight:700;border-bottom:1px solid var(--border);padding-bottom:3px;}
+.p-g2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.fy-eg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.fy-ei{background:var(--bg-panel);border-radius:5px;padding:7px;}
+.fy-el{font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);margin-bottom:3px;}
+.fy-einp{width:100%;border:1px solid var(--border-light);border-radius:3px;padding:4px 7px;font-size:11px;font-family:'Consolas','Courier New',monospace;background:var(--bg);color:var(--accent-bright);outline:none;text-align:right;}
+.fy-einp:focus{border-color:var(--accent);}
+.recon{background:var(--bg-panel);border:1px solid var(--border-light);border-radius:5px;padding:9px;margin-bottom:10px;}
+.recon-row{display:flex;justify-content:space-between;align-items:center;font-size:10px;margin-bottom:3px;}
+.recon-row:last-child{border-top:1px solid var(--border);padding-top:4px;font-weight:700;}
+.rl{color:var(--text-muted);}
+.rv{font-family:'Consolas','Courier New',monospace;color:var(--accent-bright);}
+.rd{font-family:'Consolas','Courier New',monospace;}
+.d-ok{color:var(--success);}
+.d-warn{color:var(--warn);}
+.d-err{color:var(--crit);}
+.modal-ov{position:fixed;inset:var(--banner-h) 0 var(--banner-h) 0;z-index:1200;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;}
+.modal-ov.open{display:flex;}
+.modal{background:var(--bg-card);border:2px solid var(--accent);border-radius:9px;width:580px;max-width:90vw;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;}
+.m-hdr{background:var(--primary-mid);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.m-title{font-size:13px;font-weight:800;color:var(--text);}
+.m-close{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:18px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:5px;}
+.m-close:hover{background:rgba(255,255,255,.1);color:var(--text);}
+.m-body{flex:1;overflow-y:auto;min-height:0;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.m-full{grid-column:1/-1;}
+.ml{font-size:8px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-light);margin-bottom:3px;display:block;}
+.mi{width:100%;border:1px solid var(--border-light);border-radius:4px;padding:5px 9px;font-size:11px;background:var(--bg);color:var(--text);outline:none;}
+.mi:focus{border-color:var(--accent);}
+.ms{width:100%;border:1px solid var(--border-light);border-radius:4px;padding:5px 9px;font-size:11px;background:var(--bg);color:var(--text);outline:none;cursor:pointer;}
+.m-foot{background:var(--bg-panel);border-top:1px solid var(--border);padding:9px 16px;display:flex;gap:7px;justify-content:flex-end;flex-shrink:0;}
+.btn-p{background:var(--accent);color:#fff;border:none;border-radius:5px;padding:7px 16px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;}
+.btn-p:hover{background:var(--accent-light);}
+.btn-s{background:var(--bg-panel);color:var(--text-muted);border:1px solid var(--border-light);border-radius:5px;padding:7px 16px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
+.btn-s:hover{color:var(--text);border-color:var(--accent);}
+.cmd-ov{position:fixed;inset:var(--banner-h) 0 var(--banner-h) 0;z-index:1300;background:rgba(0,0,0,.7);display:none;align-items:flex-start;justify-content:center;padding-top:70px;}
+.cmd-ov.open{display:flex;}
+.cmd-box{background:var(--bg-card);border:1px solid var(--accent);border-radius:9px;width:520px;max-width:90vw;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+.cmd-inp{width:100%;border:none;padding:12px 16px;font-size:14px;background:var(--bg-card);color:var(--text);outline:none;border-bottom:1px solid var(--border);}
+.cmd-list{max-height:300px;overflow-y:auto;}
+.cmd-item{display:flex;align-items:center;gap:9px;padding:9px 16px;cursor:pointer;font-size:11px;color:var(--text-muted);}
+.cmd-item:hover,.cmd-item.hi{background:rgba(46,155,181,.12);color:var(--text);}
+.cmd-ico{font-size:13px;width:18px;text-align:center;flex-shrink:0;}
+.cmd-key{margin-left:auto;font-size:9px;background:var(--bg-panel);padding:1px 5px;border-radius:3px;border:1px solid var(--border-light);color:var(--text-light);font-family:'Consolas','Courier New',monospace;}
+.cmd-grp{font-size:8px;text-transform:uppercase;letter-spacing:.11em;color:var(--text-light);padding:7px 16px 3px;background:var(--bg-section);}
+.cf-ov{position:fixed;inset:var(--banner-h) 0 var(--banner-h) 0;z-index:1400;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;}
+.cf-ov.open{display:flex;}
+.cf-box{background:var(--bg-card);border:2px solid var(--crit);border-radius:9px;padding:22px;width:360px;max-width:90vw;text-align:center;}
+.cf-ico{font-size:34px;margin-bottom:9px;}
+.cf-msg{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px;}
+.cf-sub{font-size:10px;color:var(--text-muted);margin-bottom:16px;}
+.cf-btns{display:flex;gap:9px;justify-content:center;}
+.toast-cont{position:fixed;bottom:calc(var(--banner-h) + 10px);right:12px;z-index:2100;display:flex;flex-direction:column;gap:5px;pointer-events:none;}
+.toast{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:9px 12px;font-size:11px;color:var(--text);display:flex;align-items:center;gap:7px;box-shadow:0 4px 14px rgba(0,0,0,.4);pointer-events:auto;max-width:300px;animation:toastIn .2s ease;}
+.toast.success{border-left:3px solid var(--success);}
+.toast.error{border-left:3px solid var(--crit);}
+.toast.warning{border-left:3px solid var(--warn);}
+.toast.info{border-left:3px solid var(--accent);}
+@keyframes toastIn{from{opacity:0;transform:translateX(16px);}to{opacity:1;transform:translateX(0);}}
+.load-ov{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+.spinner{width:38px;height:38px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.load-txt{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important;}}
+@media print{.banner,.sidebar,.toolbar,.kpi-bar,.tab-strip,.det-ov,.modal-ov,.cmd-ov,.toast-cont,.cf-ov,.load-ov,.no-print{display:none !important;}.main-content{margin-left:0 !important;}.app{display:block;}.content{padding:6px;}.print-hdr{display:block !important;}body.prec .content{display:none !important;}body.prec .det-ov{display:block !important;position:static !important;pointer-events:none;}body.prec .det-panel{width:100% !important;border:none !important;}body.prec .det-back{display:none;}body.prec .p-foot{display:none !important;}.print-footer{display:block !important;position:fixed;bottom:0;left:0;right:0;font-size:8px;text-align:center;border-top:1px solid #aaa;padding:3px;color:#555;}@page{size:17in 11in landscape;margin:.35in;}}
+.print-hdr{display:none;}
+.print-footer{display:none;}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div class="load-ov" id="loadOv"><div class="spinner"></div><div class="load-txt">Initializing 12th MLR LRFP...</div></div>
+<div class="banner banner-top">UNCLASSIFIED // FOR OFFICIAL USE ONLY</div>
+<div class="banner banner-bottom">UNCLASSIFIED // FOUO - MCB CAMP S.D. BUTLER, OKINAWA - MCIPAC G-F / PPEI</div>
+<div class="print-hdr"><strong>MCIPAC G-F / 12th MLR - Long-Range Facility Planning Dashboard</strong><br><span id="printDate"></span> | UNCLASSIFIED // FOUO | For Internal Planning Use Only</div>
+<div class="print-footer">UNCLASSIFIED // FOUO | MCIPAC G-F | 12th MLR / 3d Bn 12th MAR | Long-Range Facility Planning | For Internal Planning Use Only</div>
+<div class="app">
+<nav class="sidebar" id="sidebar" aria-label="Main navigation">
+  <div class="sb-hdr"><div class="sb-logo"><div class="logo-mark">12</div><div class="logo-text">12th MLR / 3d Bn 12th MAR<div class="logo-sub">MCIPAC G-F / PPEI</div></div></div></div>
+  <div class="nav-grp"><div class="nav-grp-lbl">Views</div>
+    <button class="nav-btn active" id="navTable" onclick="switchView('table')" title="Table view"><span class="nav-icon">&#9776;</span><span class="nav-label">Project Table</span></button>
+    <button class="nav-btn" id="navCards" onclick="switchView('cards')" title="Card view"><span class="nav-icon">&#9783;</span><span class="nav-label">Card View</span></button>
+    <button class="nav-btn" id="navSummary" onclick="switchView('summary')" title="FY Summary"><span class="nav-icon">&#9652;</span><span class="nav-label">FY Summary</span></button>
+    <button class="nav-btn" id="navCharts" onclick="switchView('charts')" title="Charts"><span class="nav-icon">&#9656;</span><span class="nav-label">Charts</span></button>
+  </div>
+  <div class="nav-grp"><div class="nav-grp-lbl">Actions</div>
+    <button class="nav-btn" onclick="openAddModal()" title="Add project"><span class="nav-icon">+</span><span class="nav-label">Add Project</span></button>
+    <button class="nav-btn" onclick="exportCSV()" title="Export CSV"><span class="nav-icon">&#8659;</span><span class="nav-label">Export CSV</span></button>
+    <button class="nav-btn" onclick="exportJSON()" title="Export JSON"><span class="nav-icon">&#8660;</span><span class="nav-label">Export JSON</span></button>
+    <button class="nav-btn" onclick="window.print()" title="Print (P)"><span class="nav-icon">&#9113;</span><span class="nav-label">Print (P)</span></button>
+  </div>
+  <div class="nav-grp"><div class="nav-grp-lbl">Camp Filter</div>
+    <button class="nav-btn active" id="campALL" onclick="filterCamp('ALL')"><span class="nav-icon">&#9632;</span><span class="nav-label">All Camps</span></button>
+    <button class="nav-btn" id="campFOSTER" onclick="filterCamp('FOSTER')"><span class="nav-icon">&#9632;</span><span class="nav-label">Camp Foster</span></button>
+    <button class="nav-btn" id="campHANSEN" onclick="filterCamp('HANSEN')"><span class="nav-icon">&#9632;</span><span class="nav-label">Camp Hansen</span></button>
+  </div>
+  <div class="sb-footer">
+    <button class="sf-btn" onclick="toggleTheme()" title="Toggle theme (T)"><span>&#9788;</span><span class="sf-lbl">Toggle Theme</span></button>
+    <button class="sf-btn" onclick="toggleSidebar()" title="Collapse sidebar (K)"><span>&#9664;</span><span class="sf-lbl">Collapse (K)</span></button>
+    <div class="ver">OMEGA APEX v6.0 | FOUO</div>
+  </div>
+</nav>
+<div class="main-content">
+  <div class="hdr" id="mainHdr">
+    <div class="hdr-top">
+      <div class="hdr-title">
+        <h1>12th MLR / 3d Bn 12th MAR - Long-Range Facility Planning</h1>
+        <div class="hdr-sub">Camp Foster &amp; Camp Hansen | FY25-FY31 | Force Design 2030 Basing</div>
+        <div class="hdr-attr">MCIPAC G-F / PPEI | MCB Camp S.D. Butler, Okinawa | FOUO</div>
+      </div>
+      <div class="hdr-right">
+        <div class="clocks-row" id="ckRow" aria-live="polite" aria-label="World clocks"></div>
+        <div class="cal-block">
+          <div class="cal-hdr"><button class="cal-nav" id="calPrev">&lsaquo;</button><span id="calLbl"></span><button class="cal-nav" id="calNext">&rsaquo;</button></div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="kpi-bar" id="kpiBar" role="region" aria-label="Key metrics"></div>
+  <div class="toolbar" role="toolbar">
+    <input type="text" class="tb-input" id="srch" placeholder="Search projects, FOC, building..." oninput="debSearch()">
+    <select class="tb-sel" id="fSt" onchange="applyFilters()"><option value="">All Status</option><option>In Planning</option><option>Complete</option><option>Not Started</option></select>
+    <select class="tb-sel" id="fFs" onchange="applyFilters()"><option value="">All Funding</option><option>FSRM</option><option>MILCON</option><option>Mod-Camp</option></select>
+    <select class="tb-sel" id="fFy" onchange="applyFilters()"><option value="">All FY</option><option>FY25</option><option>FY26</option><option>FY27</option><option>FY28</option><option>FY29</option><option>FY30</option><option>FY31</option></select>
+    <button class="tb-btn" onclick="clearFilters()">&#10005; Clear</button>
+    <div class="tb-sep"></div>
+    <button class="tb-btn add-btn" onclick="openAddModal()">+ Add Project</button>
+    <div class="tb-right">
+      <button class="tb-btn" onclick="openCmd()">&#9654; Cmd (Ctrl+K)</button>
+      <button class="tb-btn" onclick="exportCSV()">&#8659; CSV</button>
+      <button class="tb-btn" onclick="exportJSON()">&#8660; JSON</button>
+      <button class="tb-btn" onclick="window.print()">&#9113; Print</button>
+    </div>
+  </div>
+  <div class="content" id="main-content">
+    <div id="viewTable">
+      <div class="tab-strip">
+        <button class="tab-btn active" id="tabAll" onclick="switchTab('all')">All Projects</button>
+        <button class="tab-btn" id="tabFoster" onclick="switchTab('foster')">Camp Foster</button>
+        <button class="tab-btn" id="tabHansen" onclick="switchTab('hansen')">Camp Hansen</button>
+        <button class="tab-btn" id="tabFunded" onclick="switchTab('funded')">Funded</button>
+        <button class="tab-btn" id="tabNs" onclick="switchTab('ns')">Not Started</button>
+        <button class="tab-btn" id="tabLocked" onclick="switchTab('locked')">Locked</button>
+      </div>
+      <div class="tbl-wrap">
+        <table id="mainTable" aria-label="12th MLR facility projects">
+          <thead><tr>
+            <th style="width:28px;"></th>
+            <th onclick="sortBy('foc')" id="thFoc">FOC</th>
+            <th onclick="sortBy('title')" id="thTitle">Title</th>
+            <th onclick="sortBy('camp')" id="thCamp">Camp</th>
+            <th onclick="sortBy('bldg')" id="thBldg">Bldg</th>
+            <th onclick="sortBy('fs')" id="thFS">Funding</th>
+            <th onclick="sortBy('status')" id="thStatus">Status</th>
+            <th onclick="sortBy('priority')" id="thPri">Pri</th>
+            <th onclick="sortBy('total')" id="thTotal" class="cc">Total Value</th>
+            <th class="cc">FY25</th><th class="cc">FY26</th><th class="cc">FY27</th>
+            <th class="cc">FY28</th><th class="cc">FY29</th><th class="cc">FY30</th><th class="cc">FY31</th>
+            <th>Lock</th><th>Notes</th>
+          </tr></thead>
+          <tbody id="tBody"></tbody>
+        </table>
+      </div>
+      <div class="tbl-ft" id="tblFt"></div>
+    </div>
+    <div id="viewCards" style="display:none;"><div class="cards-grid" id="cardsGrid"></div></div>
+    <div id="viewSummary" style="display:none;">
+      <div class="sum-grid" id="sumGrid"></div>
+      <div class="fy-bar-sec" id="fyBarSec"><div class="chart-title">Funding by Fiscal Year (FY25-FY31)</div><div id="fyBars"></div></div>
+      <div class="fy-bar-sec"><div class="chart-title">Portfolio by Camp</div><div id="campBars"></div></div>
+    </div>
+    <div id="viewCharts" style="display:none;">
+      <div class="charts-grid">
+        <div class="chart-card chart-full"><div class="chart-title">FY25-FY31 Funding Profile ($M)</div><div id="chartFY"></div></div>
+        <div class="chart-card"><div class="chart-title">Funding Source Split (by value)</div><div id="chartFS"></div></div>
+        <div class="chart-card"><div class="chart-title">Status Distribution (by value)</div><div id="chartStatus"></div></div>
+        <div class="chart-card"><div class="chart-title">Projects by Camp (by value)</div><div id="chartCamp"></div></div>
+        <div class="chart-card"><div class="chart-title">Top 10 Projects by Value</div><div id="chartTop10"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="det-ov" id="detOv" role="dialog" aria-modal="true">
+  <div class="det-back" id="detBack"></div>
+  <div class="det-panel">
+    <div class="p-hdr"><div class="p-hdr-top"><div><div class="p-title" id="pTitle"></div><div class="p-id" id="pId"></div></div><button class="p-close" id="pClose" aria-label="Close (Esc)">&#10005;</button></div></div>
+    <div class="p-body" id="pBody"></div>
+    <div class="p-foot"><button class="btn-p" id="pSave">&#10003; Save</button><button class="btn-s" id="pPrint">&#9113; Print</button><button class="btn-s" id="pCopy">&#10063; Copy</button><button class="btn-s" id="pDel" style="color:var(--crit);border-color:var(--crit);">&#128465; Delete</button></div>
+  </div>
+</div>
+<div class="modal-ov" id="addMod" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="m-hdr"><div class="m-title">+ Add New Project</div><button class="m-close" id="addClose">&#10005;</button></div>
+    <div class="m-body">
+      <div class="m-full"><label class="ml">FOC Reference</label><input type="text" class="mi" id="mFoc" placeholder="e.g. FOC #47"></div>
+      <div class="m-full"><label class="ml">Project Title *</label><input type="text" class="mi" id="mTitle" placeholder="Full facility or project title"></div>
+      <div><label class="ml">Camp</label><select class="ms" id="mCamp"><option value="FOSTER">Camp Foster</option><option value="HANSEN">Camp Hansen</option></select></div>
+      <div><label class="ml">Building Number</label><input type="text" class="mi" id="mBldg" placeholder="e.g. 3270"></div>
+      <div><label class="ml">Funding Source</label><select class="ms" id="mFS"><option>FSRM</option><option>MILCON</option><option>Mod-Camp</option></select></div>
+      <div><label class="ml">Status</label><select class="ms" id="mStat"><option>In Planning</option><option>Not Started</option><option>Complete</option></select></div>
+      <div><label class="ml">Priority</label><select class="ms" id="mPri"><option>2-HIGH</option><option>1-CRITICAL</option><option>3-MEDIUM</option></select></div>
+      <div><label class="ml">Total Value ($)</label><input type="number" class="mi" id="mTotal" placeholder="0" min="0"></div>
+      <div><label class="ml">FY25 ($)</label><input type="number" class="mi" id="mFY25" placeholder="0" min="0"></div>
+      <div><label class="ml">FY26 ($)</label><input type="number" class="mi" id="mFY26" placeholder="0" min="0"></div>
+      <div><label class="ml">FY27 ($)</label><input type="number" class="mi" id="mFY27" placeholder="0" min="0"></div>
+      <div><label class="ml">FY28 ($)</label><input type="number" class="mi" id="mFY28" placeholder="0" min="0"></div>
+      <div><label class="ml">FY29 ($)</label><input type="number" class="mi" id="mFY29" placeholder="0" min="0"></div>
+      <div><label class="ml">FY30 ($)</label><input type="number" class="mi" id="mFY30" placeholder="0" min="0"></div>
+      <div><label class="ml">FY31 ($)</label><input type="number" class="mi" id="mFY31" placeholder="0" min="0"></div>
+      <div class="m-full"><label class="ml">Notes</label><input type="text" class="mi" id="mNotes" placeholder="Optional planning notes"></div>
+    </div>
+    <div class="m-foot"><button class="btn-s" id="addCancel">Cancel</button><button class="btn-p" id="addSave">Add Project</button></div>
+  </div>
+</div>
+<div class="cf-ov" id="cfOv" role="alertdialog" aria-modal="true">
+  <div class="cf-box"><div class="cf-ico">&#9888;</div><div class="cf-msg" id="cfMsg"></div><div class="cf-sub" id="cfSub"></div>
+  <div class="cf-btns"><button class="btn-s" id="cfCancel">Cancel</button><button class="btn-p" id="cfOk" style="background:var(--crit);">Delete</button></div></div>
+</div>
+<div class="cmd-ov" id="cmdOv" role="dialog" aria-modal="true">
+  <div class="cmd-box"><input type="text" class="cmd-inp" id="cmdInp" placeholder="Type a command..."><div class="cmd-list" id="cmdList"></div></div>
+</div>
+<div class="toast-cont" id="tCont" aria-live="polite"></div>
+<script>
+var FYK=['fy25','fy26','fy27','fy28','fy29','fy30','fy31'];
+var FYL=['FY25','FY26','FY27','FY28','FY29','FY30','FY31'];
+var PROJECTS=[
+{id:'F-001',foc:'FOC #1 (T1)',title:'FOS 5603 HIMARS/NMESIS Maint and Storage',camp:'FOSTER',bldg:'5603',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:7544000,fy25:0,fy26:7544000,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR (3/12) FOC'},
+{id:'F-002',foc:'FOC #1 (T1)',title:'FOS 5608 Howitzer Bay Storage',camp:'FOSTER',bldg:'5608',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:4487000,fy25:0,fy26:4487000,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR (3/12) FOC'},
+{id:'F-003',foc:'3/12 Mod Campus',title:'3/12 Modular Campus Construction',camp:'FOSTER',bldg:'Mod-Camp',fs:'Mod-Camp',status:'In Planning',priority:'2-HIGH',total:85000000,fy25:0,fy26:0,fy27:0,fy28:85000000,fy29:0,fy30:0,fy31:0,locked:false,notes:''},
+{id:'F-004',foc:'FOC #31 (T3)',title:'FOS 5626 Maintenance',camp:'FOSTER',bldg:'5626',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:12000000,fy25:0,fy26:0,fy27:0,fy28:12000000,fy29:0,fy30:0,fy31:0,locked:false,notes:'3rdMarDiv FOC'},
+{id:'F-005',foc:'FOC #10 (T1)',title:'FOS 5665 Battalion CP',camp:'FOSTER',bldg:'5665',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:8548000,fy25:0,fy26:0,fy27:8548000,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR (3/12) FOC'},
+{id:'F-006',foc:'FOC #16 (T3)',title:'FOS 5636 Comm Building',camp:'FOSTER',bldg:'5636',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:1000000,fy25:0,fy26:0,fy27:0,fy28:0,fy29:1000000,fy30:0,fy31:0,locked:false,notes:'12th MLR (3/12) FOC'},
+{id:'F-007',foc:'FOC #29 (T3)',title:'FOS 5602 Supply',camp:'FOSTER',bldg:'5602',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:500000,fy25:0,fy26:500000,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR (3/12) FOC'},
+{id:'F-008',foc:'FOC #30 (T4)',title:'FOS 5604 Admin',camp:'FOSTER',bldg:'5604',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:500000,fy25:0,fy26:0,fy27:0,fy28:0,fy29:500000,fy30:0,fy31:0,locked:false,notes:'12th MLR (3/12) FOC'},
+{id:'F-009',foc:'FOC #43 (T3)',title:'FOS 5971 Truck Co.',camp:'FOSTER',bldg:'5971',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:1500000,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:1500000,fy31:0,locked:false,notes:'3rdMarDiv FOC'},
+{id:'F-010',foc:'FOC #39 (T5)',title:'FOS 5632 Truck Co.',camp:'FOSTER',bldg:'5632',fs:'MILCON',status:'In Planning',priority:'2-HIGH',total:500000,fy25:0,fy26:0,fy27:500000,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'3rdMarDiv - B&M to expand heads and drinking water'},
+{id:'F-011',foc:'H-Block FOC',title:'FOS H Area Fiber Optic Backbone Upgrade',camp:'FOSTER',bldg:'H Area',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:1000000,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:1000000,fy31:0,locked:false,notes:'MCIPAC FOC'},
+{id:'F-012',foc:'FOC #37 (T5)',title:'FOS 5609 EAB',camp:'FOSTER',bldg:'5609',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'MCIPAC FOC'},
+{id:'F-013',foc:'FOC #14 (T3)',title:'FOS 5635 Wellness Building for 3/12',camp:'FOSTER',bldg:'5635',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR (3/12) FOC'},
+{id:'F-014',foc:'FOC #41 (T6)',title:'FOS 5630 EAB',camp:'FOSTER',bldg:'5630',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'MCIPAC FOC'},
+{id:'F-015',foc:'FOC #42 (T6)',title:'FOS 5967 Truck Co.',camp:'FOSTER',bldg:'5967',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'3rdMarDiv FOC'},
+{id:'F-016',foc:'FOC #38 (T5)',title:'FOS 5631 G3 EOD/MACS-4',camp:'FOSTER',bldg:'5631',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'MCIPAC/MAW FOC'},
+{id:'F-017',foc:'FOC #46 (T3)',title:'FOS 225 Consolidated Armory',camp:'FOSTER',bldg:'225',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'MCIPAC/MAW FOC'},
+{id:'F-018',foc:'12th MLR (3/12)',title:'FOS 5600',camp:'FOSTER',bldg:'5600',fs:'FSRM',status:'Not Started',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:true,notes:'Far-future requirement - cost TBD'},
+{id:'F-019',foc:'12th MLR (3/12)',title:'FOS 5601',camp:'FOSTER',bldg:'5601',fs:'FSRM',status:'Not Started',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:true,notes:'Far-future requirement - cost TBD'},
+{id:'F-020',foc:'12th MLR (3/12)',title:'FOS 5611',camp:'FOSTER',bldg:'5611',fs:'FSRM',status:'Not Started',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:true,notes:'Far-future requirement - cost TBD'},
+{id:'F-021',foc:'12th MLR (3/12)',title:'FOS 5613',camp:'FOSTER',bldg:'5613',fs:'FSRM',status:'Not Started',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:true,notes:'Far-future requirement - cost TBD'},
+{id:'F-022',foc:'12th MLR (3/12)',title:'FOS 5634OS',camp:'FOSTER',bldg:'5634OS',fs:'FSRM',status:'Not Started',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:true,notes:'Far-future requirement - cost TBD'},
+{id:'F-023',foc:'12th MLR (3/12)',title:'FOS 5635 (NS)',camp:'FOSTER',bldg:'5635',fs:'FSRM',status:'Not Started',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:true,notes:'Far-future requirement - cost TBD'},
+{id:'F-024',foc:'12th MLR (3/12)',title:'FOS 5836 - Possible Radio Bn from Hansen',camp:'FOSTER',bldg:'5836',fs:'FSRM',status:'Not Started',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:true,notes:'Possible Radio Battalion relocation from Hansen - cost TBD'},
+{id:'H-001',foc:'FOC #5 (T1)',title:'HAN 2496 Secher Hall - Multiple MLR Units',camp:'HANSEN',bldg:'2496',fs:'MILCON',status:'In Planning',priority:'2-HIGH',total:34230000,fy25:34230000,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC - Multiple MLR units'},
+{id:'H-002',foc:'FOC #8 (T1)',title:'HAN 2205 Regiment CP for MLR',camp:'HANSEN',bldg:'2205',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:16500000,fy25:0,fy26:16500000,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-003',foc:'FOC #9 (T1)',title:'HAN 2662 H&S Battery CP for LAAB',camp:'HANSEN',bldg:'2662',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:2311000,fy25:0,fy26:0,fy27:2311000,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-004',foc:'FOC #17 (T1)',title:'HAN 2664 A/C Battery CP for LAAB',camp:'HANSEN',bldg:'2664',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:2040000,fy25:0,fy26:0,fy27:2040000,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-005',foc:'HAN Mod-Camp',title:'HAN Modular Admin / Armory / Maint / Supply',camp:'HANSEN',bldg:'Mod-Camp',fs:'Mod-Camp',status:'In Planning',priority:'2-HIGH',total:307200000,fy25:0,fy26:0,fy27:0,fy28:307200000,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR Modular Admin complex - confirmed $307.2M'},
+{id:'H-006',foc:'MADIS MILCON',title:'12th MLR MADIS MILCON Storage',camp:'HANSEN',bldg:'',fs:'MILCON',status:'In Planning',priority:'2-HIGH',total:30800000,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:30800000,fy31:0,locked:false,notes:'12th MLR MADIS storage'},
+{id:'H-007',foc:'FOC #12 (T1)',title:'HAN 2204 LLB CP and Overflow - Multi MLR Units',camp:'HANSEN',bldg:'2204',fs:'MILCON',status:'In Planning',priority:'2-HIGH',total:16500000,fy25:0,fy26:16500000,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC - tied to multiple Hansen units'},
+{id:'H-008',foc:'FOC #19 (T1)',title:'HAN 2240 Supply for MLR / LAAB / LLB',camp:'HANSEN',bldg:'2240',fs:'MILCON',status:'In Planning',priority:'2-HIGH',total:20000000,fy25:0,fy26:20000000,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-009',foc:'FOC #11 (T2)',title:'HAN 2716 CP for LCT',camp:'HANSEN',bldg:'2716',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:2393000,fy25:0,fy26:0,fy27:0,fy28:2393000,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-010',foc:'FOC #22 (T3)',title:'HAN 2663 LAAB',camp:'HANSEN',bldg:'2663',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:2000000,fy25:0,fy26:0,fy27:2000000,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-011',foc:'FOC #36 (T4)',title:'HAN 2124 LLB EOD',camp:'HANSEN',bldg:'2124',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:1500000,fy25:0,fy26:0,fy27:0,fy28:0,fy29:1500000,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-012',foc:'FOC #23 (T3)',title:'HAN 2158 LCT Motor T',camp:'HANSEN',bldg:'2158',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:903000,fy25:0,fy26:0,fy27:903000,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-013',foc:'FOC #21 (T2)',title:'HAN 2245 LLB Motor T/S6',camp:'HANSEN',bldg:'2245',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:700000,fy25:0,fy26:700000,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-014',foc:'FOC #27 (T2)',title:'HAN 2182 LLB Motor T',camp:'HANSEN',bldg:'2182',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:500000,fy25:0,fy26:0,fy27:0,fy28:500000,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-015',foc:'FOC #28 (T2)',title:'HAN 2221 Comm Building - Multiple MLR Units',camp:'HANSEN',bldg:'2221',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:2000000,fy25:0,fy26:2000000,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC - Multiple MLR units'},
+{id:'H-016',foc:'FOC #41 (T2)',title:'HAN 2183 LLB Admin',camp:'HANSEN',bldg:'2183',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:500000,fy25:0,fy26:0,fy27:0,fy28:0,fy29:500000,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-017',foc:'FOC #24 (T3)',title:'HAN 2241 LAAB Motor T',camp:'HANSEN',bldg:'2241',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:450000,fy25:0,fy26:0,fy27:0,fy28:450000,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-018',foc:'FOC #44 (T6)',title:'HAN 2245A LLB Motor T/S6',camp:'HANSEN',bldg:'2245A',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:250000,fy25:0,fy26:250000,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-019',foc:'FOC #20 (T1)',title:'HAN 2439 Supply for LCT',camp:'HANSEN',bldg:'2439',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:80000,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:80000,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-020',foc:'FOC #13 (T1)',title:'HAN 2380 MADIS Storage for LAAB',camp:'HANSEN',bldg:'2380',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:2400000,fy25:0,fy26:2400000,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-021',foc:'FOC #4 (T1)',title:'HAN 2381 MADIS Storage for LAAB',camp:'HANSEN',bldg:'2381',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:1300000,fy25:0,fy26:1300000,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-022',foc:'FOC #2 (T1)',title:'HAN 2203 Consolidated Armory - Multiple MLR Units',camp:'HANSEN',bldg:'2203',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC - value TBD'},
+{id:'H-023',foc:'FOC #18 (T2)',title:'HAN 2395 MMSL/ASU for LCT',camp:'HANSEN',bldg:'2395',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:500000,fy25:0,fy26:0,fy27:0,fy28:500000,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-024',foc:'FOC #26 (T3)',title:'HAN 2133 LCT Motor T',camp:'HANSEN',bldg:'2133',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:500000,fy25:0,fy26:0,fy27:0,fy28:0,fy29:500000,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-025',foc:'FOC #35 (T4)',title:'HAN 2728 Athletic Trainer',camp:'HANSEN',bldg:'2728',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'IIIMEF FOC'},
+{id:'H-026',foc:'FOC #36 (T4)',title:'HAN 2394 3rd Radio Bn',camp:'HANSEN',bldg:'2394',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'3rdMarDiv FOC'},
+{id:'H-027',foc:'FOC #40 (T5)',title:'HAN 2137 EAB Brass Def.',camp:'HANSEN',bldg:'2137',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'MCIPAC FOC'},
+{id:'H-028',foc:'FOC #45 (T6)',title:'HAN 2390 LCT Motor T Storage',camp:'HANSEN',bldg:'2390',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-029',foc:'FOC #33 (T4)',title:'HAN 2395L LAAB',camp:'HANSEN',bldg:'2395L',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-030',foc:'FOC #34 (T4)',title:'HAN 2395N LAAB',camp:'HANSEN',bldg:'2395N',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-031',foc:'LCT Motor T',title:'HAN 2132 LCT Motor T',camp:'HANSEN',bldg:'2132',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:100000,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:100000,fy31:0,locked:false,notes:'12th MLR'},
+{id:'H-032',foc:'LAAB',title:'HAN 2497 12th MLR LAAB',camp:'HANSEN',bldg:'2497',fs:'FSRM',status:'In Planning',priority:'2-HIGH',total:150000,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:150000,locked:false,notes:'12th MLR LAAB'},
+{id:'H-033',foc:'FOC #1 (T1)',title:'HAN 2395W MMSL NMESIS Storage for LCT',camp:'HANSEN',bldg:'2395W',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-034',foc:'FOC #2 (T1)',title:'HAN 2395V MMSL NMESIS Storage for LCT',camp:'HANSEN',bldg:'2395V',fs:'FSRM',status:'Complete',priority:'2-HIGH',total:0,fy25:0,fy26:0,fy27:0,fy28:0,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR FOC'},
+{id:'H-035',foc:'NMESIS Maint',title:'12th MLR NMESIS Maintenance Facility',camp:'HANSEN',bldg:'',fs:'MILCON',status:'In Planning',priority:'2-HIGH',total:50000000,fy25:0,fy26:0,fy27:0,fy28:50000000,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR NMESIS Maintenance'},
+{id:'H-036',foc:'NMESIS Storage',title:'12th MLR NMESIS Storage Facility',camp:'HANSEN',bldg:'',fs:'MILCON',status:'In Planning',priority:'2-HIGH',total:59600000,fy25:0,fy26:0,fy27:0,fy28:59600000,fy29:0,fy30:0,fy31:0,locked:false,notes:'12th MLR NMESIS Storage'}
+];
+</script>
+<script>
+var curView='table',curTab='all',curCamp='ALL',srchDeb=null,sfld='',sdir=1,actId=null,delId=null,calY=new Date().getFullYear(),calM=new Date().getMonth();
+function fmt(v){if(!v||v===0)return'-';return'$'+Number(v).toLocaleString();}
+function fmtM(v){if(!v||v===0)return'$0';return'$'+(v/1000000).toFixed(1)+'M';}
+function fmtN(v){return parseFloat(String(v).replace(/[^0-9.]/g,''))||0;}
+function fySum(p){return FYK.reduce(function(a,k){return a+(p[k]||0);},0);}
+function fyTotals(){var t={};FYK.forEach(function(k){t[k]=0;});PROJECTS.forEach(function(p){FYK.forEach(function(k){t[k]+=(p[k]||0);});});return t;}
+function grandTotal(){return PROJECTS.reduce(function(a,p){return a+(p.total||0);},0);}
+function toast(msg,type){var el=document.createElement('div');el.className='toast '+(type||'info');var ico={success:'&#10003;',error:'&#10007;',warning:'&#9888;',info:'&#9432;'}[type||'info']||'';el.innerHTML='<span>'+ico+'</span><span>'+msg+'</span>';var c=document.getElementById('tCont');c.appendChild(el);setTimeout(function(){el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},300);},3500);}
+function getFiltered(){var q=(document.getElementById('srch').value||'').toLowerCase();var st=document.getElementById('fSt').value;var fs=document.getElementById('fFs').value;var fy=document.getElementById('fFy').value;return PROJECTS.filter(function(p){if(curCamp!=='ALL'&&p.camp!==curCamp)return false;if(curTab==='foster'&&p.camp!=='FOSTER')return false;if(curTab==='hansen'&&p.camp!=='HANSEN')return false;if(curTab==='funded'&&fySum(p)===0)return false;if(curTab==='ns'&&p.status!=='Not Started')return false;if(curTab==='locked'&&!p.locked)return false;if(q&&!((p.title||'').toLowerCase().includes(q)||(p.foc||'').toLowerCase().includes(q)||(p.bldg||'').toLowerCase().includes(q)||(p.notes||'').toLowerCase().includes(q)))return false;if(st&&!p.status.includes(st))return false;if(fs&&p.fs!==fs)return false;if(fy){var k=fy.toLowerCase();if(!(p[k]&&p[k]>0))return false;}return true;});}
+function sbadge(s){if(!s)return'<span class="badge b-ns"><span class="bdot"></span>-</span>';if(s.includes('Planning'))return'<span class="badge b-ip"><span class="bdot"></span>In Plng</span>';if(s.includes('Complete'))return'<span class="badge b-cp"><span class="bdot"></span>Cmplt</span>';if(s.includes('Not'))return'<span class="badge b-ns"><span class="bdot"></span>Not Strtd</span>';return'<span class="badge b-ns">'+s+'</span>';}
+function fsbadge(fs){if(!fs)return'-';var cls=fs==='FSRM'?'fsb-f':fs==='MILCON'?'fsb-m':'fsb-mc';return'<span class="fsb '+cls+'">'+fs+'</span>';}
+function fyCell(v){if(!v||v===0)return'<span class="fy-z">-</span>';return'<span class="fy-f">'+fmtM(v)+'</span>';}
+function renderKPI(){var t=fyTotals();var gt=grandTotal();var ns=PROJECTS.filter(function(p){return p.status==='Not Started';}).length;var ip=PROJECTS.filter(function(p){return p.status.includes('Planning');}).length;var cp=PROJECTS.filter(function(p){return p.status.includes('Complete');}).length;var fyS=FYK.reduce(function(a,k){return a+t[k];},0);var h=['<div class="kpi" tabindex="0"><div class="kpi-val">'+fmtM(gt)+'</div><div class="kpi-lbl">Portfolio Total</div><div class="kpi-sub">'+PROJECTS.length+' projects</div></div>','<div class="kpi" tabindex="0"><div class="kpi-val">'+fmtM(fyS)+'</div><div class="kpi-lbl">FY25-31 Funded</div><div class="kpi-sub">7 fiscal years</div></div>','<div class="kpi" tabindex="0"><div class="kpi-val">'+ip+'</div><div class="kpi-lbl">In Planning</div><div class="kpi-sub">Active</div></div>','<div class="kpi" tabindex="0"><div class="kpi-val">'+cp+'</div><div class="kpi-lbl">Complete</div><div class="kpi-sub">Finished</div></div>','<div class="kpi" tabindex="0"><div class="kpi-val">'+ns+'</div><div class="kpi-lbl">Not Started</div><div class="kpi-sub">Future req</div></div>'];FYK.forEach(function(k,i){h.push('<div class="kpi" tabindex="0"><div class="kpi-val">'+fmtM(t[k])+'</div><div class="kpi-lbl">'+FYL[i]+'</div><div class="kpi-sub">'+PROJECTS.filter(function(p){return p[k]>0;}).length+' proj</div></div>');});document.getElementById('kpiBar').innerHTML=h.join('');}
+function renderTable(){var rows=getFiltered();if(sfld){rows.sort(function(a,b){var av=a[sfld]||'',bv=b[sfld]||'';if(typeof av==='number')return(av-bv)*sdir;return String(av).localeCompare(String(bv))*sdir;});}var h='';rows.forEach(function(p){h+='<tr data-id="'+p.id+'" tabindex="0">';h+='<td><div class="ra"><button class="ra-btn" onclick=\'openDetail("'+p.id+'")\' title="Open detail">&#9656;</button><button class="ra-btn ra-del" onclick=\'confDel("'+p.id+'")\' title="Delete project">&#128465;</button></div></td>';h+='<td contenteditable="true" data-id="'+p.id+'" data-f="foc" title="Edit FOC">'+escH(p.foc||'-')+'</td>';var t45=p.title?p.title.length>46?p.title.substring(0,45)+'...':p.title:'-';h+='<td contenteditable="true" data-id="'+p.id+'" data-f="title" style="max-width:260px;" title="'+escH(p.title||'')+'">'+escH(t45)+'</td>';h+='<td contenteditable="true" data-id="'+p.id+'" data-f="camp">'+escH(p.camp||'-')+'</td>';h+='<td contenteditable="true" data-id="'+p.id+'" data-f="bldg">'+escH(p.bldg||'-')+'</td>';h+='<td>'+fsbadge(p.fs)+'</td>';h+='<td>'+sbadge(p.status)+'</td>';h+='<td><span style="font-size:9px;color:var(--text-muted)">'+escH(p.priority||'-')+'</span></td>';h+='<td class="cc" contenteditable="true" data-id="'+p.id+'" data-f="total" title="Edit total value">'+fmt(p.total)+'</td>';FYK.forEach(function(k){h+='<td class="cc" contenteditable="true" data-id="'+p.id+'" data-f="'+k+'" title="Edit '+k.toUpperCase()+'">'+fyCell(p[k])+'</td>';});h+='<td><span class="lk '+(p.locked?'locked':'unlocked')+'" data-id="'+p.id+'" title="Toggle lock">'+(p.locked?'&#128274;':'&#128275;')+'</span></td>';var n30=p.notes?(p.notes.length>32?p.notes.substring(0,31)+'...':p.notes):'-';h+='<td contenteditable="true" data-id="'+p.id+'" data-f="notes" style="max-width:200px;font-size:10px;color:var(--text-muted);" title="'+escH(p.notes||'')+'">'+escH(n30)+'</td>';h+='</tr>';});var fT=fyTotals();var ft_rows=rows;h+='<tr class="tot-row"><td colspan="9">FY Column Totals (filtered)</td>';FYK.forEach(function(k){var s=ft_rows.reduce(function(a,p){return a+(p[k]||0);},0);h+='<td class="cc">'+(s>0?fmtM(s):'-')+'</td>';});h+='<td colspan="2"></td></tr>';var fgt=rows.reduce(function(a,p){return a+(p.total||0);},0);h+='<tr class="grand-row"><td colspan="8">Portfolio Grand Total</td><td class="cc">'+fmt(fgt)+'</td>';FYK.forEach(function(k){var s=rows.reduce(function(a,p){return a+(p[k]||0);},0);h+='<td class="cc">'+(s>0?fmtM(s):'-')+'</td>';});h+='<td colspan="2"></td></tr>';document.getElementById('tBody').innerHTML=h;document.getElementById('tblFt').innerHTML='<span>Showing '+rows.length+' of '+PROJECTS.length+' projects</span><span>Filtered total: <strong>'+fmt(fgt)+'</strong></span>';wireEdits();wireLocks();wireRows();}
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function wireEdits(){document.querySelectorAll('td[contenteditable=true]').forEach(function(td){td.addEventListener('blur',function(){var id=this.getAttribute('data-id'),f=this.getAttribute('data-f'),v=this.textContent.trim(),p=PROJECTS.find(function(x){return x.id===id;});if(!p)return;if(['total','fy25','fy26','fy27','fy28','fy29','fy30','fy31'].indexOf(f)>=0){var n=fmtN(v);p[f]=n;this.innerHTML=f==='total'?fmt(n):fyCell(n);}else{p[f]=v;}renderKPI();renderSummary();toast('Updated','success');});td.addEventListener('focus',function(){var f=this.getAttribute('data-f'),id=this.getAttribute('data-id');if(['total','fy25','fy26','fy27','fy28','fy29','fy30','fy31'].indexOf(f)>=0){var p=PROJECTS.find(function(x){return x.id===id;});if(p)this.textContent=p[f]||0;}});td.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();this.blur();}if(e.key==='Escape')this.blur();});});}
+function wireLocks(){document.querySelectorAll('.lk').forEach(function(el){el.addEventListener('click',function(e){e.stopPropagation();var id=this.getAttribute('data-id'),p=PROJECTS.find(function(x){return x.id===id;});if(!p)return;p.locked=!p.locked;this.className='lk '+(p.locked?'locked':'unlocked');this.innerHTML=p.locked?'&#128274;':'&#128275;';toast(p.locked?'Locked':'Unlocked','info');});});}
+function wireRows(){document.querySelectorAll('#tBody tr[data-id]').forEach(function(tr){tr.addEventListener('dblclick',function(){openDetail(this.getAttribute('data-id'));});tr.addEventListener('keydown',function(e){if(e.key==='Enter')openDetail(this.getAttribute('data-id'));});});}
+function sortBy(f){if(sfld===f)sdir*=-1;else{sfld=f;sdir=1;}document.querySelectorAll('thead th').forEach(function(th){th.classList.remove('sort-asc','sort-desc');});var m={foc:'thFoc',title:'thTitle',camp:'thCamp',bldg:'thBldg',fs:'thFS',status:'thStatus',priority:'thPri',total:'thTotal'};if(m[f]){var el=document.getElementById(m[f]);if(el)el.classList.add(sdir===1?'sort-asc':'sort-desc');}renderTable();}
+function renderCards(){var rows=getFiltered();var h='';rows.forEach(function(p){var fc=FYK.map(function(k,i){var has=(p[k]||0)>0;return'<span class="fyc '+(has?'has':'no')+'">'+(has?FYL[i]+':'+fmtM(p[k]):FYL[i])+'</span>';}).join('');h+='<div class="proj-card" tabindex="0" onclick=\'openDetail("'+p.id+'")\' aria-label="'+escH(p.foc||'')+'">';h+='<div class="card-top"><div><div class="card-id">'+escH(p.foc||'-')+'</div></div>'+sbadge(p.status)+'</div>';var ct=p.title?(p.title.length>55?p.title.substring(0,54)+'...':p.title):'-';h+='<div class="card-title" title="'+escH(p.title||'')+'">'+escH(ct)+'</div>';h+='<div class="card-meta"><span class="card-camp">'+escH(p.camp||'-')+'</span>'+fsbadge(p.fs)+(p.bldg?'<span style="font-size:8px;color:var(--text-light);">Bldg '+escH(p.bldg)+'</span>':'')+'</div>';h+='<div class="card-total">'+fmt(p.total)+'</div>';h+='<div class="card-fy">'+fc+'</div>';if(p.notes)h+='<div class="card-note">'+escH(p.notes.length>60?p.notes.substring(0,59)+'...':p.notes)+'</div>';h+='</div>';});document.getElementById('cardsGrid').innerHTML=h||'<div style="color:var(--text-muted);font-size:12px;padding:20px;">No projects match filters.</div>';}
+function renderSummary(){var t=fyTotals();var gt=grandTotal();var mx=Math.max.apply(null,FYK.map(function(k){return t[k];}));var ip=PROJECTS.filter(function(p){return p.status.includes('Planning');}).length;var cp=PROJECTS.filter(function(p){return p.status.includes('Complete');}).length;var ns=PROJECTS.filter(function(p){return p.status==='Not Started';}).length;var fT=PROJECTS.filter(function(p){return p.camp==='FOSTER';}).reduce(function(a,p){return a+(p.total||0);},0);var hT=PROJECTS.filter(function(p){return p.camp==='HANSEN';}).reduce(function(a,p){return a+(p.total||0);},0);document.getElementById('sumGrid').innerHTML=['<div class="sum-card"><div class="sum-val">'+fmtM(gt)+'</div><div class="sum-lbl">Portfolio Total</div></div>','<div class="sum-card"><div class="sum-val">'+PROJECTS.length+'</div><div class="sum-lbl">Total Projects</div></div>','<div class="sum-card"><div class="sum-val">'+ip+'</div><div class="sum-lbl">In Planning</div></div>','<div class="sum-card"><div class="sum-val">'+cp+'</div><div class="sum-lbl">Complete</div></div>','<div class="sum-card"><div class="sum-val">'+ns+'</div><div class="sum-lbl">Not Started</div></div>','<div class="sum-card"><div class="sum-val">'+PROJECTS.filter(function(p){return p.camp==='FOSTER';}).length+'</div><div class="sum-lbl">Camp Foster Projects</div></div>','<div class="sum-card"><div class="sum-val">'+PROJECTS.filter(function(p){return p.camp==='HANSEN';}).length+'</div><div class="sum-lbl">Camp Hansen Projects</div></div>','<div class="sum-card"><div class="sum-val">'+PROJECTS.filter(function(p){return p.locked;}).length+'</div><div class="sum-lbl">Locked Records</div></div>'].join('');var fyH='';FYK.forEach(function(k,i){var v=t[k],pct=mx>0?Math.round((v/mx)*100):0,cnt=PROJECTS.filter(function(p){return(p[k]||0)>0;}).length;fyH+='<div class="fy-bar-row"><div class="fy-bar-lbl">'+FYL[i]+'</div><div class="fy-bar-track"><div class="fy-bar-fill" style="width:'+pct+'%"><span class="fy-bar-val">'+(v>0?fmtM(v):'')+'</span></div></div><div class="fy-bar-cnt">'+cnt+' proj</div></div>';});document.getElementById('fyBars').innerHTML=fyH;var mxC=Math.max(fT,hT);var cH='';[['Camp Foster',fT,'FOSTER'],['Camp Hansen',hT,'HANSEN']].forEach(function(c){var pct=mxC>0?Math.round((c[1]/mxC)*100):0;var cnt=PROJECTS.filter(function(p){return p.camp===c[2];}).length;cH+='<div class="fy-bar-row"><div class="fy-bar-lbl" style="width:80px;">'+c[0]+'</div><div class="fy-bar-track"><div class="fy-bar-fill" style="width:'+pct+'%;background:var(--accent-light)"><span class="fy-bar-val">'+(c[1]>0?fmtM(c[1]):'$0')+'</span></div></div><div class="fy-bar-cnt">'+cnt+' proj</div></div>';});document.getElementById('campBars').innerHTML=cH;}
+function renderCharts(){var t=fyTotals();var W=600,HC=160;var svgBar=function(vals,lbls,colors,cid,h){var el=document.getElementById(cid);if(!el)return;var W2=el.offsetWidth||W;var H2=h||200;var pd={t:20,r:10,b:38,l:65};var mx=Math.max.apply(null,vals.concat([1]));var bW=Math.floor((W2-pd.l-pd.r)/vals.length*0.65);var gp=Math.floor((W2-pd.l-pd.r)/vals.length*0.35);var isDk=document.documentElement.getAttribute('data-theme')!=='light';var tc=isDk?'#8AA4BE':'#5a6375';var gc=isDk?'#1E3550':'#e0e5ee';var svg='<svg viewBox="0 0 '+W2+' '+H2+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">';for(var g=0;g<=4;g++){var gy=pd.t+((H2-pd.t-pd.b)*g/4);svg+='<line x1="'+pd.l+'" y1="'+gy+'" x2="'+(W2-pd.r)+'" y2="'+gy+'" stroke="'+gc+'" stroke-width="1"/>';svg+='<text x="'+(pd.l-4)+'" y="'+(gy+3)+'" text-anchor="end" font-size="8" fill="'+tc+'">'+fmtM(mx*(4-g)/4)+'</text>';}vals.forEach(function(v,i){var bh=mx>0?Math.max(2,(v/mx)*(H2-pd.t-pd.b)):0;var bx=pd.l+i*((W2-pd.l-pd.r)/vals.length)+gp/2;var by=pd.t+(H2-pd.t-pd.b)-bh;var col=Array.isArray(colors)?colors[i%colors.length]:colors;svg+='<rect x="'+bx+'" y="'+by+'" width="'+bW+'" height="'+bh+'" fill="'+col+'" rx="2"/>';svg+='<text x="'+(bx+bW/2)+'" y="'+(H2-pd.b+12)+'" text-anchor="middle" font-size="8" fill="'+tc+'">'+lbls[i]+'</text>';if(v>0)svg+='<text x="'+(bx+bW/2)+'" y="'+(by-2)+'" text-anchor="middle" font-size="7" fill="'+col+'">'+fmtM(v)+'</text>';});svg+='</svg>';el.innerHTML=svg;};var svgPie=function(data,cid){var el=document.getElementById(cid);if(!el)return;var W2=el.offsetWidth||280;var H2=200;var cx=W2*0.36,cy=H2*0.5,r=Math.min(cx,cy)*0.72;var total=data.reduce(function(a,d){return a+(d.val||0);},0);var isDk=document.documentElement.getAttribute('data-theme')!=='light';var tc=isDk?'#8AA4BE':'#5a6375';var svg='<svg viewBox="0 0 '+W2+' '+H2+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">';if(total===0){svg+='<text x="'+cx+'" y="'+cy+'" text-anchor="middle" font-size="11" fill="'+tc+'">No data</text></svg>';el.innerHTML=svg;return;}var sa=-Math.PI/2;data.forEach(function(d){if(!d.val)return;var ang=(d.val/total)*2*Math.PI;var x1=cx+r*Math.cos(sa),y1=cy+r*Math.sin(sa);var x2=cx+r*Math.cos(sa+ang),y2=cy+r*Math.sin(sa+ang);var lg=ang>Math.PI?1:0;svg+='<path d="M'+cx+','+cy+' L'+x1+','+y1+' A'+r+','+r+' 0 '+lg+',1 '+x2+','+y2+' Z" fill="'+d.color+'" opacity="0.9"/>';sa+=ang;});var ly=22;data.forEach(function(d){var pct=total>0?Math.round((d.val/total)*100):0;svg+='<rect x="'+(W2*0.68)+'" y="'+(ly-7)+'" width="9" height="9" fill="'+d.color+'" rx="2"/>';svg+='<text x="'+(W2*0.68+13)+'" y="'+ly+'" font-size="9" fill="'+tc+'">'+d.label+' ('+pct+'%)</text>';ly+=18;});svg+='</svg>';el.innerHTML=svg;};var fyVals=FYK.map(function(k){return t[k];});var palette=['#2E9BB5','#4BACC6','#69C7DE','#C9A227','#7A8EE0','#30C090','#E05040'];svgBar(fyVals,FYL,palette,'chartFY',160);var fV=PROJECTS.filter(function(p){return p.fs==='FSRM';}).reduce(function(a,p){return a+(p.total||0);},0);var mV=PROJECTS.filter(function(p){return p.fs==='MILCON';}).reduce(function(a,p){return a+(p.total||0);},0);var mcV=PROJECTS.filter(function(p){return p.fs==='Mod-Camp';}).reduce(function(a,p){return a+(p.total||0);},0);svgPie([{label:'FSRM',val:fV,color:'#4BACC6'},{label:'MILCON',val:mV,color:'#C9A227'},{label:'Mod-Camp',val:mcV,color:'#7A8EE0'}],'chartFS');var ipV=PROJECTS.filter(function(p){return p.status.includes('Planning');}).reduce(function(a,p){return a+(p.total||0);},0);var cpV=PROJECTS.filter(function(p){return p.status.includes('Complete');}).reduce(function(a,p){return a+(p.total||0);},0);var nsV=PROJECTS.filter(function(p){return p.status==='Not Started';}).reduce(function(a,p){return a+(p.total||0);},0);svgPie([{label:'In Planning',val:ipV,color:'#C9A227'},{label:'Complete',val:cpV,color:'#2E9BB5'},{label:'Not Started',val:nsV||1,color:'#5A7A98'}],'chartStatus');var fcV=PROJECTS.filter(function(p){return p.camp==='FOSTER';}).reduce(function(a,p){return a+(p.total||0);},0);var hcV=PROJECTS.filter(function(p){return p.camp==='HANSEN';}).reduce(function(a,p){return a+(p.total||0);},0);svgPie([{label:'Foster',val:fcV,color:'#2E9BB5'},{label:'Hansen',val:hcV,color:'#7A8EE0'}],'chartCamp');var top10=PROJECTS.slice().sort(function(a,b){return(b.total||0)-(a.total||0);}).slice(0,10);svgBar(top10.map(function(p){return p.total||0;}),top10.map(function(p){return p.bldg||p.id;}),top10.map(function(p){return p.camp==='FOSTER'?'#4BACC6':'#7A8EE0';}),'chartTop10',200);}
+function openDetail(id){var p=PROJECTS.find(function(x){return x.id===id;});if(!p)return;actId=id;document.getElementById('pTitle').textContent=p.title||'-';document.getElementById('pId').textContent=(p.foc||'')+(p.camp?' | '+p.camp:'')+(p.bldg?' Bldg '+p.bldg:'')+' | '+p.id;var fys=fySum(p);var delta=(p.total||0)-fys;var dc=Math.abs(delta)<1?'d-ok':Math.abs(delta)<(p.total||1)*0.05?'d-warn':'d-err';var body='<div class="p-sec">Identification</div>';body+='<div class="pf"><div class="pl">FOC Reference</div><input class="pi" id="dp_foc" value="'+escA(p.foc||'')+'" aria-label="FOC"></div>';body+='<div class="pf"><div class="pl">Project Title</div><input class="pi" id="dp_title" value="'+escA(p.title||'')+'" aria-label="Title"></div>';body+='<div class="p-g2">';body+='<div class="pf"><div class="pl">Camp</div><select class="ps" id="dp_camp" aria-label="Camp"><option '+(p.camp==='FOSTER'?'selected':'')+'>FOSTER</option><option '+(p.camp==='HANSEN'?'selected':'')+'>HANSEN</option></select></div>';body+='<div class="pf"><div class="pl">Building</div><input class="pi" id="dp_bldg" value="'+escA(p.bldg||'')+'" aria-label="Building"></div>';body+='<div class="pf"><div class="pl">Funding Source</div><select class="ps" id="dp_fs" aria-label="Funding"><option '+(p.fs==='FSRM'?'selected':'')+'>FSRM</option><option '+(p.fs==='MILCON'?'selected':'')+'>MILCON</option><option '+(p.fs==='Mod-Camp'?'selected':'')+'>Mod-Camp</option></select></div>';body+='<div class="pf"><div class="pl">Status</div><select class="ps" id="dp_status" aria-label="Status"><option '+(p.status==='In Planning'?'selected':'')+'>In Planning</option><option '+(p.status==='Not Started'?'selected':'')+'>Not Started</option><option '+(p.status==='Complete'?'selected':'')+'>Complete</option></select></div>';body+='<div class="pf"><div class="pl">Priority</div><select class="ps" id="dp_pri" aria-label="Priority"><option '+(p.priority==='2-HIGH'?'selected':'')+'>2-HIGH</option><option '+(p.priority==='1-CRITICAL'?'selected':'')+'>1-CRITICAL</option><option '+(p.priority==='3-MEDIUM'?'selected':'')+'>3-MEDIUM</option></select></div>';body+='<div class="pf"><div class="pl">Lock Flag</div><select class="ps" id="dp_locked" aria-label="Lock"><option value="false" '+(!p.locked?'selected':'')+'>Unlocked</option><option value="true" '+(p.locked?'selected':'')+'>Locked</option></select></div>';body+='</div>';body+='<div class="p-sec">Total Value and FY Funding</div>';body+='<div class="pf"><div class="pl">Total Project Value ($)</div><input class="pi" id="dp_total" type="number" value="'+(p.total||0)+'" aria-label="Total"></div>';body+='<div class="fy-eg">';FYK.forEach(function(k,i){body+='<div class="fy-ei"><div class="fy-el">'+FYL[i]+'</div><input class="fy-einp" id="dp_'+k+'" type="number" value="'+(p[k]||0)+'" aria-label="'+FYL[i]+'"></div>';});body+='</div>';body+='<div class="recon"><div class="recon-row"><span class="rl">Total Value</span><span class="rv">'+fmt(p.total)+'</span></div><div class="recon-row"><span class="rl">FY25-31 Sum</span><span class="rv">'+fmt(fys)+'</span></div><div class="recon-row"><span class="rl">Variance</span><span class="rd '+dc+'">'+(Math.abs(delta)<1?'&#10003; Balanced':(delta>0?'+':'')+fmt(delta))+'</span></div></div>';body+='<div class="p-sec">Notes / Planning Context</div>';body+='<div class="pf"><textarea class="pi" id="dp_notes" rows="3" style="resize:vertical;" aria-label="Notes">'+escH(p.notes||'')+'</textarea></div>';document.getElementById('pBody').innerHTML=body;document.getElementById('detOv').classList.add('open');['dp_total'].concat(FYK.map(function(k){return'dp_'+k;})).forEach(function(fid){var el=document.getElementById(fid);if(el)el.addEventListener('input',liveRecon);});}
+function escA(s){return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function liveRecon(){var tot=parseFloat(document.getElementById('dp_total').value)||0;var fys=FYK.reduce(function(a,k){return a+(parseFloat(document.getElementById('dp_'+k).value)||0);},0);var delta=tot-fys;var dc=Math.abs(delta)<1?'d-ok':Math.abs(delta)<(tot||1)*0.05?'d-warn':'d-err';var recon=document.querySelector('.recon');if(!recon)return;var rows=recon.querySelectorAll('.recon-row');if(rows[0])rows[0].querySelector('.rv').textContent=fmt(tot);if(rows[1])rows[1].querySelector('.rv').textContent=fmt(fys);if(rows[2]){var d=rows[2].querySelector('.rd');if(d){d.className='rd '+dc;d.innerHTML=Math.abs(delta)<1?'&#10003; Balanced':(delta>0?'+':'')+fmt(delta);}}}
+function savePanel(){if(!actId)return;var p=PROJECTS.find(function(x){return x.id===actId;});if(!p)return;try{p.foc=document.getElementById('dp_foc').value;p.title=document.getElementById('dp_title').value;p.camp=document.getElementById('dp_camp').value;p.bldg=document.getElementById('dp_bldg').value;p.fs=document.getElementById('dp_fs').value;p.status=document.getElementById('dp_status').value;p.priority=document.getElementById('dp_pri').value;p.locked=document.getElementById('dp_locked').value==='true';p.total=parseFloat(document.getElementById('dp_total').value)||0;FYK.forEach(function(k){p[k]=parseFloat(document.getElementById('dp_'+k).value)||0;});p.notes=document.getElementById('dp_notes').value;closePanel();renderAll();toast('Project saved','success');}catch(e){toast('Error: '+e.message,'error');}}
+function closePanel(){document.getElementById('detOv').classList.remove('open');actId=null;}
+function printRec(){if(!actId)return;document.getElementById('printDate').textContent='Printed: '+new Date().toLocaleDateString();document.body.classList.add('prec');window.print();document.body.classList.remove('prec');}
+function copyRec(){if(!actId)return;var p=PROJECTS.find(function(x){return x.id===actId;});if(!p)return;var lines=['MCIPAC G-F / 12th MLR - Project Record','===================================','FOC: '+p.foc,'Title: '+p.title,'Camp: '+p.camp+' | Bldg: '+(p.bldg||'-'),'Funding: '+p.fs,'Status: '+p.status+' | Priority: '+p.priority,'Total Value: '+fmt(p.total),'','FY Funding:'].concat(FYK.map(function(k,i){return'  '+FYL[i]+': '+fmt(p[k]);})).concat(['','FY25-31 Sum: '+fmt(fySum(p)),'Notes: '+(p.notes||'-'),'','UNCLASSIFIED // FOUO | For Internal Planning Use Only']).join('\n');try{navigator.clipboard.writeText(lines).then(function(){toast('Copied','success');}).catch(function(){toast('Copy failed - use Ctrl+A','warning');});}catch(e){toast('Copy unavailable','warning');}}
+function confDel(id){var p=PROJECTS.find(function(x){return x.id===id;});if(!p)return;delId=id;document.getElementById('cfMsg').textContent='Delete this project?';document.getElementById('cfSub').textContent=p.title||id;document.getElementById('cfOv').classList.add('open');}
+function execDel(){if(!delId)return;var idx=PROJECTS.findIndex(function(x){return x.id===delId;});if(idx>=0){var t=PROJECTS[idx].title;PROJECTS.splice(idx,1);toast('Deleted: '+(t||delId),'warning');closePanel();renderAll();}delId=null;document.getElementById('cfOv').classList.remove('open');}
+function openAddModal(){['mFoc','mTitle','mBldg','mNotes'].forEach(function(id){document.getElementById(id).value='';});['mTotal','mFY25','mFY26','mFY27','mFY28','mFY29','mFY30','mFY31'].forEach(function(id){document.getElementById(id).value='0';});document.getElementById('addMod').classList.add('open');}
+function saveAdd(){var title=document.getElementById('mTitle').value.trim();if(!title){toast('Title required','error');return;}var camp=document.getElementById('mCamp').value;var pfx=camp==='FOSTER'?'F':'H';var ex=PROJECTS.filter(function(p){return p.id.startsWith(pfx+'-');});var mx=ex.reduce(function(a,p){var n=parseInt(p.id.split('-')[1]||0);return n>a?n:a;},0);var nid=pfx+'-'+String(mx+1).padStart(3,'0');var np={id:nid,foc:document.getElementById('mFoc').value.trim()||'TBD',title:title,camp:camp,bldg:document.getElementById('mBldg').value.trim(),fs:document.getElementById('mFS').value,status:document.getElementById('mStat').value,priority:document.getElementById('mPri').value,total:parseFloat(document.getElementById('mTotal').value)||0,fy25:parseFloat(document.getElementById('mFY25').value)||0,fy26:parseFloat(document.getElementById('mFY26').value)||0,fy27:parseFloat(document.getElementById('mFY27').value)||0,fy28:parseFloat(document.getElementById('mFY28').value)||0,fy29:parseFloat(document.getElementById('mFY29').value)||0,fy30:parseFloat(document.getElementById('mFY30').value)||0,fy31:parseFloat(document.getElementById('mFY31').value)||0,locked:false,notes:document.getElementById('mNotes').value.trim()};PROJECTS.push(np);document.getElementById('addMod').classList.remove('open');renderAll();toast('Added: '+title,'success');}
+function exportCSV(){try{var hdr=['ID','FOC','Title','Camp','Bldg','Funding','Status','Priority','Total'].concat(FYL).concat(['Locked','Notes']);var rows=PROJECTS.map(function(p){return[p.id,p.foc,'"'+p.title.replace(/"/g,'""')+'"',p.camp,p.bldg,p.fs,p.status,p.priority,p.total].concat(FYK.map(function(k){return p[k]||0;})).concat([p.locked?'YES':'NO','"'+(p.notes||'').replace(/"/g,'""')+'"']);});var t=fyTotals();rows.push(['TOTALS','','','','','','','',grandTotal()].concat(FYK.map(function(k){return t[k];})).concat(['','']));var csv=[hdr.join(',')].concat(rows.map(function(r){return r.join(',');})).join('\n');var blob=new Blob([csv],{type:'text/csv'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='12thMLR_LRFP_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);toast('CSV exported','success');}catch(e){toast('Export failed: '+e.message,'error');}}
+function exportJSON(){try{var data={meta:{title:'12th MLR Long-Range Facility Planning',org:'MCIPAC G-F / PPEI',classification:'UNCLASSIFIED // FOUO',exported:new Date().toISOString(),totalProjects:PROJECTS.length,grandTotal:grandTotal()},fyTotals:fyTotals(),projects:PROJECTS};var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='12thMLR_LRFP_'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);toast('JSON exported','success');}catch(e){toast('Export failed: '+e.message,'error');}}
+var CMD=[{ico:'&#9776;',lbl:'Table View',key:'',fn:function(){switchView('table');}},{ico:'&#9783;',lbl:'Card View',key:'',fn:function(){switchView('cards');}},{ico:'&#9652;',lbl:'FY Summary',key:'',fn:function(){switchView('summary');}},{ico:'&#9656;',lbl:'Charts',key:'',fn:function(){switchView('charts');}},{ico:'+',lbl:'Add New Project',key:'',fn:openAddModal},{ico:'&#8659;',lbl:'Export CSV',key:'',fn:exportCSV},{ico:'&#8660;',lbl:'Export JSON',key:'',fn:exportJSON},{ico:'&#9113;',lbl:'Print Dashboard',key:'P',fn:function(){window.print();}},{ico:'&#10005;',lbl:'Clear Filters',key:'',fn:clearFilters},{ico:'&#9788;',lbl:'Toggle Theme',key:'T',fn:toggleTheme},{ico:'&#9664;',lbl:'Toggle Sidebar',key:'K',fn:toggleSidebar},{ico:'&#9632;',lbl:'Filter: Camp Foster',key:'',fn:function(){filterCamp('FOSTER');}},{ico:'&#9632;',lbl:'Filter: Camp Hansen',key:'',fn:function(){filterCamp('HANSEN');}},{ico:'&#9632;',lbl:'Show All Camps',key:'',fn:function(){filterCamp('ALL');}},{ico:'&#9776;',lbl:'Tab: All Projects',key:'',fn:function(){switchTab('all');}},{ico:'&#9776;',lbl:'Tab: Funded Only',key:'',fn:function(){switchTab('funded');}},{ico:'&#9776;',lbl:'Tab: Not Started',key:'',fn:function(){switchTab('ns');}},{ico:'&#128274;',lbl:'Tab: Locked Records',key:'',fn:function(){switchTab('locked');}}];
+var cmdHL=0;
+function openCmd(){document.getElementById('cmdOv').classList.add('open');document.getElementById('cmdInp').value='';renderCmd('');document.getElementById('cmdInp').focus();}
+function renderCmd(q){var q2=q.toLowerCase();var items=CMD.filter(function(a){return!q2||a.lbl.toLowerCase().includes(q2);});cmdHL=0;var h=items.map(function(a,i){return'<div class="cmd-item '+(i===0?'hi':'')+'" data-idx="'+i+'"><span class="cmd-ico">'+a.ico+'</span><span>'+a.lbl+'</span>'+(a.key?'<span class="cmd-key">'+a.key+'</span>':'')+'</div>';}).join('');document.getElementById('cmdList').innerHTML=h||'<div style="padding:14px 16px;font-size:11px;color:var(--text-light);">No commands found</div>';document.querySelectorAll('.cmd-item').forEach(function(el){el.addEventListener('click',function(){var idx=parseInt(this.getAttribute('data-idx'));var filtered=CMD.filter(function(a){return!q2||a.lbl.toLowerCase().includes(q2);});if(filtered[idx]){filtered[idx].fn();closeCmd();}});});}
+function closeCmd(){document.getElementById('cmdOv').classList.remove('open');}
+document.getElementById('cmdInp').addEventListener('input',function(){renderCmd(this.value);});
+document.getElementById('cmdInp').addEventListener('keydown',function(e){var items=document.querySelectorAll('.cmd-item');if(e.key==='ArrowDown'){e.preventDefault();cmdHL=Math.min(cmdHL+1,items.length-1);}else if(e.key==='ArrowUp'){e.preventDefault();cmdHL=Math.max(cmdHL-1,0);}else if(e.key==='Enter'){e.preventDefault();if(items[cmdHL])items[cmdHL].click();}else if(e.key==='Escape')closeCmd();items.forEach(function(el,i){el.classList.toggle('hi',i===cmdHL);});});
+function switchView(v){curView=v;['table','cards','summary','charts'].forEach(function(x){document.getElementById('view'+x.charAt(0).toUpperCase()+x.slice(1)).style.display=(x===v)?'block':'none';var btn=document.getElementById('nav'+x.charAt(0).toUpperCase()+x.slice(1));if(btn)btn.classList.toggle('active',x===v);});renderCurView();}
+function switchTab(tab){curTab=tab;['all','foster','hansen','funded','ns','locked'].forEach(function(t){var btn=document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));if(btn)btn.classList.toggle('active',t===tab);});renderTable();}
+function filterCamp(c){curCamp=c;['ALL','FOSTER','HANSEN'].forEach(function(x){var btn=document.getElementById('camp'+x);if(btn)btn.classList.toggle('active',x===c);});renderCurView();}
+function applyFilters(){renderCurView();}
+function clearFilters(){document.getElementById('srch').value='';document.getElementById('fSt').value='';document.getElementById('fFs').value='';document.getElementById('fFy').value='';curCamp='ALL';curTab='all';['ALL','FOSTER','HANSEN'].forEach(function(x){var btn=document.getElementById('camp'+x);if(btn)btn.classList.toggle('active',x==='ALL');});['all','foster','hansen','funded','ns','locked'].forEach(function(t){var btn=document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));if(btn)btn.classList.toggle('active',t==='all');});renderCurView();toast('Filters cleared','info');}
+function debSearch(){clearTimeout(srchDeb);srchDeb=setTimeout(function(){renderCurView();},300);}
+function renderCurView(){renderKPI();if(curView==='table')renderTable();else if(curView==='cards')renderCards();else if(curView==='summary')renderSummary();else if(curView==='charts')renderCharts();}
+function renderAll(){renderKPI();renderTable();if(curView==='summary')renderSummary();}
+function toggleTheme(){var t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('12mlr_theme',t);}catch(e){}toast('Theme: '+t,'info');if(curView==='charts')setTimeout(renderCharts,50);}
+function toggleSidebar(){var sb=document.getElementById('sidebar');sb.classList.toggle('collapsed');try{localStorage.setItem('12mlr_sb',sb.classList.contains('collapsed')?'c':'o');}catch(e){}}
+var CLOCKS=[{tz:'Asia/Tokyo',lbl:'JST',cls:''},{tz:'Pacific/Honolulu',lbl:'HST',cls:''},{tz:'America/New_York',lbl:'EST',cls:''},{tz:'America/Los_Angeles',lbl:'PST',cls:''},{tz:'UTC',lbl:'ZULU',cls:'zulu'}];
+function updateClocks(){var now=new Date();var h='';CLOCKS.forEach(function(z){var t=now.toLocaleTimeString('en-US',{timeZone:z.tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});var d=now.toLocaleDateString('en-US',{timeZone:z.tz,month:'short',day:'numeric'});h+='<div class="ck '+z.cls+'" title="'+z.tz+'"><div class="ck-tz">'+z.lbl+'</div><div class="ck-time">'+t+'</div><div class="ck-date">'+d+'</div></div>';});document.getElementById('ckRow').innerHTML=h;}
+var calY2=new Date().getFullYear(),calM2=new Date().getMonth();
+function renderCal(){var mnths=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];document.getElementById('calLbl').textContent=mnths[calM2]+' '+calY2;var now=new Date();var first=new Date(calY2,calM2,1);var sdow=first.getDay();var dim=new Date(calY2,calM2+1,0).getDate();var h=['Su','Mo','Tu','We','Th','Fr','Sa'].map(function(d){return'<div class="cal-dow">'+d+'</div>';}).join('');for(var i=0;i<sdow;i++)h+='<div class="cal-day other-month"></div>';for(var d=1;d<=dim;d++){var isT=(d===now.getDate()&&calM2===now.getMonth()&&calY2===now.getFullYear());h+='<div class="cal-day'+(isT?' today':'')+'">' +d+'</div>';}document.getElementById('calGrid').innerHTML=h;}
+function updateHdr(){var hdr=document.getElementById('mainHdr');var kpi=document.getElementById('kpiBar');if(hdr){var h=hdr.offsetHeight+(kpi?kpi.offsetHeight:0);document.documentElement.style.setProperty('--hdr-h',h+'px');}}
+document.getElementById('calPrev').addEventListener('click',function(e){e.stopPropagation();calM2--;if(calM2<0){calM2=11;calY2--;}renderCal();});
+document.getElementById('calNext').addEventListener('click',function(e){e.stopPropagation();calM2++;if(calM2>11){calM2=0;calY2++;}renderCal();});
+document.getElementById('pClose').addEventListener('click',function(e){e.stopPropagation();closePanel();});
+document.getElementById('detBack').addEventListener('click',function(){closePanel();});
+document.getElementById('pSave').addEventListener('click',function(e){e.stopPropagation();savePanel();});
+document.getElementById('pPrint').addEventListener('click',function(e){e.stopPropagation();printRec();});
+document.getElementById('pCopy').addEventListener('click',function(e){e.stopPropagation();copyRec();});
+document.getElementById('pDel').addEventListener('click',function(e){e.stopPropagation();if(actId)confDel(actId);});
+document.getElementById('addClose').addEventListener('click',function(){document.getElementById('addMod').classList.remove('open');});
+document.getElementById('addCancel').addEventListener('click',function(){document.getElementById('addMod').classList.remove('open');});
+document.getElementById('addSave').addEventListener('click',saveAdd);
+document.getElementById('cfCancel').addEventListener('click',function(){document.getElementById('cfOv').classList.remove('open');delId=null;});
+document.getElementById('cfOk').addEventListener('click',execDel);
+document.getElementById('cmdOv').addEventListener('click',function(e){if(e.target===this)closeCmd();});
+document.addEventListener('keydown',function(e){var tag=e.target.tagName;var isEd=tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||e.target.isContentEditable;if(isEd)return;if(e.key==='Escape'){closePanel();closeCmd();document.getElementById('addMod').classList.remove('open');}if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();openCmd();}if(e.key==='t'||e.key==='T')toggleTheme();if(e.key==='k'||e.key==='K')toggleSidebar();if(e.key==='p'||e.key==='P')window.print();});
+window.addEventListener('DOMContentLoaded',function(){try{var st=localStorage.getItem('12mlr_theme');if(st)document.documentElement.setAttribute('data-theme',st);var ss=localStorage.getItem('12mlr_sb');if(ss==='c')document.getElementById('sidebar').classList.add('collapsed');}catch(e){}renderKPI();renderTable();renderCal();updateClocks();setInterval(updateClocks,1000);document.getElementById('printDate').textContent='Printed: '+new Date().toLocaleDateString();setTimeout(updateHdr,100);window.addEventListener('resize',function(){updateHdr();if(curView==='charts')renderCharts();});setTimeout(function(){var lo=document.getElementById('loadOv');if(lo){lo.style.opacity='0';lo.style.transition='opacity .4s';setTimeout(function(){if(lo.parentNode)lo.parentNode.removeChild(lo);},400);}toast('12th MLR LRFP Dashboard loaded - '+PROJECTS.length+' projects','success');},700);});
+</script>
+</body>
+</html>

@@ -1,0 +1,2466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1600">
+<title>4th Marine Regiment / CLB-4 Master Relocation Plan - APEX OMEGA v5.0</title>
+<style>
+/* ============================================================
+   APEX OMEGA v5.0 - 4th MAR / CLB-4 MASTER RELOCATION PLAN
+   MCIPAC G-F / PPE - Camp Schwab Consolidation
+   Palette: Military Dark/Pacific Hybrid - Deep Navy + Teal
+   ============================================================ */
+
+:root {
+  /* Core palette - deep navy base, teal accent */
+  --primary:      #0D2240;
+  --primary-mid:  #1A3A5C;
+  --primary-light:#1E4D8C;
+  --accent:       #2E9BB5;
+  --accent-light: #4BACC6;
+  --accent-bright:#69C7DE;
+
+  /* Background system */
+  --bg:           #0D1E30;
+  --bg-card:      #1A2E44;
+  --bg-panel:     #1E3350;
+  --bg-section:   #101E2E;
+
+  /* Text */
+  --text:         #E2EAF4;
+  --text-muted:   #8AA4BE;
+  --text-light:   #5A7A98;
+
+  /* Borders */
+  --border:       #1E3550;
+  --border-light: #253F5A;
+
+  /* Status colors - colorblind-safe */
+  --status-green:   #2BA84A;
+  --status-green-bg:#0A3A1A;
+  --status-amber:   #D4900A;
+  --status-amber-bg:#2A1E00;
+  --status-red:     #C1272D;
+  --status-red-bg:  #4A0C10;
+  --status-blue:    #2E9BB5;
+  --status-blue-bg: #0A2A3A;
+  --status-purple:  #7B4FBE;
+  --status-purple-bg:#1A0F2E;
+
+  /* Unit tile colors */
+  --tile-div:     #1E4A72;
+  --tile-mlg:     #0E3D28;
+  --tile-reg:     #3A0E6E;
+  --tile-arm:     #0E3D22;
+  --tile-med:     #5C0E2A;
+  --tile-mtr:     #1A4030;
+
+  /* FRF */
+  --frf-red:      #C1272D;
+  --frf-red-bg:   #380810;
+
+  /* Demo / swing */
+  --swing-amber:  #D4900A;
+  --swing-bg:     #3A2800;
+
+  /* Phase header colors */
+  --ph1: #1E5080;
+  --ph2: #1A3A6C;
+  --ph3: #0E5530;
+  --ph4: #7A0E12;
+  --ph5: #0A3048;
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Consolas', 'Courier New', Courier, monospace;
+
+  /* Layout */
+  --class-bar-h: 28px;
+  --header-h: auto;
+}
+
+/* ============================================================
+   RESET + BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  padding-top: var(--class-bar-h);
+  padding-bottom: var(--class-bar-h);
+  min-width: 1200px;
+}
+
+/* ============================================================
+   CLASSIFICATION BARS
+   ============================================================ */
+.class-bar {
+  position: fixed; left: 0; right: 0; z-index: 9999;
+  background: var(--primary);
+  border-bottom: 2px solid var(--accent);
+  color: var(--text);
+  text-align: center; font-weight: 700; font-size: 11px;
+  padding: 0; height: var(--class-bar-h);
+  display: flex; align-items: center; justify-content: center;
+  letter-spacing: 1.5px; font-family: var(--font-sans);
+}
+.class-bar-top { top: 0; border-bottom: 2px solid var(--accent); border-top: none; }
+.class-bar-bottom { bottom: 0; border-top: 2px solid var(--accent); border-bottom: none; }
+
+/* ============================================================
+   SKIP LINK
+   ============================================================ */
+.skip-link {
+  position: absolute; top: -40px; left: 0; background: var(--accent);
+  color: var(--primary); padding: 8px 16px; z-index: 10000;
+  font-weight: 700; font-size: 12px;
+}
+.skip-link:focus { top: var(--class-bar-h); }
+
+/* ============================================================
+   MAIN WRAPPER
+   ============================================================ */
+.main-wrapper {
+  max-width: 1680px; margin: 0 auto; padding: 20px 24px;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.hdr {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  padding: 0 0 16px 0;
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--accent);
+  align-items: start;
+}
+
+.hdr-title h1 {
+  font-size: 26px; font-weight: 800;
+  color: var(--accent-light);
+  text-transform: uppercase; letter-spacing: 1px;
+  line-height: 1.15;
+}
+.hdr-title h2 {
+  font-size: 12px; color: var(--text-muted); font-weight: 500;
+  margin-top: 5px; letter-spacing: 0.5px;
+}
+.hdr-org {
+  font-size: 10px; color: var(--accent);
+  font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; margin-top: 6px;
+}
+
+.hdr-right {
+  display: flex; flex-direction: column;
+  align-items: flex-end; gap: 8px;
+}
+
+.frf-deadline {
+  background: var(--status-red); color: #fff;
+  font-weight: 800; font-size: 12px;
+  padding: 5px 14px; border-radius: 4px;
+  letter-spacing: 1px; font-family: var(--font-mono);
+}
+
+.frf-countdown {
+  font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+  color: var(--accent-bright);
+  background: var(--bg-card);
+  border: 1px solid var(--accent);
+  padding: 5px 12px; border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+.frf-countdown.urgent { color: var(--swing-amber); border-color: var(--swing-amber); }
+.frf-countdown.critical { color: var(--status-red); border-color: var(--status-red); }
+
+/* Clock row - 5 zones */
+.clock-row {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.clock-item {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-card); border: 1px solid var(--border);
+  padding: 3px 8px; border-radius: 3px;
+  display: flex; gap: 5px; align-items: center;
+}
+.clock-label {
+  font-weight: 700; color: var(--accent);
+  font-size: 9px; letter-spacing: 0.5px;
+}
+
+/* Mini calendar */
+.mini-cal {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; padding: 8px 10px;
+  font-size: 10px;
+}
+.cal-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px;
+}
+.cal-month { font-weight: 700; color: var(--accent-light); font-size: 11px; }
+.cal-nav {
+  background: none; border: none; color: var(--text-muted);
+  cursor: pointer; font-size: 14px; padding: 0 4px; line-height: 1;
+}
+.cal-nav:hover { color: var(--accent); }
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; text-align: center; }
+.cal-dow { font-size: 8px; color: var(--text-light); font-weight: 700; padding: 1px 0; }
+.cal-day {
+  font-size: 9px; padding: 2px; border-radius: 2px;
+  color: var(--text-muted); cursor: default;
+}
+.cal-day.today {
+  background: var(--accent); color: var(--primary);
+  font-weight: 800; border-radius: 3px;
+}
+.cal-day.other-month { color: var(--text-light); opacity: 0.4; }
+
+/* ============================================================
+   KPI BAR
+   ============================================================ */
+.kpi-bar {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  padding: 10px 12px;
+}
+.kpi-label {
+  font-size: 9px; font-weight: 700; color: var(--text-light);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;
+}
+.kpi-value {
+  font-size: 22px; font-weight: 800;
+  color: var(--accent-bright); font-family: var(--font-mono);
+  line-height: 1;
+}
+.kpi-sub { font-size: 9px; color: var(--text-muted); margin-top: 3px; }
+
+/* ============================================================
+   LEGEND
+   ============================================================ */
+.legend {
+  display: flex; gap: 18px; flex-wrap: wrap;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 8px 14px; border-radius: 4px;
+  margin-bottom: 14px;
+}
+.leg-item { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 600; color: var(--text-muted); }
+.leg-dot {
+  width: 14px; height: 14px; border-radius: 3px;
+  border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;
+}
+
+/* ============================================================
+   PHASE GRID - 5 COLUMNS
+   ============================================================ */
+.phase-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.phase-col {
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  border-radius: 6px; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.p-head {
+  padding: 10px 12px; text-align: center; color: #fff;
+  font-weight: 800; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 1px; line-height: 1.3;
+  border-bottom: 2px solid rgba(255,255,255,0.1);
+}
+.p-head small {
+  display: block; font-size: 9px; font-weight: 500;
+  opacity: 0.8; text-transform: none; letter-spacing: 0;
+  margin-top: 3px;
+}
+.p-body {
+  padding: 10px; flex-grow: 1;
+  background: var(--bg-panel);
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+/* Phase cards */
+.card {
+  background: var(--bg-card);
+  padding: 8px 10px 7px;
+  border-left: 4px solid #555; border-radius: 0 4px 4px 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.s-plan  { border-left-color: var(--text-light); }
+.s-swing { border-left-color: var(--swing-amber); background: var(--swing-bg); }
+.s-move  { border-left-color: var(--status-green); }
+.s-frf   { border-left-color: var(--status-red); background: var(--frf-red-bg); }
+.s-armory{ border-left-color: var(--status-green); background: var(--status-green-bg); }
+.s-final { border-left-color: var(--accent); background: var(--status-blue-bg); }
+
+.badge {
+  font-size: 8px; font-weight: 800; color: #fff;
+  padding: 2px 7px; border-radius: 3px;
+  display: inline-block; margin-bottom: 4px;
+  letter-spacing: 0.5px; text-transform: uppercase;
+}
+.u-row {
+  font-size: 10px; font-weight: 700;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 2px; color: var(--text);
+}
+.arr { color: var(--accent); font-size: 9px; margin: 0 3px; }
+.date-badge {
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+  color: var(--accent-light);
+  background: var(--bg-section);
+  border: 1px solid var(--border);
+  padding: 2px 6px; border-radius: 3px; white-space: nowrap;
+}
+.detail {
+  font-size: 9px; color: var(--text-muted); margin-top: 3px;
+  line-height: 1.4; border-top: 1px solid var(--border);
+  padding-top: 4px;
+}
+.impact {
+  font-size: 9px; color: var(--accent); font-style: italic;
+  font-weight: 600; margin-top: 2px;
+}
+
+/* FRF demolition status block */
+.frf-status {
+  background: var(--frf-red-bg);
+  border: 1px solid var(--status-red);
+  border-radius: 4px; padding: 8px 10px;
+}
+.frf-status-title {
+  font-size: 9px; font-weight: 800; color: var(--status-red);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;
+}
+.frf-status-item {
+  font-size: 9px; color: var(--text); padding: 2px 0;
+  display: flex; align-items: center; gap: 6px;
+}
+.frf-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* Final config summary block */
+.final-block {
+  background: var(--status-blue-bg);
+  border: 1px solid var(--accent);
+  border-radius: 4px; padding: 8px 10px;
+}
+.final-block-title {
+  font-size: 9px; font-weight: 800; color: var(--accent-light);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px;
+}
+.final-item {
+  font-size: 9px; color: var(--text-muted); padding: 2px 0;
+  display: flex; align-items: center; gap: 6px;
+}
+.final-dot { width: 6px; height: 6px; border-radius: 1px; flex-shrink: 0; }
+
+/* ============================================================
+   FOOTER REFERENCE BOXES
+   ============================================================ */
+.footer-grid {
+  display: grid; grid-template-columns: 1.2fr 1fr;
+  gap: 12px; margin-bottom: 16px;
+}
+.f-box {
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  padding: 10px 12px; border-radius: 4px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.f-title {
+  font-size: 10px; font-weight: 800; color: var(--accent-light);
+  width: 130px; text-align: right; line-height: 1.4;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  flex-shrink: 0; border-right: 2px solid var(--border); padding-right: 10px;
+}
+.f-list { display: flex; flex-wrap: wrap; gap: 5px; flex-grow: 1; }
+.f-item {
+  background: var(--bg-panel); border: 1px solid var(--border);
+  padding: 4px 9px; font-size: 9px; border-radius: 3px;
+  font-weight: 700; color: var(--text);
+}
+.f-item strong { color: var(--accent-light); margin-right: 3px; }
+
+/* Org footer */
+.org-footer {
+  text-align: center; font-size: 10px; color: var(--text-light);
+  font-weight: 700; letter-spacing: 1.5px; padding: 10px 0 6px;
+  border-top: 1px solid var(--border);
+  margin-bottom: 24px; text-transform: uppercase;
+}
+
+/* ============================================================
+   INTERACTIVE MAP SECTION
+   ============================================================ */
+.map-section {
+  background: var(--bg-section);
+  border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.map-header {
+  padding: 14px 20px;
+  background: var(--primary);
+  border-bottom: 2px solid var(--accent);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.map-title {
+  font-size: 15px; font-weight: 800;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--accent-light);
+}
+.map-status {
+  font-size: 11px; color: var(--text-muted); margin-top: 3px;
+}
+.map-status span { color: var(--accent-bright); font-weight: 700; }
+.map-controls { display: flex; gap: 10px; align-items: center; }
+
+.map-btn {
+  border: none; padding: 9px 18px; border-radius: 5px;
+  cursor: pointer; font-weight: 700; font-size: 11px;
+  font-family: var(--font-sans); letter-spacing: 0.5px;
+  text-transform: uppercase; transition: all 0.2s;
+}
+.map-btn:hover { filter: brightness(1.2); transform: translateY(-1px); }
+.map-btn:active { transform: translateY(0); }
+.map-btn:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
+.btn-execute { background: var(--status-green); color: #fff; }
+.btn-reset   { background: var(--primary-mid); color: #fff; border: 1px solid var(--border-light); }
+
+.kb-hint { font-size: 9px; color: var(--text-light); margin-top: 4px; }
+kbd {
+  background: var(--bg-card); padding: 1px 5px;
+  border-radius: 3px; font-family: var(--font-mono);
+  font-size: 9px; border: 1px solid var(--border-light);
+  color: var(--accent-light);
+}
+
+/* Phase progress indicator */
+.phase-indicator {
+  display: flex; gap: 6px; align-items: center;
+  padding: 8px 20px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+}
+.phase-pip {
+  height: 6px; border-radius: 3px;
+  background: var(--border); transition: all 0.4s ease;
+}
+.phase-pip.p1 { width: 60px; }
+.phase-pip.p2 { width: 70px; }
+.phase-pip.p3 { width: 70px; }
+.phase-pip.p4 { width: 80px; }
+.phase-pip.active { background: var(--accent-bright); }
+.phase-pip.done   { background: var(--status-green); }
+.phase-label-bar {
+  font-size: 10px; color: var(--text-muted);
+  margin-left: 10px; font-weight: 700;
+  font-family: var(--font-mono); letter-spacing: 0.5px;
+}
+
+/* ============================================================
+   MAP STAGE
+   ============================================================ */
+.map-stage {
+  width: 100%; height: 700px; position: relative;
+  background: #0A1520;
+  background-image:
+    linear-gradient(rgba(46,155,181,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46,155,181,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  overflow: hidden;
+}
+
+/* FRF demolition line */
+.demo-line {
+  position: absolute; top: 0; bottom: 0; left: 1045px; width: 10px;
+  background: repeating-linear-gradient(
+    175deg, transparent, transparent 12px,
+    rgba(193,39,45,0.5) 12px, rgba(193,39,45,0.5) 20px
+  );
+  border-left: 2px solid rgba(193,39,45,0.8);
+  z-index: 5;
+}
+.demo-label {
+  position: absolute; top: 28px; left: 1060px;
+  color: rgba(193,39,45,0.85);
+  font-size: 11px; font-weight: 800;
+  letter-spacing: 3px; writing-mode: vertical-rl;
+  text-orientation: upright; font-family: var(--font-sans);
+}
+
+/* Zone labels */
+.zone-label {
+  position: absolute; font-size: 9px; font-weight: 800;
+  color: rgba(46,155,181,0.3); text-transform: uppercase;
+  letter-spacing: 2.5px; z-index: 0; pointer-events: none;
+}
+
+/* ============================================================
+   MAP BUILDINGS
+   ============================================================ */
+.m-bldg {
+  position: absolute;
+  background: rgba(22,34,51,0.85);
+  border: 2px solid #253F5A;
+  color: var(--accent-light); font-family: var(--font-sans);
+  font-size: 16px; font-weight: 800;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  padding-top: 6px; z-index: 1; border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  transition: background 0.6s, border-color 0.6s, opacity 0.6s;
+}
+.m-bldg span {
+  font-size: 9px; color: var(--text-muted);
+  font-weight: 600; margin-top: 1px;
+  text-align: center; letter-spacing: 0.3px; padding: 0 4px;
+}
+.m-bldg.frf {
+  border-color: rgba(193,39,45,0.7); border-style: dashed;
+  background: rgba(42,11,12,0.7);
+  color: #E57373;
+}
+.m-bldg.swing {
+  border-color: rgba(212,144,10,0.7); border-style: dotted;
+  background: rgba(30,21,0,0.7); color: var(--swing-amber);
+}
+.m-bldg.final-dest {
+  border-color: rgba(46,155,181,0.6);
+  background: rgba(10,30,40,0.85);
+}
+.m-bldg.resident {
+  border-color: rgba(43,168,74,0.5);
+  background: rgba(13,42,24,0.85);
+}
+.m-bldg.demolished {
+  background: #080E14 !important;
+  border-color: #1A2535 !important;
+  color: #253545 !important;
+  border-style: solid !important;
+  opacity: 0.6;
+}
+.m-bldg.demolished span {
+  color: #253545; text-decoration: line-through;
+}
+.m-bldg.demolished::after {
+  content: "VACATED"; color: rgba(193,39,45,0.7);
+  font-size: 10px; font-weight: 800; margin-top: 12px;
+  letter-spacing: 1px;
+}
+
+/* ============================================================
+   UNIT TILES
+   ============================================================ */
+.tile {
+  width: 108px; height: 28px;
+  font-size: 9px; font-weight: 700; font-family: var(--font-sans);
+  display: flex; justify-content: flex-start; align-items: center;
+  border-radius: 3px; padding-left: 5px; padding-right: 3px;
+  position: absolute; z-index: 10;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.6);
+  transition: top 1.5s cubic-bezier(0.4, 0, 0.2, 1),
+              left 1.5s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.5s ease;
+  border: 1px solid rgba(255,255,255,0.15);
+  cursor: default; letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.fy-tag {
+  position: absolute; top: -7px; right: -4px;
+  background: var(--primary); color: var(--accent-light);
+  font-size: 8px; font-weight: 900;
+  padding: 1px 4px; border-radius: 2px;
+  border: 1px solid var(--accent);
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.5); z-index: 11;
+  font-family: var(--font-mono);
+  opacity: 0; transition: opacity 0.5s ease-in;
+}
+.fy-tag.visible { opacity: 1; }
+.fy-tag.inline {
+  position: static; top: auto; right: auto;
+  display: inline-block; margin-left: auto;
+  font-size: 7px; padding: 1px 3px;
+  border-radius: 2px; box-shadow: none;
+  flex-shrink: 0;
+}
+
+
+/* Org logos */
+.logo-mlg {
+  height: 12px; width: 12px; border-radius: 50%;
+  background: #2BA84A; border: 2px solid #B71C1C;
+  margin-right: 4px; display: inline-block; flex-shrink: 0;
+}
+.logo-div {
+  height: 12px; width: 10px;
+  background: linear-gradient(135deg, #B71C1C 50%, #FFC107 50%);
+  border: 1px solid #000; margin-right: 4px;
+  display: inline-block; flex-shrink: 0;
+}
+
+/* Tile type colors */
+.t-mlg { background: var(--tile-mlg); color: #C8E6C9; }
+.t-div { background: var(--tile-div); color: var(--text); }
+.t-reg { background: var(--tile-reg); color: #E1BEE7; border: 1px solid rgba(123,79,190,0.6); }
+.t-arm { background: var(--tile-arm); color: #C8E6C9; }
+.t-med { background: var(--tile-med); color: #FCE4EC; }
+.t-mtr { background: var(--tile-mtr); color: #DCEDC8; }
+
+/* Map footer */
+.map-footer {
+  padding: 8px 20px; text-align: center;
+  font-size: 10px; color: var(--text-light); font-weight: 700;
+  letter-spacing: 1px; border-top: 1px solid var(--border);
+  background: var(--primary); text-transform: uppercase;
+}
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@media print {
+  .class-bar { position: static; }
+  .class-bar-top { border-bottom: 1px solid #000; }
+  .class-bar-bottom { border-top: 1px solid #000; margin-top: 8px; }
+  body {
+    padding: 0; background: #fff; color: #000;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .main-wrapper { max-width: 100%; padding: 0 0.25in; }
+  .map-section { display: none; }
+  .hdr { border-bottom: 2px solid #1E4D8C; }
+  .hdr-title h1 { color: #1E4D8C; font-size: 22px; }
+  .hdr-title h2 { color: #444; }
+  .hdr-org { color: #1E4D8C; }
+  .frf-deadline { background: #333; -webkit-print-color-adjust: exact; }
+  .frf-countdown { color: #000; background: #eee; border-color: #999; }
+  .clock-row { display: none; }
+  .mini-cal { display: none; }
+  .kpi-bar { display: none; }
+  .legend { background: #f5f5f5; border-color: #ccc; }
+  .leg-item { color: #333; }
+  .phase-grid { break-inside: avoid; }
+  .phase-col { box-shadow: none; border: 1px solid #999; background: #fff; }
+  .p-body { background: #f9f9f9; }
+  .card { box-shadow: none; background: #fff; border-left-width: 3px; }
+  .u-row { color: #000; }
+  .detail { color: #444; border-color: #ddd; }
+  .impact { color: #1E4D8C; }
+  .date-badge { color: #333; background: #eee; border-color: #ccc; }
+  .badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .footer-grid { break-inside: avoid; }
+  .f-box { background: #f5f5f5; border: 1px solid #ccc; }
+  .f-item { background: #fff; border-color: #ccc; color: #000; }
+  .f-item strong { color: #1E4D8C; }
+  .f-title { color: #1E4D8C; border-color: #ccc; }
+  .frf-status { background: #fff3f3; border-color: #c00; }
+  .frf-status-title { color: #c00; }
+  .org-footer { color: #666; border-color: #ccc; }
+  @page { size: 17in 11in landscape; margin: 0.35in; }
+}
+
+/* ============================================================
+   ACCESSIBILITY
+   ============================================================ */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+*:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
+
+/* ============================================================
+   OMEGA APEX v6.0 - EDIT SYSTEM
+   ============================================================ */
+
+/* Edit Mode Toggle Bar */
+#edit-bar {
+  position: fixed; top: var(--class-bar-h); left: 0; right: 0; z-index: 8000;
+  background: #1A0A3A; border-bottom: 2px solid #7B4FBE;
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 16px; font-family: var(--font-sans);
+  transform: translateY(-100%); transition: transform 0.3s ease;
+  pointer-events: none;
+}
+body.edit-mode #edit-bar { transform: translateY(0); pointer-events: all; }
+body.edit-mode { padding-top: calc(var(--class-bar-h) + 38px); }
+
+#edit-bar-label {
+  font-size: 10px; font-weight: 800; color: #CE93D8;
+  letter-spacing: 2px; text-transform: uppercase; margin-right: 4px;
+}
+#edit-mode-btn {
+  position: fixed; bottom: calc(var(--class-bar-h) + 12px); right: 16px;
+  z-index: 8001; background: #3A0E6E; color: #E1BEE7;
+  border: 1px solid #7B4FBE; border-radius: 6px;
+  padding: 8px 14px; font-size: 11px; font-weight: 800;
+  font-family: var(--font-sans); cursor: pointer;
+  letter-spacing: 1px; text-transform: uppercase;
+  transition: all 0.2s; box-shadow: 0 4px 16px rgba(123,79,190,0.4);
+}
+#edit-mode-btn:hover { background: #5B1FA8; box-shadow: 0 4px 20px rgba(123,79,190,0.7); }
+body.edit-mode #edit-mode-btn { background: #7A0E12; border-color: #C1272D; color: #fff; }
+
+.eb-btn {
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+  color: #E1BEE7; border-radius: 4px; padding: 4px 10px;
+  font-size: 10px; font-weight: 700; cursor: pointer;
+  font-family: var(--font-sans); letter-spacing: 0.5px;
+  transition: background 0.2s;
+}
+.eb-btn:hover { background: rgba(255,255,255,0.15); }
+.eb-btn.primary { background: #2E9BB5; border-color: #4BACC6; color: #fff; }
+.eb-btn.danger  { background: #7A0E12; border-color: #C1272D; color: #fff; }
+.eb-btn.success { background: #0E5530; border-color: #2BA84A; color: #fff; }
+
+#edit-bar-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.15); margin: 0 4px; }
+#edit-bar-hint { font-size: 9px; color: rgba(255,255,255,0.35); margin-left: auto; }
+#edit-unsaved { font-size: 9px; color: #FFB74D; font-weight: 700;
+  display: none; margin-left: 8px; }
+body.has-unsaved #edit-unsaved { display: inline; }
+
+/* Editable elements in edit mode */
+body.edit-mode [data-editable] {
+  cursor: pointer !important;
+  outline: 1px dashed rgba(123,79,190,0.4);
+  border-radius: 2px;
+  transition: outline 0.15s;
+}
+body.edit-mode [data-editable]:hover {
+  outline: 2px solid #7B4FBE;
+  background: rgba(123,79,190,0.08) !important;
+}
+body.edit-mode [data-editable].editing {
+  outline: 2px solid #CE93D8 !important;
+}
+
+/* Edit Panel (slide from right) */
+#edit-panel {
+  position: fixed; top: var(--class-bar-h); right: 0; bottom: var(--class-bar-h);
+  width: 360px; background: #0F0A1E;
+  border-left: 2px solid #7B4FBE;
+  z-index: 9000; display: flex; flex-direction: column;
+  transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  font-family: var(--font-sans);
+}
+#edit-panel.open { transform: translateX(0); }
+
+#ep-header {
+  padding: 14px 16px 12px;
+  background: #1A0A3A; border-bottom: 1px solid #3A1A6E;
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+#ep-title { font-size: 12px; font-weight: 800; color: #CE93D8;
+  text-transform: uppercase; letter-spacing: 1px; flex-grow: 1; }
+#ep-close {
+  background: none; border: none; color: #7B4FBE; cursor: pointer;
+  font-size: 18px; line-height: 1; padding: 2px 6px; border-radius: 3px;
+  transition: color 0.2s;
+}
+#ep-close:hover { color: #CE93D8; }
+#ep-section {
+  font-size: 9px; color: rgba(206,147,216,0.5);
+  text-transform: uppercase; letter-spacing: 1px;
+  padding: 6px 16px 0; flex-shrink: 0;
+}
+
+#ep-body { flex: 1; overflow-y: auto; padding: 12px 16px; min-height: 0; }
+
+.ep-field { margin-bottom: 14px; }
+.ep-field label {
+  display: block; font-size: 9px; font-weight: 700; color: #8A6FA8;
+  text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;
+}
+.ep-field input, .ep-field textarea, .ep-field select {
+  width: 100%; background: #1A0A3A; border: 1px solid #3A1A6E;
+  color: #E1BEE7; border-radius: 4px; padding: 7px 10px;
+  font-size: 11px; font-family: var(--font-sans);
+  transition: border-color 0.2s; resize: vertical;
+}
+.ep-field input:focus, .ep-field textarea:focus, .ep-field select:focus {
+  outline: none; border-color: #7B4FBE;
+}
+.ep-field textarea { min-height: 60px; }
+.ep-hint {
+  font-size: 9px; color: rgba(206,147,216,0.4); margin-top: 3px;
+}
+
+#ep-footer {
+  padding: 12px 16px; border-top: 1px solid #3A1A6E;
+  display: flex; gap: 8px; flex-shrink: 0;
+  background: #0F0A1E;
+}
+
+/* Inline edit input that appears over text */
+.inline-edit-input {
+  position: absolute; z-index: 9500;
+  background: #1A0A3A; border: 2px solid #7B4FBE;
+  color: #E1BEE7; border-radius: 4px; padding: 4px 8px;
+  font-size: inherit; font-weight: inherit; font-family: var(--font-sans);
+  min-width: 80px; outline: none;
+}
+
+/* Tile editor - position inputs */
+.ep-coord-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* Edit Mode toast */
+#edit-toast {
+  position: fixed; bottom: calc(var(--class-bar-h) + 60px); right: 16px;
+  z-index: 9900; background: #0E5530; color: #C8E6C9;
+  border: 1px solid #2BA84A; border-radius: 6px;
+  padding: 8px 14px; font-size: 11px; font-weight: 700;
+  opacity: 0; transform: translateY(8px);
+  transition: all 0.25s ease; pointer-events: none;
+}
+#edit-toast.show { opacity: 1; transform: translateY(0); }
+#edit-toast.warn { background: #3A2800; border-color: #D4900A; color: #FFB74D; }
+#edit-toast.err  { background: #4A0C10; border-color: #C1272D; color: #FF8A80; }
+
+/* Tile drag in edit mode */
+body.edit-mode .tile { cursor: grab !important; }
+body.edit-mode .tile.dragging { cursor: grabbing !important; opacity: 0.8; z-index: 9000 !important; }
+body.edit-mode .tile:hover { outline: 2px solid #7B4FBE; }
+
+/* Sequence editor rows */
+.seq-row {
+  background: #1A0A3A; border: 1px solid #3A1A6E; border-radius: 4px;
+  padding: 8px 10px; margin-bottom: 6px;
+}
+.seq-row-head {
+  font-size: 9px; font-weight: 800; color: #CE93D8;
+  text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px;
+}
+
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<div id="a11y-announce" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Classification Bars -->
+<div class="class-bar class-bar-top" role="banner" aria-label="Classification marking">
+  UNCLASSIFIED // FOR INTERNAL PLANNING PURPOSES ONLY
+</div>
+<div class="class-bar class-bar-bottom" role="contentinfo" aria-label="Classification marking">
+  UNCLASSIFIED // FOR INTERNAL PLANNING PURPOSES ONLY
+</div>
+
+<div class="main-wrapper" id="main-content">
+
+  <!-- HEADER -->
+  <header class="hdr">
+    <div class="hdr-title">
+      <h1 data-editable="title" data-label="Dashboard Title" title="Click to edit in Edit Mode">4th Marine Regiment / CLB-4<br>Master Relocation Plan</h1>
+      <h2 data-editable="subtitle" data-label="Subtitle" title="Click to edit in Edit Mode">Phased Facility Utilization &amp; Unit Movement Sequence - FY26 through FRF Vacation (1 June 2028)</h2>
+      <div class="hdr-org" data-editable="org" data-label="Org Attribution" title="Click to edit in Edit Mode">MCIPAC G-F &bull; PPE &bull; Camp Schwab Consolidation</div>
+    </div>
+    <div class="hdr-right">
+      <div class="frf-deadline" data-editable="frf-deadline-text" data-label="FRF Deadline Label" aria-label="FRF vacation deadline" title="Click to edit in Edit Mode">FRF VACATION DEADLINE: 1 JUNE 2028</div>
+      <div class="frf-countdown" id="frf-countdown" role="timer" aria-label="Time remaining to FRF deadline">Calculating...</div>
+      <div class="clock-row" aria-label="World clocks">
+        <div class="clock-item"><span class="clock-label">JST</span><span id="clk-jst">--:--:--</span></div>
+        <div class="clock-item"><span class="clock-label">HST</span><span id="clk-hst">--:--:--</span></div>
+        <div class="clock-item"><span class="clock-label">EST</span><span id="clk-est">--:--:--</span></div>
+        <div class="clock-item"><span class="clock-label">PST</span><span id="clk-pst">--:--:--</span></div>
+        <div class="clock-item"><span class="clock-label">ZULU</span><span id="clk-utc">--:--:--</span></div>
+      </div>
+      <div class="mini-cal" id="mini-cal" aria-label="Mini calendar"></div>
+    </div>
+  </header>
+
+  <!-- KPI BAR -->
+  <div class="kpi-bar" role="region" aria-label="Summary metrics">
+    <div class="kpi-card">
+      <div class="kpi-label" data-editable="text" data-label="KPI Label" title="Click to edit in Edit Mode">Total Units Moving</div>
+      <div class="kpi-value" data-editable="text" data-label="KPI Value" title="Click to edit in Edit Mode">9</div>
+      <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">Unit elements relocating FY26-FY28</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label" data-editable="text" data-label="KPI Label" title="Click to edit in Edit Mode">Phases</div>
+      <div class="kpi-value" data-editable="text" data-label="KPI Value" title="Click to edit in Edit Mode">4</div>
+      <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">Q3 FY26 through Q3 FY28</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label" data-editable="text" data-label="KPI Label" title="Click to edit in Edit Mode">FRF Bldgs</div>
+      <div class="kpi-value" data-editable="text" data-label="KPI Value" title="Click to edit in Edit Mode">2</div>
+      <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">3509 demo / 3510 pending GOJ</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label" data-editable="text" data-label="KPI Label" title="Click to edit in Edit Mode">Swing Spaces</div>
+      <div class="kpi-value" data-editable="text" data-label="KPI Value" title="Click to edit in Edit Mode">1</div>
+      <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">Bldg 1024 interim use</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label" data-editable="text" data-label="KPI Label" title="Click to edit in Edit Mode">Consol Buildings</div>
+      <div class="kpi-value" data-editable="text" data-label="KPI Value" title="Click to edit in Edit Mode">4</div>
+      <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">3213, 3235, 3237, 3314</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label" data-editable="text" data-label="KPI Label" title="Click to edit in Edit Mode">Days to FRF</div>
+      <div class="kpi-value" id="kpi-days">--</div>
+      <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">1 June 2028 deadline</div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend" role="img" aria-label="Map and phase grid legend">
+    <div class="leg-item"><div class="leg-dot" style="background:var(--swing-amber)"></div>Swing Space</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--status-green)"></div>Permanent Move</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--status-red)"></div>FRF Action</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--accent)"></div>Final Configuration</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--text-light)"></div>Planning / Contract</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--tile-mtr)"></div>In Place / No Move</div>
+  </div>
+
+  <!-- PHASE GRID - 5 columns -->
+  <div class="phase-grid" role="region" aria-label="Five-phase relocation timeline">
+
+    <!-- Phase 1: FY26 Start -->
+    <div class="phase-col">
+      <div class="p-head" style="background:var(--ph1);">
+        FY26 (Start)<small>Planning &amp; Swing Operations</small>
+      </div>
+      <div class="p-body">
+        <div class="card s-move">
+          <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3413 &rarr; 3335</span>
+          <div class="u-row">
+            <span>SAFETY/ENV/FIR <span class="arr">&rarr;</span> 3335</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">Q3 FY26</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Moves to converted Base Theater offices. Bldg 3413 vacated for CLB-4 A&amp;B backfill.</div>
+        </div>
+        <div class="card s-swing">
+          <span class="badge" style="background:var(--swing-amber);color:#000;" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">1024 SWING</span>
+          <div class="u-row">
+            <span>CLB-4 COMM <span class="arr">&rarr;</span> 1024</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">Q3 FY26</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Interim swing during Bldg 3235 renovation. Gym: NIPR/Phones. Court: Server Racks.</div>
+        </div>
+        <div class="card s-plan">
+          <span class="badge" style="background:var(--text-light);color:#000;" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">CONTRACT</span>
+          <div class="u-row">CONTRACT AWARDS BEGIN</div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Design-Build contract awards begin to enable phased facility renovation and unit consolidation across Camp Schwab.</div>
+          <div class="u-row" style="margin-top:5px;">
+            <span class="date-badge" style="font-size:9px;" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">Q4 FY26 &ndash; Q1 FY27</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2: FY27 Moves -->
+    <div class="phase-col">
+      <div class="p-head" style="background:var(--ph2);">
+        FY27 (Moves)<small>Enabling &amp; Consolidation</small>
+      </div>
+      <div class="p-body">
+        <div class="card s-move">
+          <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3446 &rarr; 3237</span>
+          <div class="u-row">
+            <span>UDP-W SUPPLY <span class="arr">&rarr;</span> 3237</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">Q3 FY27</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Consolidates into Bldg 3237 with 4th MAR Regt Supply and CLB-4 Supply already resident.</div>
+        </div>
+        <div class="card s-move">
+          <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3213 VACATES</span>
+          <div class="u-row">
+            <span>LAR CO <span class="arr">&rarr;</span> 3210</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">Q2 FY27</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Co-locates with ACV CO at Bldg 3210.</div>
+        </div>
+        <div class="card s-frf">
+          <span class="badge" style="background:var(--status-red);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3509 &rarr; 3410</span>
+          <div class="u-row">
+            <span>HQ CO 4TH MAR REGT <span class="arr">&rarr;</span> 3410</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">Q4 FY27</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Vacates FRF demolition line. Relocates to renovated Bldg 3410.</div>
+        </div>
+        <div class="card s-move">
+          <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3314 &rarr; 3413</span>
+          <div class="u-row">
+            <span>CLB-4 A&amp;B CO <span class="arr">&rarr;</span> 3413</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">Q2 FY27</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Occupies former Safety/Env building after renovation.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3: FY28 Finals -->
+    <div class="phase-col">
+      <div class="p-head" style="background:var(--ph3);">
+        FY28 (Finals)<small>Backfill &amp; Consolidation</small>
+      </div>
+      <div class="p-body">
+        <div class="card s-move">
+          <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">1024 &rarr; 3235</span>
+          <div class="u-row">
+            <span>CLB-4 COMM <span class="arr">&rarr;</span> 3235</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">Q3 FY28</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Exits Bldg 1024 swing space. Joins 4th MAR COMM in final configuration at Bldg 3235.</div>
+        </div>
+        <div class="card s-armory">
+          <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">ARMORY &rarr; 1024</span>
+          <div class="u-row">
+            <span>CONSOL ARMORY <span class="arr">&rarr;</span> 1024</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">Q3 FY28</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Consolidated Armory (4th MAR Regt / CLB-4) occupies renovated 1st floor of Bldg 1024.</div>
+        </div>
+        <div class="card s-move">
+          <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3314 &rarr; 3213</span>
+          <div class="u-row">
+            <span>CLB-4 HQ <span class="arr">&rarr;</span> 3213</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">Q3 FY28</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Moves to renovated Bldg 3213.</div>
+          <div class="impact" data-editable="text" data-label="Impact Note" title="Click to edit in Edit Mode">Bldg 3314 2nd deck freed for 4th MAR Regt HQ.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4: 1 June 2028 FRF -->
+    <div class="phase-col">
+      <div class="p-head" style="background:var(--ph4);">
+        1 June 2028<small>FRF Vacation Deadline</small>
+      </div>
+      <div class="p-body">
+        <div class="card s-frf">
+          <span class="badge" style="background:var(--status-purple);border:1px solid gold;" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">4TH MAR HQ</span>
+          <div class="u-row">
+            <span>3509 <span class="arr">&rarr;</span> 3314</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">Q3 FY28</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Occupies renovated 2nd Deck of Bldg 3314. 1st Deck: 1st Bn, 4th MAR (UDP).</div>
+          <div class="impact" data-editable="text" data-label="Impact Note" title="Click to edit in Edit Mode">FRF Bldg 3509 vacated. Demolition follows.</div>
+        </div>
+        <div class="card s-frf">
+          <span class="badge" style="background:var(--status-red);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3510 (MED)</span>
+          <div class="u-row">RETAINED - PENDING GOJ CONSTRUCTION</div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Facility remains active until GOJ completes replacement Medical/Dental clinic.</div>
+        </div>
+        <div class="frf-status">
+          <div class="frf-status-title">FRF Demolition Status</div>
+          <div class="frf-status-item">
+            <div class="frf-dot" style="background:var(--status-red);"></div>
+            3509: Vacated &amp; Demolished
+          </div>
+          <div class="frf-status-item">
+            <div class="frf-dot" style="background:var(--swing-amber);"></div>
+            3510: Retained pending GOJ rebuild
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 5: Final Configuration -->
+    <div class="phase-col">
+      <div class="p-head" style="background:var(--ph5);border-left:3px solid var(--accent);">
+        Post-FRF<small>Final Configuration</small>
+      </div>
+      <div class="p-body">
+        <div class="final-block">
+          <div class="final-block-title">Consolidated Facilities</div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3314 (1st Deck) - 1st Bn, 4th MAR (UDP)</div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3314 (2nd Deck) - 4th MAR Regt HQ</div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3213 - CLB-4 HQ</div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3237 - Consol Supply (4th MAR Regt / CLB-4 / UDP-W)</div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3235 - Consol Comms (4th MAR Regt / CLB-4)</div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">1024 - Consol Armory (4th MAR Regt / CLB-4)</div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3210 - ACV / LAR CO (4th MAR Regt)</div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3270 - Motor Pool (4th MAR Regt / CLB-4)</div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3413 - CLB-4 A&amp;B CO</div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3335 - Safety/Fire/Env</div>
+          <div class="final-item"><div class="final-dot" style="background:var(--accent);"></div><span data-editable="text" data-label="Final Config Item" title="Click to edit in Edit Mode">3410 - HQ CO, 4th MAR Regt</div>
+        </div>
+        <div class="card s-frf" style="margin-top:4px;">
+          <span class="badge" style="background:var(--status-amber);color:#000;" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">PENDING</span>
+          <div class="u-row">3510 MED/ATC</div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">Retained until GOJ replacement clinic complete.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /phase-grid -->
+
+  <!-- FOOTER REFERENCE BOXES -->
+  <div class="footer-grid">
+    <div class="f-box">
+      <div class="f-title">Camp Schwab<br>Support Facilities<br>(No Renovation)</div>
+      <div class="f-list">
+        <div class="f-item" data-editable="text" data-label="Reference Item" title="Click to edit in Edit Mode"><strong>3210</strong> ACV / LAR CO (4th MAR Regt)</div>
+        <div class="f-item" data-editable="text" data-label="Reference Item" title="Click to edit in Edit Mode"><strong>3270</strong> Motor Pool (4th MAR Regt / CLB-4)</div>
+        <div class="f-item" data-editable="text" data-label="Reference Item" title="Click to edit in Edit Mode"><strong>3252</strong> UDP-W Motor Pool</div>
+        <div class="f-item" data-editable="text" data-label="Reference Item" title="Click to edit in Edit Mode"><strong>3335</strong> Base Theater &rarr; Safety/Fire/Env</div>
+        <div class="f-item" data-editable="text" data-label="Reference Item" title="Click to edit in Edit Mode"><strong>3410</strong> HQ CO, 4th MAR Regt (Dest)</div>
+      </div>
+    </div>
+    <div class="f-box" style="border-left:3px solid var(--status-purple);">
+      <div class="f-title" style="color:var(--accent-light);border-color:var(--border);">Camp Kinser<br>(Projected Elements)</div>
+      <div class="f-list">
+        <div class="f-item" data-editable="text" data-label="Reference Item" title="Click to edit in Edit Mode"><strong>835</strong> UDP-H HQ</div>
+        <div class="f-item" data-editable="text" data-label="Reference Item" title="Click to edit in Edit Mode"><strong>300</strong> CBRN/FDSVC</div>
+        <div class="f-item" data-editable="text" data-label="Reference Item" title="Click to edit in Edit Mode"><strong>400</strong> Armory/Sup</div>
+        <div class="f-item" data-editable="text" data-label="Reference Item" title="Click to edit in Edit Mode"><strong>602</strong> Motor Pool</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="org-footer" data-editable="text" data-label="Footer Attribution" title="Click to edit in Edit Mode">MCIPAC G-F &bull; PPE &bull; Camp Schwab Consolidation &bull; APEX OMEGA v5.0</div>
+
+</div><!-- /main-wrapper -->
+
+<!-- INTERACTIVE EXECUTION MAP -->
+<div class="map-section" role="region" aria-label="Interactive execution demonstration">
+  <div class="map-header">
+    <div>
+      <div class="map-title">Interactive Execution Demonstration - Camp Schwab Consolidation</div>
+      <div class="map-status">Phase Status: <span id="status">Initial Posture - Current Configuration</span></div>
+      <div class="kb-hint">Keyboard: <kbd>Space</kbd> or <kbd>&rarr;</kbd> advance phase &nbsp; <kbd>R</kbd> reset &nbsp; <kbd>P</kbd> print</div>
+    </div>
+    <div class="map-controls">
+      <button class="map-btn btn-execute" id="btn-exec"
+              aria-label="Execute next phase"
+              title="Advance to the next relocation phase">&#9654; EXECUTE PHASE</button>
+      <button class="map-btn btn-reset" id="btn-reset"
+              aria-label="Reset map to initial posture"
+              title="Reset to initial posture">RESET</button>
+    </div>
+  </div>
+
+  <div class="phase-indicator" role="progressbar" aria-label="Phase progress" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" id="phase-bar">
+    <div class="phase-pip p1" id="pip-1" title="Phase 1: Q3 FY26 - Safety/Env and CLB-4 Comms Swing"></div>
+    <div class="phase-pip p2" id="pip-2" title="Phase 2: FY27 - UDP-W Supply, LAR, HQ CO, CLB-4 A&amp;B"></div>
+    <div class="phase-pip p3" id="pip-3" title="Phase 3: Q3 FY28 - Comms Final, Armory, CLB-4 HQ"></div>
+    <div class="phase-pip p4" id="pip-4" title="Phase 4: Q3 FY28 - 4th MAR HQ to 3314, FRF Vacated"></div>
+    <div class="phase-label-bar" id="phase-label">INITIAL POSTURE</div>
+  </div>
+
+  <div class="map-stage" id="map" tabindex="0" role="application"
+       aria-label="Camp Schwab relocation map. Use Space or Right Arrow to advance phases. R to reset.">
+
+    <!-- FRF Demolition Line -->
+    <div class="demo-line" aria-hidden="true"></div>
+    <div class="demo-label" aria-hidden="true">FRF&nbsp;DEMO&nbsp;LINE</div>
+
+    <!-- Zone Labels -->
+    <div class="zone-label" style="top:10px;left:30px;">SOURCE ZONE</div>
+    <div class="zone-label" style="top:10px;left:340px;">SWING / TRANSIT</div>
+    <div class="zone-label" style="top:10px;left:640px;">FINAL CONFIGURATION</div>
+    <div class="zone-label" style="top:10px;left:1070px;">FRF ZONE</div>
+
+    <!-- ====================================================
+         BUILDINGS
+         ==================================================== -->
+
+    <!-- SOURCE ZONE buildings -->
+    <div id="b-3446" class="m-bldg" data-editable-bldg="true" style="top:50px;left:28px;width:100px;height:80px;"
+         title="Bldg 3446 - UDP-W Supply (source, moves to 3237 Q3 FY27)">
+      3446<span>UDP-W SUPPLY</span>
+    </div>
+    <div id="b-3413" class="m-bldg" data-editable-bldg="true" style="top:175px;left:28px;width:100px;height:100px;"
+         title="Bldg 3413 - Safety/Env (source), later CLB-4 A&amp;B destination">
+      3413<span>Safety/Env</span>
+    </div>
+    <div id="b-3213" class="m-bldg final-dest" data-editable-bldg="true" style="top:315px;left:28px;width:200px;height:150px;"
+         title="Bldg 3213 - CLB-4 HQ destination after renovation">
+      3213<span>CLB-4 HQ (Dest)</span>
+    </div>
+
+    <!-- SWING/TRANSIT ZONE buildings -->
+    <div id="b-3335" class="m-bldg" data-editable-bldg="true" style="top:50px;left:330px;width:100px;height:80px;"
+         title="Bldg 3335 - Base Theater, Safety/Env destination">
+      3335<span>Theater &rarr; Safety/Fire/Env</span>
+    </div>
+    <div id="b-1024" class="m-bldg swing" data-editable-bldg="true" style="top:175px;left:330px;width:155px;height:140px;"
+         title="Bldg 1024 - BEQ/CLB-4 Swing Space, later Consolidated Armory">
+      1024<span id="lbl-1024">BEQ / SWING &rarr; ARMORY</span>
+    </div>
+    <div id="b-3410" class="m-bldg" data-editable-bldg="true" style="top:355px;left:330px;width:120px;height:80px;"
+         title="Bldg 3410 - HQ CO 4th destination">
+      3410<span>HQ CO, 4th MAR Regt</span>
+    </div>
+
+    <!-- FINAL CONFIGURATION ZONE buildings -->
+    <div id="b-3237" class="m-bldg final-dest" data-editable-bldg="true" style="top:50px;left:620px;width:150px;height:160px;"
+         title="Bldg 3237 - Consolidated Supply (4th MAR, CLB-4, UDP-W)">
+      3237<span>Consol Supply (4th/CLB-4/UDP-W)</span>
+    </div>
+    <div id="b-3235" class="m-bldg final-dest" data-editable-bldg="true" style="top:240px;left:620px;width:150px;height:160px;"
+         title="Bldg 3235 - Consolidated Comms (4th MAR + CLB-4)">
+      3235<span>Consol Comms (4th MAR/CLB-4)</span>
+    </div>
+    <div id="b-3210" class="m-bldg" data-editable-bldg="true" style="top:430px;left:620px;width:150px;height:95px;"
+         title="Bldg 3210 - ACV CO / LAR CO">
+      3210<span>ACV / LAR CO</span>
+    </div>
+    <!-- 3270 Motor Pool near 3210 -->
+    <div id="b-3270" class="m-bldg resident" data-editable-bldg="true" style="top:555px;left:620px;width:150px;height:90px;"
+         title="Bldg 3270 - Regimental Motor Pool (4th MAR MTR-T and CLB-4 MTR-T, in place, no move)">
+      3270<span>Motor Pool</span>
+    </div>
+    <!-- 3314 - Regt HQ destination -->
+    <div id="b-3314" class="m-bldg final-dest" data-editable-bldg="true" style="top:50px;left:820px;width:150px;height:250px;"
+         title="Bldg 3314 - 4th MAR Regimental HQ (final destination)">
+      3314<span>4TH MAR HQ (Dest)</span>
+    </div>
+
+    <!-- FRF ZONE buildings -->
+    <div id="b-3509" class="m-bldg frf" data-editable-bldg="true" style="top:300px;left:1070px;width:130px;height:90px;"
+         title="Bldg 3509 - Current 4th MAR HQ, FRF zone, to be vacated and demolished">
+      3509<span id="lbl-3509">4TH MAR HQ</span>
+    </div>
+    <div id="b-3510" class="m-bldg frf" data-editable-bldg="true" style="top:420px;left:1070px;width:130px;height:90px;"
+         title="Bldg 3510 - Med/ATC, retained pending GOJ replacement construction">
+      3510<span>Med/ATC</span>
+    </div>
+
+    <!-- ====================================================
+         UNIT TILES
+         Initial positions - all at their confirmed starting locations
+         ==================================================== -->
+
+    <!-- Safety/Fire/Env - starts at 3413 -->
+    <div id="t-saf" class="tile t-div" data-editable-tile="true" style="top:211px;left:30px;"
+         title="Safety/Fire/Env - starts at Bldg 3413, moves to 3335 Q3 FY26">
+      <div class="logo-div"></div>SAF/FIRE/ENV<div class="fy-tag">Q3 FY26</div>
+    </div>
+
+    <!-- UDP-W Supply - starts at 3446 -->
+    <div id="t-udp-sup" class="tile t-div" data-editable-tile="true" style="top:86px;left:30px;"
+         title="UDP-W Supply - starts at Bldg 3446, moves to 3237 Q3 FY27">
+      <div class="logo-div"></div>UDP-W SUP<div class="fy-tag">Q3 FY27</div>
+    </div>
+
+    <!-- LAR CO - starts at 3213 -->
+    <div id="t-lar" class="tile t-div" data-editable-tile="true" style="top:370px;left:36px;"
+         title="LAR CO - starts at Bldg 3213, moves to 3210 Q2 FY27">
+      <div class="logo-div"></div>LAR CO<div class="fy-tag">Q2 FY27</div>
+    </div>
+
+    <!-- CLB-4 Comms - starts at 3213 -->
+    <div id="t-clb-com" class="tile t-mlg" data-editable-tile="true" style="top:402px;left:36px;"
+         title="CLB-4 COMM - starts at Bldg 3213, swings to 1024 Q3 FY26, final move to 3235 Q3 FY28">
+      <div class="logo-mlg"></div>CLB-4 COMM<div class="fy-tag" id="tag-clb-com">Q3 FY26</div>
+    </div>
+
+    <!-- HQ CO 4th - starts at 3509 FRF zone, moves to 3410 to vacate demo line -->
+    <div id="t-hq-co" class="tile t-div" data-editable-tile="true" style="top:328px;left:1074px;"
+         title="HQ CO 4th MAR - starts at Bldg 3509 FRF zone, moves to 3410 Q4 FY27 to vacate demolition line">
+      <div class="logo-div"></div>HQ CO 4TH<div class="fy-tag">Q4 FY27</div>
+    </div>
+
+    <!-- CLB-4 HQ - starts at 3314 -->
+    <div id="t-clb-hq" class="tile t-mlg" data-editable-tile="true" style="top:92px;left:834px;"
+         title="CLB-4 HQ - starts at Bldg 3314, moves to 3213 Q3 FY28">
+      <div class="logo-mlg"></div>CLB-4 HQ<div class="fy-tag">Q3 FY28</div>
+    </div>
+
+    <!-- CLB-4 A&B Co - starts at 3314 -->
+    <div id="t-clb-ab" class="tile t-mlg" data-editable-tile="true" style="top:124px;left:834px;"
+         title="CLB-4 A&amp;B Co - starts at Bldg 3314, moves to 3413 Q2 FY27">
+      <div class="logo-mlg"></div>A&amp;B CO<div class="fy-tag">Q2 FY27</div>
+    </div>
+
+    <!-- 4th MAR Supply - resident in 3237 at init, stays -->
+    <div id="t-4th-sup" class="tile t-div" data-editable-tile="true" style="top:88px;left:634px;"
+         title="4th MAR Supply - resident in Bldg 3237, remains throughout all phases">
+      <div class="logo-div"></div>4TH MAR SUP
+    </div>
+
+    <!-- CLB-4 Supply - resident in 3237 at init, stays -->
+    <div id="t-clb-sup" class="tile t-mlg" data-editable-tile="true" style="top:120px;left:634px;"
+         title="CLB-4 Supply - resident in Bldg 3237, remains throughout all phases">
+      <div class="logo-mlg"></div>CLB-4 SUP
+    </div>
+
+    <!-- 4th MAR COMM - resident in 3235 at init, stays -->
+    <div id="t-4th-com" class="tile t-div" data-editable-tile="true" style="top:278px;left:634px;"
+         title="4th MAR COMM - resident in Bldg 3235, remains throughout all phases">
+      <div class="logo-div"></div>4TH COMM
+    </div>
+
+    <!-- Consolidated Armory - starts in FRF zone (existing armory location) -->
+    <div id="t-arm" class="tile t-arm" data-editable-tile="true" style="top:218px;left:1084px;"
+         title="Consolidated Armory - starts in FRF zone, moves to Bldg 1024 1st floor Q3 FY28">
+      <div class="logo-div"></div><div class="logo-mlg"></div>CONSOL ARM<div class="fy-tag">Q3 FY28</div>
+    </div>
+
+    <!-- 4th MAR HQ (Regt) - starts at 3509 FRF -->
+    <div id="t-reg" class="tile t-reg" data-editable-tile="true" style="top:356px;left:1074px;"
+         title="4th MAR Regimental HQ - starts at Bldg 3509 FRF zone, moves to 3314 Q3 FY28">
+      <div class="logo-div"></div>4TH MAR HQ<div class="fy-tag">Q3 FY28</div>
+    </div>
+
+    <!-- Med/ATC - stays at 3510 throughout -->
+    <div id="t-med" class="tile t-med" data-editable-tile="true" style="top:456px;left:1084px;"
+         title="Med/ATC - remains at Bldg 3510 pending GOJ replacement construction">
+      <div class="logo-div"></div>MED / ATC
+    </div>
+
+    <!-- 4th MAR Motor T - resident at 3270, stays -->
+    <div id="t-4th-mtr" class="tile t-mtr" data-editable-tile="true" style="top:583px;left:634px;"
+         title="4th MAR Motor T - resident at Bldg 3270, remains in place throughout all phases">
+      <div class="logo-div"></div>4TH MTR-T
+    </div>
+
+    <!-- CLB-4 Motor T - resident at 3270, stays -->
+    <div id="t-clb-mtr" class="tile t-mtr" data-editable-tile="true" style="top:611px;left:634px;"
+         title="CLB-4 Motor T - resident at Bldg 3270, remains in place throughout all phases">
+      <div class="logo-mlg"></div>CLB-4 MTR-T
+    </div>
+
+  </div><!-- /map-stage -->
+
+  <div class="map-footer">MCIPAC G-F &bull; PPE &bull; Camp Schwab Consolidation &bull; UNCLASSIFIED // FOR INTERNAL PLANNING PURPOSES ONLY</div>
+</div><!-- /map-section -->
+
+<script>
+(function() {
+  'use strict';
+
+  /* ============================================================
+     CLOCKS - 5 timezones
+     ============================================================ */
+  var FRF_DEADLINE = new Date('2028-06-01T00:00:00+09:00');
+
+  function updateClocks() {
+    var now = new Date();
+    var opts = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+
+    document.getElementById('clk-jst').textContent =
+      now.toLocaleTimeString('en-US', Object.assign({}, opts, { timeZone: 'Asia/Tokyo' }));
+    document.getElementById('clk-hst').textContent =
+      now.toLocaleTimeString('en-US', Object.assign({}, opts, { timeZone: 'Pacific/Honolulu' }));
+    document.getElementById('clk-est').textContent =
+      now.toLocaleTimeString('en-US', Object.assign({}, opts, { timeZone: 'America/New_York' }));
+    document.getElementById('clk-pst').textContent =
+      now.toLocaleTimeString('en-US', Object.assign({}, opts, { timeZone: 'America/Los_Angeles' }));
+    document.getElementById('clk-utc').textContent =
+      now.toLocaleTimeString('en-US', Object.assign({}, opts, { timeZone: 'UTC' }));
+
+    // Countdown
+    var diff = FRF_DEADLINE - now;
+    var countdown = document.getElementById('frf-countdown');
+    var kpiDays = document.getElementById('kpi-days');
+
+    if (diff <= 0) {
+      countdown.textContent = 'DEADLINE PASSED';
+      countdown.classList.add('critical');
+      if (kpiDays) kpiDays.textContent = '0';
+      return;
+    }
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+
+    countdown.textContent =
+      d + 'd ' + String(h).padStart(2, '0') + 'h ' +
+      String(m).padStart(2, '0') + 'm ' + String(s).padStart(2, '0') + 's';
+
+    countdown.classList.remove('urgent', 'critical');
+    if (d <= 7) countdown.classList.add('critical');
+    else if (d <= 30) countdown.classList.add('urgent');
+
+    if (kpiDays) kpiDays.textContent = d.toLocaleString();
+  }
+
+  updateClocks();
+  setInterval(updateClocks, 1000);
+
+  /* ============================================================
+     MINI CALENDAR
+     ============================================================ */
+  var calYear, calMonth;
+
+  function renderCal(year, month) {
+    calYear = year; calMonth = month;
+    var cal = document.getElementById('mini-cal');
+    var months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+    var days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+    var today = new Date();
+    var first = new Date(year, month, 1);
+    var last  = new Date(year, month + 1, 0);
+    var startDay = first.getDay();
+
+    var html = '<div class="cal-head">' +
+      '<button class="cal-nav" id="cal-prev" aria-label="Previous month" title="Previous month">&lsaquo;</button>' +
+      '<span class="cal-month">' + months[month] + ' ' + year + '</span>' +
+      '<button class="cal-nav" id="cal-next" aria-label="Next month" title="Next month">&rsaquo;</button>' +
+      '</div><div class="cal-grid">';
+
+    days.forEach(function(d) { html += '<div class="cal-dow">' + d + '</div>'; });
+
+    for (var i = 0; i < startDay; i++) html += '<div class="cal-day other-month"></div>';
+    for (var d2 = 1; d2 <= last.getDate(); d2++) {
+      var isToday = (d2 === today.getDate() && month === today.getMonth() && year === today.getFullYear());
+      html += '<div class="cal-day' + (isToday ? ' today' : '') + '">' + d2 + '</div>';
+    }
+    html += '</div>';
+    cal.innerHTML = html;
+
+    document.getElementById('cal-prev').addEventListener('click', function(e) {
+      e.stopPropagation();
+      var nm = calMonth - 1; var ny = calYear;
+      if (nm < 0) { nm = 11; ny--; }
+      renderCal(ny, nm);
+    });
+    document.getElementById('cal-next').addEventListener('click', function(e) {
+      e.stopPropagation();
+      var nm = calMonth + 1; var ny = calYear;
+      if (nm > 11) { nm = 0; ny++; }
+      renderCal(ny, nm);
+    });
+  }
+
+  var now0 = new Date();
+  renderCal(now0.getFullYear(), now0.getMonth());
+
+  /* ============================================================
+     PHASE ANIMATION ENGINE
+     ============================================================ */
+  var phase = 0;
+  var timeOuts = [];
+
+  var PHASE_NAMES = [
+    'Initial Posture - Current Configuration',
+    'Phase 1 (Q3 FY26) - Safety/Env and CLB-4 Comms Swing',
+    'Phase 2 (FY27) - UDP-W Supply, LAR CO, HQ CO, CLB-4 A&B',
+    'Phase 3 (Q3 FY28) - Comms Final, Armory, CLB-4 HQ',
+    'Phase 4 (Q3 FY28) - 4th MAR HQ to 3314. FRF Vacated.'
+  ];
+
+  function announce(msg) {
+    document.getElementById('a11y-announce').textContent = msg;
+  }
+
+  function safeTimeout(cb, delay) {
+    var id = setTimeout(cb, delay);
+    timeOuts.push(id);
+    return id;
+  }
+
+  function clearAllTimeouts() {
+    timeOuts.forEach(function(id) { clearTimeout(id); });
+    timeOuts = [];
+  }
+
+  function move(id, t, l) {
+    var el = document.getElementById(id);
+    if (el) { el.style.top = t + 'px'; el.style.left = l + 'px'; }
+  }
+
+  function showTag(tileId) {
+    safeTimeout(function() {
+      var el = document.getElementById(tileId);
+      if (el) {
+        var tag = el.querySelector('.fy-tag');
+        if (tag) tag.classList.add('visible');
+      }
+    }, 1500);
+  }
+
+  function updateStatus(msg) {
+    var el = document.getElementById('status');
+    if (el) el.textContent = msg;
+  }
+
+  function updatePips() {
+    for (var i = 1; i <= 4; i++) {
+      var pip = document.getElementById('pip-' + i);
+      if (!pip) continue;
+      pip.classList.remove('active', 'done');
+      if (i < phase) pip.classList.add('done');
+      else if (i === phase) pip.classList.add('active');
+    }
+    var bar = document.getElementById('phase-bar');
+    if (bar) bar.setAttribute('aria-valuenow', String(phase));
+    var lbl = document.getElementById('phase-label');
+    if (lbl) lbl.textContent = phase === 0 ? 'INITIAL POSTURE' : 'PHASE ' + phase + ' OF 4';
+  }
+
+  /* ============================================================
+     RESET
+     ============================================================ */
+  function resetMap() {
+    clearAllTimeouts();
+    phase = 0;
+    updatePips();
+
+    // Reset demolished buildings
+    ['b-3509', 'b-3446'].forEach(function(bid) {
+      var b = document.getElementById(bid);
+      if (b) b.classList.remove('demolished');
+    });
+    var lbl3509 = document.getElementById('lbl-3509');
+    if (lbl3509) lbl3509.textContent = '4TH MAR HQ';
+
+    // Reset 1024 label
+    var lbl1024 = document.getElementById('lbl-1024');
+    if (lbl1024) lbl1024.innerHTML = 'BEQ / SWING &rarr; ARMORY';
+    var b1024 = document.getElementById('b-1024');
+    if (b1024) { b1024.style.borderColor = ''; b1024.style.borderStyle = ''; }
+
+    // Hide moveable fy-tags only (not RESIDENT or STAY tags)
+    var moverIds = ['t-saf','t-udp-sup','t-lar','t-hq-co','t-clb-com',
+                    't-clb-hq','t-clb-ab','t-arm','t-reg'];
+    moverIds.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) {
+        var tag = el.querySelector('.fy-tag');
+        if (tag) tag.classList.remove('visible');
+      }
+    });
+
+    // Reset CLB-4 COMM tag text
+    var comTag = document.getElementById('tag-clb-com');
+    if (comTag) comTag.textContent = 'Q3 FY26';
+
+    // Reset tile positions - initial posture
+    // Safety/Fire/Env at 3413
+    move('t-saf', 211, 30);
+    // UDP-W Supply at 3446
+    move('t-udp-sup', 86, 30);
+    // LAR CO at 3213
+    move('t-lar', 370, 36);
+    // CLB-4 COMM at 3213
+    move('t-clb-com', 402, 36);
+    // HQ CO 4th at 3509 FRF zone
+    move('t-hq-co', 328, 1074);
+    // CLB-4 HQ at 3314
+    move('t-clb-hq', 92, 834);
+    // CLB-4 A&B at 3314
+    move('t-clb-ab', 124, 834);
+    // Armory in FRF zone
+    move('t-arm', 218, 1084);
+    // 4th MAR HQ at 3509 FRF
+    move('t-reg', 356, 1074);
+
+    // Resident tiles stay in place (they never move)
+    // t-4th-sup, t-clb-sup at 3237
+    // t-4th-com at 3235
+    // t-4th-mtr, t-clb-mtr at 3270
+    // t-med at 3510
+
+    updateStatus(PHASE_NAMES[0]);
+    announce('Map reset to initial posture.');
+  }
+
+  /* ============================================================
+     NEXT PHASE
+     ============================================================ */
+  function nextPhase() {
+    if (phase >= 4) return;
+    phase++;
+    updatePips();
+    updateStatus(PHASE_NAMES[phase]);
+    announce(PHASE_NAMES[phase]);
+
+    if (phase === 1) {
+      // Safety/Fire/Env -> 3335 (top:76, left:332)
+      move('t-saf', 86, 332);
+      showTag('t-saf');
+
+      // CLB-4 COMM -> 1024 swing (top:240, left:344)
+      move('t-clb-com', 240, 344);
+      showTag('t-clb-com');
+    }
+    else if (phase === 2) {
+      // UDP-W Supply -> 3237 (top:156, left:634 - below existing 4th/CLB-4 supply tiles)
+      move('t-udp-sup', 152, 634);
+      showTag('t-udp-sup');
+
+      // LAR CO -> 3210 (top:464, left:634)
+      move('t-lar', 468, 634);
+      showTag('t-lar');
+
+      // HQ CO 4th -> 3410 from FRF zone (top:381, left:332)
+      move('t-hq-co', 391, 332);
+      showTag('t-hq-co');
+
+      // CLB-4 A&B -> 3413 (top:211, left:30)
+      move('t-clb-ab', 213, 30);
+      showTag('t-clb-ab');
+
+      // 3446 fades to demolished look after UDP-W Supply leaves
+      safeTimeout(function() {
+        var b = document.getElementById('b-3446');
+        if (b) b.classList.add('demolished');
+      }, 1200);
+    }
+    else if (phase === 3) {
+      // CLB-4 COMM final -> 3235 (top:314, left:634 - below 4th COMM)
+      move('t-clb-com', 310, 634);
+      // Update fy-tag text to show final FY
+      var comTag = document.getElementById('tag-clb-com');
+      if (comTag) {
+        comTag.classList.remove('visible');
+        safeTimeout(function() {
+          comTag.textContent = 'Q3 FY28';
+          comTag.classList.add('visible');
+        }, 1600);
+      }
+
+      // Consolidated Armory -> 1024 1st floor (top:208, left:344)
+      move('t-arm', 211, 344);
+      showTag('t-arm');
+
+      // Update 1024 label to CONSOL ARMORY
+      safeTimeout(function() {
+        var lbl1024 = document.getElementById('lbl-1024');
+        if (lbl1024) lbl1024.textContent = 'CONSOL ARMORY';
+        var b1024 = document.getElementById('b-1024');
+        if (b1024) {
+          b1024.style.borderColor = 'rgba(43,168,74,0.7)';
+          b1024.style.borderStyle = 'solid';
+        }
+      }, 1800);
+
+      // CLB-4 HQ -> 3213 (top:380, left:42)
+      move('t-clb-hq', 353, 42);
+      showTag('t-clb-hq');
+    }
+    else if (phase === 4) {
+      // 4th MAR HQ -> 3314 2nd deck (top:156, left:834)
+      move('t-reg', 156, 834);
+      showTag('t-reg');
+
+      // 3509 demolished
+      safeTimeout(function() {
+        var b = document.getElementById('b-3509');
+        if (b) b.classList.add('demolished');
+        var lbl3509 = document.getElementById('lbl-3509');
+        if (lbl3509) lbl3509.textContent = 'VACATED';
+      }, 1200);
+    }
+  }
+
+  /* ============================================================
+     BUTTON WIRING - JS only, stopPropagation
+     ============================================================ */
+  document.getElementById('btn-exec').addEventListener('click', function(e) {
+    e.stopPropagation();
+    nextPhase();
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', function(e) {
+    e.stopPropagation();
+    resetMap();
+  });
+
+  /* ============================================================
+     KEYBOARD NAVIGATION
+     ============================================================ */
+  document.addEventListener('keydown', function(e) {
+    var tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+
+    if (e.key === ' ' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      nextPhase();
+    } else if (e.key === 'r' || e.key === 'R') {
+      e.preventDefault();
+      resetMap();
+    } else if (e.key === 'p' || e.key === 'P') {
+      e.preventDefault();
+      window.print();
+    }
+  });
+
+  /* ============================================================
+     INIT
+     ============================================================ */
+  resetMap();
+
+})();
+
+/* ============================================================
+   OMEGA APEX v6.0 - EDIT SYSTEM ENGINE
+   ============================================================ */
+(function() {
+  'use strict';
+
+  /* --- STATE --- */
+  var editMode = false;
+  var editHistory = [];           // undo stack [{el, key, oldVal, newVal}]
+  var pendingEl = null;           // element being edited in panel
+  var pendingData = {};           // current panel field values
+  var unsaved = false;
+  var dragTile = null;
+  var dragOffX = 0, dragOffY = 0;
+
+  /* --- STORAGE KEY --- */
+  var STORE_KEY = '4thMAR_edits_v1';
+
+  /* --- STORAGE AVAILABILITY CHECK --- */
+  function storageAvailable() {
+    try {
+      var test = '__storage_test__';
+      localStorage.setItem(test, '1');
+      localStorage.removeItem(test);
+      return true;
+    } catch(e) { return false; }
+  }
+
+
+
+  /* --- SEQUENCE DATA (mirrors JS animation engine, editable) --- */
+  var SEQ = {
+    phase0: {
+      't-saf':     { top: 211, left: 30  },
+      't-udp-sup': { top: 86,  left: 30  },
+      't-lar':     { top: 370, left: 36  },
+      't-clb-com': { top: 402, left: 36  },
+      't-hq-co':   { top: 328, left: 1074},
+      't-clb-hq':  { top: 92,  left: 834 },
+      't-clb-ab':  { top: 124, left: 834 },
+      't-arm':     { top: 218, left: 1084},
+      't-reg':     { top: 356, left: 1074}
+    },
+    phase1: {
+      't-saf':    { top: 86,  left: 332 },
+      't-clb-com':{ top: 240, left: 344 }
+    },
+    phase2: {
+      't-udp-sup':{ top: 152, left: 634 },
+      't-lar':    { top: 468, left: 634 },
+      't-hq-co':  { top: 391, left: 332 },
+      't-clb-ab': { top: 213, left: 30  }
+    },
+    phase3: {
+      't-clb-com':{ top: 310, left: 634 },
+      't-arm':    { top: 211, left: 344 },
+      't-clb-hq': { top: 353, left: 42  }
+    },
+    phase4: {
+      't-reg':    { top: 156, left: 834 }
+    }
+  };
+
+  /* --- TOAST --- */
+  var toastTimer = null;
+  function toast(msg, type) {
+    var el = document.getElementById('edit-toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'show' + (type ? ' ' + type : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() {
+      el.className = '';
+    }, 2800);
+  }
+
+  /* --- UNSAVED STATE --- */
+  function setUnsaved(val) {
+    unsaved = val;
+    if (val) document.body.classList.add('has-unsaved');
+    else document.body.classList.remove('has-unsaved');
+  }
+
+  /* --- HISTORY --- */
+  function pushHistory(entry) {
+    editHistory.push(entry);
+    setUnsaved(true);
+  }
+
+  function undoLast() {
+    if (!editHistory.length) { toast('Nothing to undo', 'warn'); return; }
+    var entry = editHistory.pop();
+    try {
+      if (entry.type === 'text') {
+        entry.el.innerHTML = entry.oldVal;
+      } else if (entry.type === 'tile-pos') {
+        var el = document.getElementById(entry.id);
+        if (el) { el.style.top = entry.oldTop + 'px'; el.style.left = entry.oldLeft + 'px'; }
+        SEQ[entry.phase][entry.id] = { top: entry.oldTop, left: entry.oldLeft };
+      } else if (entry.type === 'seq-pos') {
+        SEQ[entry.phase][entry.id] = { top: entry.oldTop, left: entry.oldLeft };
+      }
+      toast('Undone', '');
+      if (!editHistory.length) setUnsaved(false);
+    } catch(e) { toast('Undo failed', 'err'); }
+  }
+
+  /* --- LOAD SAVED EDITS --- */
+  function loadSavedEdits() {
+    try {
+      if (!storageAvailable()) return;
+      var raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return;
+      var saved = JSON.parse(raw);
+
+      // Text edits
+      if (saved.texts) {
+        saved.texts.forEach(function(item) {
+          var el = document.querySelector('[data-edit-id="' + item.id + '"]');
+          if (el) el.innerHTML = item.html;
+        });
+      }
+      // Tile positions (phase0 = init positions shown on reset)
+      if (saved.seq) {
+        Object.keys(saved.seq).forEach(function(phase) {
+          Object.keys(saved.seq[phase]).forEach(function(tid) {
+            if (SEQ[phase]) SEQ[phase][tid] = saved.seq[phase][tid];
+          });
+        });
+      }
+      // Tile init HTML (label text)
+      if (saved.tileLabels) {
+        saved.tileLabels.forEach(function(item) {
+          var el = document.getElementById(item.id);
+          if (el) {
+            var textNode = getTextNode(el);
+            if (textNode) textNode.textContent = item.text;
+          }
+        });
+      }
+      // Building labels
+      if (saved.bldgLabels) {
+        saved.bldgLabels.forEach(function(item) {
+          var el = document.getElementById(item.id);
+          if (el) {
+            var span = el.querySelector('span');
+            if (span) span.textContent = item.text;
+          }
+        });
+      }
+      toast('Saved edits loaded', '');
+    } catch(e) { /* no saved data */ }
+  }
+
+  /* --- SAVE TO LOCALSTORAGE --- */
+  function saveEdits() {
+    try {
+      if (!storageAvailable()) { toast('Storage not available (private mode?)', 'err'); return; }
+      var texts = [];
+      document.querySelectorAll('[data-edit-id]').forEach(function(el) {
+        texts.push({ id: el.getAttribute('data-edit-id'), html: el.innerHTML });
+      });
+
+      var tileLabels = [];
+      document.querySelectorAll('.tile[data-editable-tile]').forEach(function(el) {
+        var text = getTextNode(el);
+        if (text) tileLabels.push({ id: el.id, text: text.textContent });
+      });
+
+      var bldgLabels = [];
+      document.querySelectorAll('[data-editable-bldg]').forEach(function(el) {
+        var span = el.querySelector('span');
+        if (span) bldgLabels.push({ id: el.id, text: span.textContent });
+      });
+
+      localStorage.setItem(STORE_KEY, JSON.stringify({
+        texts: texts,
+        seq: SEQ,
+        tileLabels: tileLabels,
+        bldgLabels: bldgLabels,
+        savedAt: new Date().toISOString()
+      }));
+      setUnsaved(false);
+      toast('Changes saved to browser storage');
+    } catch(e) { toast('Save failed: ' + e.message, 'err'); }
+  }
+
+  /* --- CLEAR SAVES --- */
+  function clearSaves() {
+    localStorage.removeItem(STORE_KEY);
+    toast('Saved edits cleared. Reload page to restore defaults.', 'warn');
+    setUnsaved(false);
+  }
+
+  /* --- EXPORT HTML --- */
+  function exportHTML() {
+    try {
+      var clone = document.documentElement.cloneNode(true);
+
+      // Remove edit system UI from clone
+      ['edit-mode-btn','edit-bar','edit-panel','edit-toast'].forEach(function(id) {
+        var el = clone.querySelector('#' + id);
+        if (el) el.parentNode.removeChild(el);
+      });
+
+      // Remove edit-mode class and data attributes from clone
+      clone.querySelector('body').classList.remove('edit-mode','has-unsaved');
+
+      // Update tile positions in clone HTML to match current state
+      document.querySelectorAll('.tile[id]').forEach(function(tile) {
+        var cloneTile = clone.querySelector('#' + tile.id);
+        if (cloneTile) {
+          cloneTile.style.top = tile.style.top;
+          cloneTile.style.left = tile.style.left;
+        }
+      });
+
+      // Serialize and download - data URI for iOS Safari compatibility
+      var html = '<!DOCTYPE html>' + clone.outerHTML;
+      var fname = '4th_MAR_CLB4_Relocation_APEX_v6_' +
+        new Date().toISOString().slice(0,10).replace(/-/g,'') + '.html';
+      try {
+        // Try Blob method first (desktop browsers)
+        var blob = new Blob([html], { type: 'text/html' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = fname;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+        toast('HTML exported - check Downloads');
+      } catch(blobErr) {
+        // Fallback: open in new tab (iOS Safari)
+        try {
+          var encoded = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+          var win = window.open(encoded, '_blank');
+          if (win) {
+            toast('Opened in new tab - use Share > Save to Files', 'warn');
+          } else {
+            toast('Export: allow popups or use desktop browser', 'warn');
+          }
+        } catch(e2) {
+          toast('Export unavailable on this browser', 'err');
+        }
+      }
+    } catch(e) {
+      // Fallback: open in new window
+      var win = window.open('', '_blank');
+      if (win) {
+        win.document.write(document.documentElement.outerHTML);
+        win.document.close();
+        toast('Opened in new tab - use File > Save', 'warn');
+      } else {
+        toast('Export failed: popup blocked', 'err');
+      }
+    }
+  }
+
+  /* --- GET TEXT NODE FROM TILE --- */
+  function getTextNode(tile) {
+    for (var i = 0; i < tile.childNodes.length; i++) {
+      var n = tile.childNodes[i];
+      if (n.nodeType === 3 && n.textContent.trim().length > 0) return n;
+    }
+    return null;
+  }
+
+  /* --- EDIT MODE TOGGLE --- */
+  function toggleEditMode() {
+    editMode = !editMode;
+    document.body.classList.toggle('edit-mode', editMode);
+    var btn = document.getElementById('edit-mode-btn');
+    if (btn) btn.innerHTML = editMode ? '&#10005; EXIT EDIT' : '&#9998; EDIT MODE';
+    if (!editMode) closePanel();
+    toast(editMode ? 'Edit Mode ON - click any element to edit' : 'Edit Mode OFF', editMode ? '' : 'warn');
+  }
+
+  /* --- PANEL OPEN/CLOSE --- */
+  function openPanel(title, section, bodyHTML) {
+    var panel = document.getElementById('edit-panel');
+    document.getElementById('ep-title').textContent = title;
+    document.getElementById('ep-section').textContent = section;
+    document.getElementById('ep-body').innerHTML = bodyHTML;
+    panel.classList.add('open');
+  }
+
+  function closePanel() {
+    document.getElementById('edit-panel').classList.remove('open');
+    pendingEl = null; pendingData = {};
+    document.querySelectorAll('[data-editable].editing').forEach(function(el) {
+      el.classList.remove('editing');
+    });
+  }
+
+  /* --- INLINE EDIT FOR SHORT TEXT --- */
+  function startInlineEdit(el) {
+    var oldHTML = el.innerHTML;
+    var oldText = el.textContent.trim();
+    el.classList.add('editing');
+
+    var rect = el.getBoundingClientRect();
+    var input = document.createElement(el.tagName === 'TEXTAREA' ? 'textarea' : 'input');
+    input.className = 'inline-edit-input';
+    input.value = oldText;
+    input.style.top = (rect.top + window.scrollY) + 'px';
+    input.style.left = rect.left + 'px';
+    input.style.width = Math.max(rect.width, 120) + 'px';
+    if (el.tagName === 'DIV' && el.offsetHeight > 40) {
+      var ta = document.createElement('textarea');
+      ta.className = 'inline-edit-input';
+      ta.value = oldText;
+      ta.style.top = (rect.top + window.scrollY) + 'px';
+      ta.style.left = rect.left + 'px';
+      ta.style.width = Math.max(rect.width, 200) + 'px';
+      ta.style.height = Math.max(rect.height, 60) + 'px';
+      input = ta;
+    }
+
+    document.body.appendChild(input);
+    input.focus(); input.select();
+
+    function commit() {
+      var newText = input.value.trim();
+      if (newText !== oldText) {
+        pushHistory({ type: 'text', el: el, oldVal: oldHTML, newVal: newText });
+        el.textContent = newText;
+        setUnsaved(true);
+        toast('Updated');
+      }
+      el.classList.remove('editing');
+      if (input.parentNode) input.parentNode.removeChild(input);
+    }
+
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); commit(); }
+      if (e.key === 'Escape') {
+        el.classList.remove('editing');
+        if (input.parentNode) input.parentNode.removeChild(input);
+      }
+    });
+  }
+
+  /* --- BUILD PANEL FOR TEXT ELEMENT --- */
+  function openTextPanel(el) {
+    pendingEl = el;
+    var label = el.getAttribute('data-label') || 'Text';
+    var section = el.closest('.phase-col') ? 'Phase Grid' :
+                  el.closest('.kpi-bar') ? 'KPI Bar' :
+                  el.closest('.hdr') ? 'Header' :
+                  el.closest('.footer-grid') ? 'Reference Boxes' :
+                  el.closest('.final-block') ? 'Final Config' : 'Content';
+
+    var isMultiline = el.offsetHeight > 40 || el.classList.contains('detail');
+    var currentText = el.textContent.trim();
+
+    var body = '<div class="ep-field">' +
+      '<label>' + label + '</label>' +
+      (isMultiline
+        ? '<textarea id="ep-text-val" rows="4">' + currentText + '</textarea>'
+        : '<input id="ep-text-val" type="text" value="' + currentText.replace(/"/g,'&quot;') + '">') +
+      '<div class="ep-hint">Edit text above. HTML entities are supported.</div>' +
+      '</div>';
+
+    openPanel(label, section, body);
+    setTimeout(function() {
+      var inp = document.getElementById('ep-text-val');
+      if (inp) { inp.focus(); inp.select(); }
+    }, 50);
+    pendingData = { type: 'text', el: el, oldVal: el.innerHTML };
+  }
+
+  /* --- BUILD PANEL FOR TILE --- */
+  function openTilePanel(tile) {
+    pendingEl = tile;
+    var tid = tile.id;
+    var textNode = getTextNode(tile);
+    var label = textNode ? textNode.textContent.trim() : tid;
+    var curTop = parseInt(tile.style.top) || 0;
+    var curLeft = parseInt(tile.style.left) || 0;
+
+    // Build sequence fields
+    var seqHTML = '';
+    ['phase0','phase1','phase2','phase3','phase4'].forEach(function(ph, idx) {
+      if (SEQ[ph] && SEQ[ph][tid]) {
+        var pos = SEQ[ph][tid];
+        seqHTML += '<div class="seq-row">' +
+          '<div class="seq-row-head">Phase ' + idx + (idx===0?' (Init)':'') + '</div>' +
+          '<div class="ep-coord-row">' +
+          '<div class="ep-field"><label>Top (px)</label>' +
+          '<input class="seq-top" data-phase="' + ph + '" data-tile="' + tid + '" type="number" value="' + pos.top + '"></div>' +
+          '<div class="ep-field"><label>Left (px)</label>' +
+          '<input class="seq-left" data-phase="' + ph + '" data-tile="' + tid + '" type="number" value="' + pos.left + '"></div>' +
+          '</div></div>';
+      }
+    });
+
+    var body = '<div class="ep-field">' +
+      '<label>Tile Label</label>' +
+      '<input id="ep-tile-label" type="text" value="' + label.replace(/"/g,'&quot;') + '">' +
+      '<div class="ep-hint">Text displayed on the unit tile</div>' +
+      '</div>' +
+      '<div class="ep-field">' +
+      '<label>Current Position</label>' +
+      '<div class="ep-coord-row">' +
+      '<div class="ep-field"><label>Top (px)</label><input id="ep-tile-top" type="number" value="' + curTop + '"></div>' +
+      '<div class="ep-field"><label>Left (px)</label><input id="ep-tile-left" type="number" value="' + curLeft + '"></div>' +
+      '</div></div>' +
+      (seqHTML ? '<div class="ep-field"><label>Movement Sequence Positions</label>' +
+        '<div class="ep-hint">Update coordinates for each phase this tile moves in</div></div>' + seqHTML : '') +
+      '<div class="ep-field"><label>FY Tag Text</label>' +
+      '<input id="ep-tile-fytag" type="text" value="' + (tile.querySelector('.fy-tag') ? tile.querySelector('.fy-tag').textContent : '') + '">' +
+      '<div class="ep-hint">Date shown when tile moves (e.g. Q3 FY26). Leave blank if none.</div></div>';
+
+    openPanel('Unit Tile: ' + label, 'Map Simulation', body);
+    pendingData = { type: 'tile', tid: tid };
+  }
+
+  /* --- BUILD PANEL FOR BUILDING --- */
+  function openBuildingPanel(bldg) {
+    pendingEl = bldg;
+    var bid = bldg.id;
+    var numText = '';
+    var spanText = '';
+    for (var i = 0; i < bldg.childNodes.length; i++) {
+      var n = bldg.childNodes[i];
+      if (n.nodeType === 3 && n.textContent.trim()) numText = n.textContent.trim();
+    }
+    var span = bldg.querySelector('span');
+    if (span) spanText = span.textContent.trim();
+
+    var body = '<div class="ep-field">' +
+      '<label>Building Number</label>' +
+      '<input id="ep-bldg-num" type="text" value="' + numText.replace(/"/g,'&quot;') + '">' +
+      '<div class="ep-hint">Large number displayed on building</div>' +
+      '</div>' +
+      '<div class="ep-field">' +
+      '<label>Building Label</label>' +
+      '<input id="ep-bldg-label" type="text" value="' + spanText.replace(/"/g,'&quot;') + '">' +
+      '<div class="ep-hint">Small subtitle under building number</div>' +
+      '</div>' +
+      '<div class="ep-field">' +
+      '<label>Position</label>' +
+      '<div class="ep-coord-row">' +
+      '<div class="ep-field"><label>Top (px)</label><input id="ep-bldg-top" type="number" value="' + (parseInt(bldg.style.top)||0) + '"></div>' +
+      '<div class="ep-field"><label>Left (px)</label><input id="ep-bldg-left" type="number" value="' + (parseInt(bldg.style.left)||0) + '"></div>' +
+      '</div></div>' +
+      '<div class="ep-coord-row">' +
+      '<div class="ep-field"><label>Width (px)</label><input id="ep-bldg-w" type="number" value="' + (parseInt(bldg.style.width)||100) + '"></div>' +
+      '<div class="ep-field"><label>Height (px)</label><input id="ep-bldg-h" type="number" value="' + (parseInt(bldg.style.height)||80) + '"></div>' +
+      '</div>';
+
+    openPanel('Building: ' + (numText || bid), 'Map Simulation', body);
+    pendingData = { type: 'building', bid: bid };
+  }
+
+  /* --- APPLY PANEL CHANGES --- */
+  function applyPanel() {
+    try {
+      if (pendingData.type === 'text' && pendingEl) {
+        var newText = document.getElementById('ep-text-val').value.trim();
+        var oldVal = pendingEl.innerHTML;
+        pendingEl.textContent = newText;
+        pushHistory({ type: 'text', el: pendingEl, oldVal: oldVal, newVal: newText });
+        toast('Text updated');
+
+      } else if (pendingData.type === 'tile') {
+        var tid = pendingData.tid;
+        var tile = document.getElementById(tid);
+        if (!tile) { toast('Tile not found', 'err'); return; }
+
+        // Label
+        var newLabel = document.getElementById('ep-tile-label').value.trim();
+        var textNode = getTextNode(tile);
+        if (textNode && newLabel) { textNode.textContent = newLabel; }
+
+        // Current position
+        var newTop = parseInt(document.getElementById('ep-tile-top').value) || 0;
+        var newLeft = parseInt(document.getElementById('ep-tile-left').value) || 0;
+        var oldTop = parseInt(tile.style.top) || 0;
+        var oldLeft = parseInt(tile.style.left) || 0;
+        tile.style.top = newTop + 'px';
+        tile.style.left = newLeft + 'px';
+        pushHistory({ type: 'tile-pos', id: tid, phase: 'current',
+          oldTop: oldTop, oldLeft: oldLeft, newTop: newTop, newLeft: newLeft });
+
+        // Sequence positions
+        document.querySelectorAll('.seq-top').forEach(function(inp) {
+          var ph = inp.getAttribute('data-phase');
+          var t2 = inp.getAttribute('data-tile');
+          var lInp = document.querySelector('.seq-left[data-phase="' + ph + '"][data-tile="' + t2 + '"]');
+          if (ph && SEQ[ph] && SEQ[ph][t2] && lInp) {
+            var oldSt = SEQ[ph][t2].top, oldSl = SEQ[ph][t2].left;
+            SEQ[ph][t2].top  = parseInt(inp.value) || SEQ[ph][t2].top;
+            SEQ[ph][t2].left = parseInt(lInp.value) || SEQ[ph][t2].left;
+            if (SEQ[ph][t2].top !== oldSt || SEQ[ph][t2].left !== oldSl) {
+              pushHistory({ type:'seq-pos', id:t2, phase:ph,
+                oldTop:oldSt, oldLeft:oldSl, newTop:SEQ[ph][t2].top, newLeft:SEQ[ph][t2].left });
+            }
+          }
+        });
+
+        // FY Tag
+        var fyTag = tile.querySelector('.fy-tag');
+        var fyVal = document.getElementById('ep-tile-fytag').value.trim();
+        if (fyTag && fyVal) fyTag.textContent = fyVal;
+
+        toast('Tile updated');
+
+      } else if (pendingData.type === 'building') {
+        var bldg = document.getElementById(pendingData.bid);
+        if (!bldg) { toast('Building not found', 'err'); return; }
+
+        // Number text
+        var newNum = document.getElementById('ep-bldg-num').value.trim();
+        for (var i = 0; i < bldg.childNodes.length; i++) {
+          var n = bldg.childNodes[i];
+          if (n.nodeType === 3 && n.textContent.trim()) { n.textContent = newNum; break; }
+        }
+
+        // Label
+        var span = bldg.querySelector('span');
+        if (span) span.textContent = document.getElementById('ep-bldg-label').value.trim();
+
+        // Position and size
+        bldg.style.top    = (parseInt(document.getElementById('ep-bldg-top').value)||0) + 'px';
+        bldg.style.left   = (parseInt(document.getElementById('ep-bldg-left').value)||0) + 'px';
+        bldg.style.width  = (parseInt(document.getElementById('ep-bldg-w').value)||100) + 'px';
+        bldg.style.height = (parseInt(document.getElementById('ep-bldg-h').value)||80) + 'px';
+
+        toast('Building updated');
+      }
+
+      setUnsaved(true);
+      closePanel();
+    } catch(e) { toast('Apply error: ' + e.message, 'err'); }
+  }
+
+  /* --- TILE DRAG (edit mode only) --- */
+  function initTileDrag() {
+    document.querySelectorAll('.tile[data-editable-tile]').forEach(function(tile) {
+      tile.addEventListener('mousedown', function(e) {
+        if (!editMode) return;
+        if (e.button !== 0) return;
+        e.preventDefault(); e.stopPropagation();
+        dragTile = tile;
+        tile.classList.add('dragging');
+        var rect = tile.getBoundingClientRect();
+        var stage = document.getElementById('map').getBoundingClientRect();
+        dragOffX = e.clientX - rect.left;
+        dragOffY = e.clientY - rect.top;
+      });
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (!dragTile) return;
+      var stage = document.getElementById('map').getBoundingClientRect();
+      var newLeft = Math.max(0, e.clientX - stage.left - dragOffX);
+      var newTop  = Math.max(0, e.clientY - stage.top  - dragOffY);
+      dragTile.style.left = newLeft + 'px';
+      dragTile.style.top  = newTop  + 'px';
+    });
+
+    document.addEventListener('mouseup', function(e) {
+      if (!dragTile) return;
+      dragTile.classList.remove('dragging');
+      var newTop  = parseInt(dragTile.style.top);
+      var newLeft = parseInt(dragTile.style.left);
+      // Update SEQ phase0 to reflect drag
+      var tid = dragTile.id;
+      if (SEQ.phase0[tid]) {
+        var old = { top: SEQ.phase0[tid].top, left: SEQ.phase0[tid].left };
+        SEQ.phase0[tid] = { top: newTop, left: newLeft };
+        pushHistory({ type:'tile-pos', id:tid, phase:'phase0',
+          oldTop:old.top, oldLeft:old.left, newTop:newTop, newLeft:newLeft });
+        toast(tid + ' repositioned (' + newTop + ', ' + newLeft + ')');
+      }
+      dragTile = null;
+    });
+  }
+
+  /* --- CLICK HANDLING IN EDIT MODE --- */
+  function handleEditClick(e) {
+    if (!editMode) return;
+
+    // Tile click (but not drag)
+    var tile = e.target.closest('.tile[data-editable-tile]');
+    if (tile && !dragTile) {
+      e.stopPropagation();
+      openTilePanel(tile);
+      return;
+    }
+
+    // Building click
+    var bldg = e.target.closest('[data-editable-bldg]');
+    if (bldg) {
+      e.stopPropagation();
+      openBuildingPanel(bldg);
+      return;
+    }
+
+    // Generic editable text element
+    var edEl = e.target.closest('[data-editable]');
+    if (edEl) {
+      e.stopPropagation();
+      var edType = edEl.getAttribute('data-editable');
+      var textLen = edEl.textContent.trim().length;
+      // Short text: inline edit. Long/multi-line: panel.
+      if (textLen < 80 && edEl.offsetHeight < 45) {
+        startInlineEdit(edEl);
+      } else {
+        openTextPanel(edEl);
+      }
+      return;
+    }
+
+    // Click outside panel while panel open = close panel
+    var panel = document.getElementById('edit-panel');
+    if (panel.classList.contains('open') && !panel.contains(e.target)) {
+      closePanel();
+    }
+  }
+
+  /* --- BUTTON WIRING --- */
+  function wireEditButtons() {
+    document.getElementById('edit-mode-btn').addEventListener('click', function(e) {
+      e.stopPropagation(); toggleEditMode();
+    });
+    document.getElementById('eb-save').addEventListener('click', function(e) {
+      e.stopPropagation(); saveEdits();
+    });
+    document.getElementById('eb-export').addEventListener('click', function(e) {
+      e.stopPropagation(); exportHTML();
+    });
+    document.getElementById('eb-clear').addEventListener('click', function(e) {
+      e.stopPropagation(); clearSaves();
+    });
+    document.getElementById('eb-undo').addEventListener('click', function(e) {
+      e.stopPropagation(); undoLast();
+    });
+    document.getElementById('ep-close').addEventListener('click', function(e) {
+      e.stopPropagation(); closePanel();
+    });
+    document.getElementById('ep-apply').addEventListener('click', function(e) {
+      e.stopPropagation(); applyPanel();
+    });
+    document.getElementById('ep-cancel').addEventListener('click', function(e) {
+      e.stopPropagation(); closePanel();
+    });
+  }
+
+  /* --- KEYBOARD SHORTCUTS (additive to existing) --- */
+  function wireEditKeys() {
+    document.addEventListener('keydown', function(e) {
+      var tag = e.target.tagName;
+      var inInput = (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable);
+
+      // E to toggle edit mode (not in input)
+      if (!inInput && (e.key === 'e' || e.key === 'E')) {
+        e.preventDefault(); toggleEditMode(); return;
+      }
+      // Ctrl+Z undo
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault(); undoLast(); return;
+      }
+      // Ctrl+S save
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault(); saveEdits(); return;
+      }
+      // Esc close panel
+      if (e.key === 'Escape' && editMode) {
+        closePanel();
+      }
+    });
+  }
+
+  /* --- ASSIGN DATA-EDIT-IDs for stable storage keys --- */
+  function assignEditIds() {
+    var counter = 0;
+    document.querySelectorAll('[data-editable]').forEach(function(el) {
+      if (!el.getAttribute('data-edit-id')) {
+        el.setAttribute('data-edit-id', 'ed-' + (++counter));
+      }
+    });
+  }
+
+  /* --- INIT --- */
+  function initEditSystem() {
+    assignEditIds();
+    wireEditButtons();
+    wireEditKeys();
+    initTileDrag();
+    document.addEventListener('click', handleEditClick);
+    loadSavedEdits();
+    toast('APEX OMEGA v6.0 ready. Press E to enter Edit Mode.', '');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      initEditSystem();
+    } catch(initErr) {
+      console.error('APEX Edit System init error:', initErr);
+      var btn = document.getElementById('edit-mode-btn');
+      if (btn) { btn.textContent = 'EDIT: ERROR'; btn.style.background='#7A0E12'; }
+    }
+  });
+  // Fallback: if DOMContentLoaded already fired (script at bottom of body)
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    try { initEditSystem(); } catch(e) { console.error('APEX Edit fallback init error:', e); }
+  }
+
+})();
+
+</script>
+
+
+<!-- ============================================================
+     OMEGA APEX v6.0 - EDIT SYSTEM UI
+     ============================================================ -->
+
+<!-- Edit Mode Toggle Button -->
+<button id="edit-mode-btn" title="Toggle Edit Mode (E key)" aria-label="Toggle Edit Mode">
+  &#9998; EDIT MODE
+</button>
+
+<!-- Edit Mode Bar -->
+<div id="edit-bar" role="toolbar" aria-label="Edit Mode Controls">
+  <span id="edit-bar-label">&#9998; Edit Mode Active</span>
+  <div id="edit-bar-sep"></div>
+  <button class="eb-btn primary" id="eb-save" title="Save to localStorage" aria-label="Save changes">SAVE</button>
+  <button class="eb-btn success" id="eb-export" title="Export as updated HTML file" aria-label="Export HTML">EXPORT HTML</button>
+  <button class="eb-btn" id="eb-clear" title="Clear all saved edits and reload defaults" aria-label="Clear saved edits">CLEAR SAVES</button>
+  <div id="edit-bar-sep"></div>
+  <button class="eb-btn" id="eb-undo" title="Undo last change (Ctrl+Z)" aria-label="Undo">UNDO</button>
+  <span id="edit-unsaved">&#9679; Unsaved changes</span>
+  <span id="edit-bar-hint">Click any element to edit &bull; Drag tiles to reposition &bull; E to exit</span>
+</div>
+
+<!-- Edit Panel -->
+<div id="edit-panel" role="dialog" aria-label="Edit Panel" aria-modal="true">
+  <div id="ep-header">
+    <div id="ep-title">Edit Element</div>
+    <button id="ep-close" aria-label="Close edit panel" title="Close (Esc)">&#10005;</button>
+  </div>
+  <div id="ep-section"></div>
+  <div id="ep-body"></div>
+  <div id="ep-footer">
+    <button class="eb-btn primary" id="ep-apply" style="flex:1;">APPLY</button>
+    <button class="eb-btn" id="ep-cancel">CANCEL</button>
+  </div>
+</div>
+
+<!-- Edit Toast -->
+<div id="edit-toast" role="status" aria-live="polite"></div>
+
+</body>
+</html>

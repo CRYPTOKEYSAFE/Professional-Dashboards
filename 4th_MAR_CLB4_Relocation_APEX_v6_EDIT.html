@@ -3353,10 +3353,46 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       }
     });
 
+    // Current echelon class
+    var echelons = [['t-div','Division'],['t-mlg','MLG'],['t-reg','Regiment'],
+                    ['t-arm','Armory'],['t-med','Medical'],['t-mtr','Motor Transport']];
+    var curEch = '';
+    echelons.forEach(function(e){ if (tile.classList.contains(e[0])) curEch = e[0]; });
+    var echOpts = echelons.map(function(e){
+      return '<option value="' + e[0] + '"' + (e[0]===curEch?' selected':'') + '>' + e[1] + '</option>';
+    }).join('');
+
+    // Current FY tag variant
+    var fyEl = tile.querySelector('.fy-tag');
+    var curVariant = 'default';
+    if (fyEl) {
+      if (fyEl.classList.contains('resident')) curVariant = 'resident';
+      else if (fyEl.classList.contains('pending')) curVariant = 'pending';
+      else if (fyEl.classList.contains('phase-1')) curVariant = 'phase-1';
+      else if (fyEl.classList.contains('phase-2')) curVariant = 'phase-2';
+      else if (fyEl.classList.contains('phase-3')) curVariant = 'phase-3';
+      else if (fyEl.classList.contains('phase-4')) curVariant = 'phase-4';
+    }
+    var variants = [['default','Default (teal accent)'],
+                    ['resident','Resident (green)'],
+                    ['pending','Pending (amber)'],
+                    ['phase-1','Phase 1 color'],
+                    ['phase-2','Phase 2 color'],
+                    ['phase-3','Phase 3 color'],
+                    ['phase-4','Phase 4 color']];
+    var varOpts = variants.map(function(v){
+      return '<option value="' + v[0] + '"' + (v[0]===curVariant?' selected':'') + '>' + v[1] + '</option>';
+    }).join('');
+
     var body = '<div class="ep-field">' +
       '<label>Tile Label</label>' +
       '<input id="ep-tile-label" type="text" value="' + label.replace(/"/g,'&quot;') + '">' +
       '<div class="ep-hint">Text displayed on the unit tile</div>' +
+      '</div>' +
+      '<div class="ep-field">' +
+      '<label>Echelon (color)</label>' +
+      '<select id="ep-tile-echelon">' + echOpts + '</select>' +
+      '<div class="ep-hint">Changes tile background color by unit type</div>' +
       '</div>' +
       '<div class="ep-field">' +
       '<label>Current Position</label>' +
@@ -3367,8 +3403,11 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       (seqHTML ? '<div class="ep-field"><label>Movement Sequence Positions</label>' +
         '<div class="ep-hint">Update coordinates for each phase this tile moves in</div></div>' + seqHTML : '') +
       '<div class="ep-field"><label>FY Tag Text</label>' +
-      '<input id="ep-tile-fytag" type="text" value="' + (tile.querySelector('.fy-tag') ? tile.querySelector('.fy-tag').textContent : '') + '">' +
-      '<div class="ep-hint">Date shown when tile moves (e.g. Q3 FY26). Leave blank if none.</div></div>';
+      '<input id="ep-tile-fytag" type="text" value="' + (fyEl ? fyEl.textContent : '') + '">' +
+      '<div class="ep-hint">Date shown (e.g. Q3 FY26, RES, PEND GOJ). Blank removes tag.</div></div>' +
+      '<div class="ep-field"><label>FY Tag Style</label>' +
+      '<select id="ep-tile-fyvariant">' + varOpts + '</select>' +
+      '<div class="ep-hint">Color variant for the FY tag</div></div>';
 
     openPanel('Unit Tile: ' + label, 'Map Simulation', body);
     pendingData = { type: 'tile', tid: tid };
@@ -3458,10 +3497,41 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           }
         });
 
-        // FY Tag
+        // Echelon (color class)
+        var echSel = document.getElementById('ep-tile-echelon');
+        if (echSel && echSel.value) {
+          ['t-div','t-mlg','t-reg','t-arm','t-med','t-mtr'].forEach(function(c){ tile.classList.remove(c); });
+          tile.classList.add(echSel.value);
+        }
+
+        // FY Tag text + variant
         var fyTag = tile.querySelector('.fy-tag');
         var fyVal = document.getElementById('ep-tile-fytag').value.trim();
-        if (fyTag && fyVal) fyTag.textContent = fyVal;
+        var varSel = document.getElementById('ep-tile-fyvariant');
+        if (fyTag) {
+          if (fyVal) {
+            fyTag.textContent = fyVal;
+            // Reset variant classes
+            ['resident','pending','phase-1','phase-2','phase-3','phase-4','visible'].forEach(function(c){ fyTag.classList.remove(c); });
+            if (varSel && varSel.value !== 'default') fyTag.classList.add(varSel.value);
+            // Resident/pending variants are auto-visible
+            if (varSel && (varSel.value === 'resident' || varSel.value === 'pending')) {
+              fyTag.classList.add(varSel.value);
+            } else {
+              // For moving tags show it now so user sees change
+              fyTag.classList.add('visible');
+            }
+          } else {
+            // Blank removes tag entirely
+            if (fyTag.parentNode) fyTag.parentNode.removeChild(fyTag);
+          }
+        } else if (fyVal) {
+          // Create a new tag if one didn't exist
+          var nt = document.createElement('div');
+          nt.className = 'fy-tag' + (varSel && varSel.value !== 'default' ? ' ' + varSel.value : ' visible');
+          nt.textContent = fyVal;
+          tile.appendChild(nt);
+        }
 
         toast('Tile updated');
 

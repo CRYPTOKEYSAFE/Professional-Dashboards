@@ -1456,20 +1456,23 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       <button class="nav-btn" data-tab="buildings" type="button" aria-label="Building schedule tab" title="Building Schedule (5)">
         <span class="nav-icon" aria-hidden="true">&#9638;</span><span class="nav-label">Building Schedule</span>
       </button>
-      <button class="nav-btn" data-tab="timeline" type="button" aria-label="Timeline tab" title="Timeline (6)">
+      <button class="nav-btn" data-tab="projects" type="button" aria-label="Projects and cost tab" title="Projects &amp; Cost (6)">
+        <span class="nav-icon" aria-hidden="true">$</span><span class="nav-label">Projects &amp; Cost</span>
+      </button>
+      <button class="nav-btn" data-tab="timeline" type="button" aria-label="Timeline tab" title="Timeline (7)">
         <span class="nav-icon" aria-hidden="true">&#9776;</span><span class="nav-label">Timeline</span>
       </button>
-      <button class="nav-btn" data-tab="charts" type="button" aria-label="Charts tab" title="Charts (7)">
+      <button class="nav-btn" data-tab="charts" type="button" aria-label="Charts tab" title="Charts (8)">
         <span class="nav-icon" aria-hidden="true">&#9650;</span><span class="nav-label">Charts</span>
       </button>
     </div>
 
     <div class="nav-grp">
       <div class="nav-grp-lbl">Tools</div>
-      <button class="nav-btn" data-tab="editor" type="button" aria-label="Data editor tab" title="Data Editor (8)">
+      <button class="nav-btn" data-tab="editor" type="button" aria-label="Data editor tab" title="Data Editor (9)">
         <span class="nav-icon" aria-hidden="true">&#9998;</span><span class="nav-label">Data Editor</span>
       </button>
-      <button class="nav-btn" data-tab="help" type="button" aria-label="Help tab" title="Help (9)">
+      <button class="nav-btn" data-tab="help" type="button" aria-label="Help tab" title="Help">
         <span class="nav-icon" aria-hidden="true">?</span><span class="nav-label">How to Use</span>
       </button>
     </div>
@@ -1622,7 +1625,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
 
   <!-- TAB: OVERVIEW -->
   <section class="tab-panel active" id="tab-overview" role="tabpanel" aria-labelledby="nav-overview">
-    <div class="grid-3">
+    <div class="grid-4">
       <div class="panel-card">
         <h3>Mission Summary</h3>
         <p style="font-size:12px;color:var(--text-muted);line-height:1.6;">
@@ -1650,6 +1653,18 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           </div>
         </div>
       </div>
+      <div class="panel-card" style="border-left:4px solid var(--status-green);">
+        <h3>Total Project Cost</h3>
+        <div style="text-align:center;padding:16px 0 8px;">
+          <div id="ov-total-cost" style="font-family:var(--font-mono);font-size:30px;font-weight:800;color:var(--status-green);letter-spacing:0.02em;">$0</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.15em;margin-top:6px;">Across All 10 Projects</div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);line-height:1.5;margin-top:8px;border-top:1px solid var(--border-light);padding-top:8px;">
+          Live sum from the Projects &amp; Cost tab. Edit any cost there and this updates immediately.
+        </div>
+        <button class="hdr-btn" type="button" data-tab-jump="projects" style="margin-top:10px;width:100%;">Open Projects &amp; Cost</button>
+      </div>
+
       <div class="panel-card">
         <h3>Quick Actions</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
@@ -1657,6 +1672,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           <button class="hdr-btn" type="button" data-tab-jump="phases">Phase Grid</button>
           <button class="hdr-btn" type="button" data-tab-jump="roster">Unit Roster</button>
           <button class="hdr-btn" type="button" data-tab-jump="buildings">Buildings</button>
+          <button class="hdr-btn" type="button" data-tab-jump="projects">Projects &amp; Cost</button>
           <button class="hdr-btn" type="button" data-tab-jump="timeline">Timeline</button>
           <button class="hdr-btn" type="button" data-tab-jump="charts">Charts</button>
           <button class="hdr-btn" type="button" data-tab-jump="editor">Editor</button>
@@ -2170,6 +2186,62 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     </div>
   </section>
 
+  <!-- TAB: PROJECTS & COST -->
+  <section class="tab-panel" id="tab-projects" role="tabpanel" aria-labelledby="nav-projects">
+    <div class="panel-card">
+      <h3 style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        4th Marines Consolidation on Camp Schwab Projects
+        <span style="margin-left:auto;display:flex;gap:6px;">
+          <button class="hdr-btn primary" id="pj-add" type="button">Add Project</button>
+          <button class="hdr-btn" id="pj-export-csv" type="button">Export CSV</button>
+          <button class="hdr-btn" id="pj-export-json" type="button">Export JSON</button>
+        </span>
+      </h3>
+
+      <!-- Total cost hero card -->
+      <div style="display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;background:var(--bg-section);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:6px;padding:12px 16px;margin-bottom:14px;">
+        <div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-weight:800;">Total Project Cost</div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:3px;">Auto-calculated from all project rows. Edit any Cost cell and this updates live.</div>
+        </div>
+        <div id="pj-total" style="font-family:var(--font-mono);font-size:28px;font-weight:800;color:var(--accent-bright);letter-spacing:0.02em;">$0</div>
+      </div>
+
+      <div class="tbl-scroll" style="max-height:calc(100vh - 360px);">
+        <table class="ed-table" id="tbl-projects" aria-label="Projects and costs">
+          <thead>
+            <tr>
+              <th style="width:80px;">PAX ID</th>
+              <th style="width:110px;">Building</th>
+              <th style="width:140px;">Cost</th>
+              <th>Scope</th>
+              <th style="width:140px;">Supported Unit</th>
+              <th style="width:100px;">Completion</th>
+              <th style="width:120px;">Delivery</th>
+              <th style="width:70px;">FRF Note</th>
+              <th style="width:60px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-projects"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2" style="text-align:right;font-weight:800;">TOTAL</td>
+              <td id="pj-total-cell" class="num" style="font-weight:800;font-family:var(--font-mono);color:var(--accent-bright);">$0</td>
+              <td colspan="6"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div style="margin-top:14px;padding:10px 12px;background:var(--bg-section);border-left:3px solid var(--swing-amber);border-radius:4px;font-size:11px;color:var(--text-muted);line-height:1.6;">
+        <strong style="color:var(--swing-amber);">FRF Notes:</strong>
+        &nbsp;<strong>*</strong> = HN-funded FRF project (DEMO), FRF (2030)
+        &nbsp;&bull;&nbsp; <strong>**</strong> = HN-funded FRF project (renovation), FRF (2030)
+        &nbsp;&bull;&nbsp; Set the FRF Note cell to <code>*</code>, <code>**</code>, or blank.
+      </div>
+    </div>
+  </section>
+
   <!-- TAB: TIMELINE / GANTT -->
   <section class="tab-panel" id="tab-timeline" role="tabpanel" aria-labelledby="nav-timeline">
     <div class="panel-card">
@@ -2459,6 +2531,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     // Lazy-render heavy tabs
     if (name === 'roster') renderRoster();
     if (name === 'buildings') renderBuildings();
+    if (name === 'projects' && window.__APEX.renderProjects) window.__APEX.renderProjects();
     if (name === 'timeline') renderGantt();
     if (name === 'charts') renderCharts();
     if (name === 'editor') renderEditor();
@@ -3852,10 +3925,12 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     { id:'tab-phases',    cat:'Navigate', label:'Go to Phase Grid',      key:'3', run:function(){ A.switchTab('phases'); } },
     { id:'tab-roster',    cat:'Navigate', label:'Go to Unit Roster',     key:'4', run:function(){ A.switchTab('roster'); } },
     { id:'tab-buildings', cat:'Navigate', label:'Go to Building Schedule', key:'5', run:function(){ A.switchTab('buildings'); } },
-    { id:'tab-timeline',  cat:'Navigate', label:'Go to Timeline (Gantt)', key:'6', run:function(){ A.switchTab('timeline'); } },
-    { id:'tab-charts',    cat:'Navigate', label:'Go to Charts',          key:'7', run:function(){ A.switchTab('charts'); } },
-    { id:'tab-editor',    cat:'Navigate', label:'Go to Data Editor',     key:'8', run:function(){ A.switchTab('editor'); } },
-    { id:'tab-help',      cat:'Navigate', label:'Go to Help',            key:'9', run:function(){ A.switchTab('help'); } },
+    { id:'tab-projects',  cat:'Navigate', label:'Go to Projects & Cost',   key:'6', run:function(){ A.switchTab('projects'); } },
+    { id:'tab-timeline',  cat:'Navigate', label:'Go to Timeline',          key:'7', run:function(){ A.switchTab('timeline'); } },
+    { id:'tab-charts',    cat:'Navigate', label:'Go to Charts',            key:'8', run:function(){ A.switchTab('charts'); } },
+    { id:'tab-editor',    cat:'Navigate', label:'Go to Data Editor',       key:'9', run:function(){ A.switchTab('editor'); } },
+    { id:'tab-help',      cat:'Navigate', label:'Go to Help',                     run:function(){ A.switchTab('help'); } },
+    { id:'csv-projects',  cat:'Export',   label:'Export Projects & Cost CSV',     run:function(){ var b=document.getElementById('pj-export-csv'); if (b) b.click(); } },
     { id:'theme',         cat:'View',     label:'Toggle Theme (Dark/Light)', key:'T', run:function(){ A.toggleTheme(); } },
     { id:'sidebar',       cat:'View',     label:'Collapse Sidebar',      key:'K', run:function(){ A.toggleSidebar(); } },
     { id:'edit',          cat:'Edit',     label:'Toggle Edit Mode',      key:'E', run:function(){ var b=document.getElementById('edit-mode-btn'); if (b) b.click(); } },
@@ -4490,6 +4565,184 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
 
 <script>
 /* ============================================================
+   APEX OMEGA v6.0 - PROJECTS & COST
+   ============================================================ */
+(function(){
+  'use strict';
+  var A = window.__APEX; if (!A) return;
+
+  // Seed from the "4th Marines Consolidation on Camp Schwab Projects" slide.
+  // All 10 rows. Edit any cell; the total recalculates live.
+  // frf:  ''=none, '*'=HN-funded FRF DEMO (2030), '**'=HN-funded FRF renovation (2030)
+  var PROJECTS = [
+    { paxId:'387356', bldg:'SCH-1024', cost:10413140.40, scope:'Construct armory, secured storage, telecomm room, exterior overhang and OSS Vault', supported:'4th MarRegt, CLB-4', completion:'Q3 FY27', delivery:'DB to FEAD', frf:'' },
+    { paxId:'387624', bldg:'SCH-3213', cost:5397927.60, scope:'Convert to CLB-4 HQ', supported:'CLB-4', completion:'Q2 FY28', delivery:'DB to FEAD', frf:'' },
+    { paxId:'387568', bldg:'SCH-3270', cost:3537573.00, scope:'HVAC Upgrade and Telecommunications', supported:'4th MarRegt, CLB-4', completion:'Q4 FY27', delivery:'DB to FEAD', frf:'' },
+    { paxId:'387433', bldg:'SCH-3314', cost:1949383.28, scope:'Convert to 4th Mar HQ / UDP West', supported:'4th MarRegt', completion:'Q3 FY28', delivery:'DB to FEAD', frf:'' },
+    { paxId:'387622', bldg:'SCH-3237', cost:1452485.00, scope:'Re-partition WHSE for three units; Telecomm Room w/ Fire Suppression Design', supported:'4th MarRegt, CLB-4', completion:'Q2 FY27', delivery:'DB to FEAD', frf:'**' },
+    { paxId:'N/A',    bldg:'SCH-3235', cost:388000,     scope:'Add IT / Comms', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', frf:'' },
+    { paxId:'N/A',    bldg:'SCH-3410', cost:180000,     scope:'Add IT / Comms', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', frf:'*' },
+    { paxId:'N/A',    bldg:'SCH-3413', cost:178000,     scope:'Convert to A & B Co, CLB-4', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', frf:'*' },
+    { paxId:'N/A',    bldg:'SCH-3210', cost:14000,      scope:'Upgrade Female Head', supported:'4th MarRegt', completion:'Q4 FY26', delivery:'DOW to P&E', frf:'**' },
+    { paxId:'N/A',    bldg:'SCH-3335', cost:0,          scope:'G-6 Coordination MCEN switch install', supported:'MCB Butler', completion:'Q3 FY26', delivery:'N/A', frf:'' }
+  ];
+  A.PROJECTS = PROJECTS;
+
+  function fmtUSD(n) {
+    n = Number(n) || 0;
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function parseCost(s) {
+    if (typeof s === 'number') return s;
+    if (!s) return 0;
+    var cleaned = String(s).replace(/[^0-9.\-]/g, '');
+    var n = parseFloat(cleaned);
+    return isNaN(n) ? 0 : n;
+  }
+
+  function renderProjects() {
+    var body = document.getElementById('tbody-projects'); if (!body) return;
+    var html = PROJECTS.map(function(p, idx){
+      var rowClass = p.frf === '*' ? 'style="background:rgba(193,39,45,0.05);"'
+                   : p.frf === '**' ? 'style="background:rgba(212,144,10,0.05);"'
+                   : '';
+      return '<tr data-idx="' + idx + '" ' + rowClass + '>' +
+        '<td><input data-k="paxId" value="' + A.esc(p.paxId) + '" style="font-family:var(--font-mono);"></td>' +
+        '<td><input data-k="bldg"  value="' + A.esc(p.bldg)  + '" style="font-family:var(--font-mono);font-weight:700;"></td>' +
+        '<td><input data-k="cost"  value="' + p.cost + '" type="number" step="0.01" class="pj-cost" style="text-align:right;font-family:var(--font-mono);"></td>' +
+        '<td><input data-k="scope" value="' + A.esc(p.scope) + '" style="min-width:240px;"></td>' +
+        '<td><input data-k="supported"  value="' + A.esc(p.supported)  + '"></td>' +
+        '<td><input data-k="completion" value="' + A.esc(p.completion) + '" style="text-align:center;"></td>' +
+        '<td><input data-k="delivery"   value="' + A.esc(p.delivery)   + '"></td>' +
+        '<td><select data-k="frf" style="width:100%;">' +
+             '<option value=""' + (p.frf===''?' selected':'') + '>-</option>' +
+             '<option value="*"' + (p.frf==='*'?' selected':'') + '>* DEMO</option>' +
+             '<option value="**"' + (p.frf==='**'?' selected':'') + '>** Reno</option>' +
+             '</select></td>' +
+        '<td><span class="row-act"><button class="row-act-btn del" data-pj-del="' + idx + '" type="button" title="Delete row">Del</button></span></td>' +
+        '</tr>';
+    }).join('');
+    body.innerHTML = html;
+
+    // Live cost update on any cost input
+    Array.prototype.forEach.call(body.querySelectorAll('[data-k]'), function(inp){
+      inp.addEventListener('input', function(){
+        var tr = inp.closest('tr');
+        var idx = parseInt(tr.getAttribute('data-idx'), 10);
+        if (isNaN(idx) || !PROJECTS[idx]) return;
+        var k = inp.getAttribute('data-k');
+        var v = inp.value;
+        if (k === 'cost') v = parseCost(v);
+        PROJECTS[idx][k] = v;
+        if (k === 'cost') refreshTotal();
+        if (k === 'frf') renderProjects(); // row shading needs refresh
+        persistProjects();
+      });
+    });
+
+    // Wire delete
+    Array.prototype.forEach.call(body.querySelectorAll('[data-pj-del]'), function(btn){
+      btn.addEventListener('click', function(){
+        var i = parseInt(btn.getAttribute('data-pj-del'), 10);
+        if (isNaN(i) || !PROJECTS[i]) return;
+        if (confirm('Delete project ' + PROJECTS[i].bldg + ' (' + fmtUSD(PROJECTS[i].cost) + ')?')) {
+          PROJECTS.splice(i, 1);
+          renderProjects(); refreshTotal(); persistProjects();
+          A.toast('Project deleted', 'warning');
+        }
+      });
+    });
+
+    refreshTotal();
+  }
+
+  function refreshTotal() {
+    var total = PROJECTS.reduce(function(sum, p){ return sum + (Number(p.cost) || 0); }, 0);
+    var s = fmtUSD(total);
+    var cell = document.getElementById('pj-total-cell'); if (cell) cell.textContent = s;
+    var hero = document.getElementById('pj-total');      if (hero) hero.textContent = s;
+    // Also update Overview total-cost badge if present
+    var ov = document.getElementById('ov-total-cost'); if (ov) ov.textContent = s;
+    // And KPI if tagged
+    var kpi = document.querySelector('[data-kpi="total-cost"]');
+    if (kpi) kpi.textContent = s;
+  }
+
+  function persistProjects() {
+    try { localStorage.setItem('4thMAR_projects_v1', JSON.stringify(PROJECTS)); } catch(e) {}
+  }
+  function loadProjects() {
+    try {
+      var raw = localStorage.getItem('4thMAR_projects_v1');
+      if (!raw) return;
+      var arr = JSON.parse(raw);
+      if (Array.isArray(arr) && arr.length) {
+        PROJECTS.splice(0, PROJECTS.length);
+        arr.forEach(function(p){ PROJECTS.push(p); });
+      }
+    } catch(e) {}
+  }
+
+  function wireProjects() {
+    var add = document.getElementById('pj-add');
+    if (add) add.addEventListener('click', function(){
+      PROJECTS.push({ paxId:'N/A', bldg:'SCH-XXXX', cost:0, scope:'New project',
+        supported:'', completion:'', delivery:'', frf:'' });
+      renderProjects(); persistProjects(); A.toast('Project row added', 'success');
+    });
+    var csv = document.getElementById('pj-export-csv');
+    if (csv) csv.addEventListener('click', function(){
+      var cols = ['paxId','bldg','cost','scope','supported','completion','delivery','frf'];
+      function esc(v) { var s = String(v==null?'':v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s; }
+      var rows = [cols.join(',')].concat(PROJECTS.map(function(p){ return cols.map(function(c){ return esc(p[c]); }).join(','); }));
+      var total = PROJECTS.reduce(function(s,p){ return s + (Number(p.cost)||0); }, 0);
+      rows.push('TOTAL,,' + total.toFixed(2) + ',,,,,');
+      var blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href = url;
+      a.download = '4thMAR_projects_' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '.csv';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ a.remove(); URL.revokeObjectURL(url); }, 500);
+      A.toast('Projects CSV exported', 'success');
+    });
+    var js = document.getElementById('pj-export-json');
+    if (js) js.addEventListener('click', function(){
+      var total = PROJECTS.reduce(function(s,p){ return s + (Number(p.cost)||0); }, 0);
+      var payload = { PROJECTS: PROJECTS, TOTAL: total, exportedAt: new Date().toISOString() };
+      var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href = url;
+      a.download = '4thMAR_projects_' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '.json';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ a.remove(); URL.revokeObjectURL(url); }, 500);
+      A.toast('Projects JSON exported', 'success');
+    });
+  }
+
+  loadProjects();
+  A.renderProjects = renderProjects;
+  A.refreshProjectTotal = refreshTotal;
+  A.wireProjects = wireProjects;
+
+  // Hook into the master propagator so anything else that triggers propagateAll
+  // also refreshes the project total + row shading
+  var oldProp = A.propagateAll;
+  A.propagateAll = function(){
+    if (typeof oldProp === 'function') oldProp();
+    refreshTotal();
+  };
+
+  // Initial wire on DOMContentLoaded (init sequence will call wireProjects)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function(){ wireProjects(); refreshTotal(); });
+  } else {
+    wireProjects(); refreshTotal();
+  }
+})();
+</script>
+
+<script>
+/* ============================================================
    APEX OMEGA v6.0 - EDITOR + EXPORT + INIT
    ============================================================ */
 (function(){
@@ -4833,7 +5086,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
 
       // Number keys 1-9 = tab jump
       if (/^[1-9]$/.test(e.key)) {
-        var names = ['overview','map','phases','roster','buildings','timeline','charts','editor','help'];
+        var names = ['overview','map','phases','roster','buildings','projects','timeline','charts','editor'];
         var idx = parseInt(e.key, 10) - 1;
         if (names[idx]) { A.switchTab(names[idx]); e.preventDefault(); return; }
       }

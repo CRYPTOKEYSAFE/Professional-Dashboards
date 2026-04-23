@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>DPRI / 12th MLR / 3/12 Facility Planning &mdash; FOUO</title>
+<!-- INJECT:vendor:vendor/tabulator-6.4.0.min.css -->
+<style>
+<!-- INJECT:style:src/styles.css -->
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="banner banner-top" role="note" aria-label="Handling caveat">FOR OFFICIAL USE ONLY</div>
+<div id="app" role="application"></div>
+<div class="banner banner-bottom" role="note" aria-label="Handling caveat">FOR OFFICIAL USE ONLY</div>
+
+<!-- Icon sprite (inline SVG symbols) -->
+<!-- INJECT:vendor:vendor/icons.svg -->
+
+<!-- Embedded datasets (read by dataStore on boot) -->
+<script type="application/json" id="data-projects"><!-- INJECT:data:data/projects.json --></script>
+<script type="application/json" id="data-ccn-catalog"><!-- INJECT:data:data/ccn-catalog.json --></script>
+<script type="application/json" id="data-installations"><!-- INJECT:data:data/installations.json --></script>
+<script type="application/json" id="data-programs"><!-- INJECT:data:data/programs.json --></script>
+
+<!-- Vendor libraries (all inlined, no CDN) -->
+<script><!-- INJECT:vendor:vendor/tabulator-6.4.0.min.js --></script>
+<script><!-- INJECT:vendor:vendor/d3-7.9.0.min.js --></script>
+<script><!-- INJECT:vendor:vendor/papaparse-5.5.3.min.js --></script>
+
+<!-- App modules (load order matters: dataStore & persistence first, shell last before app) -->
+<script><!-- INJECT:module:src/modules/dataStore.js --></script>
+<script><!-- INJECT:module:src/modules/persistence.js --></script>
+<script><!-- INJECT:module:src/modules/shell.js --></script>
+<script><!-- INJECT:module:src/modules/grid.js --></script>
+<script><!-- INJECT:module:src/modules/ccn.js --></script>
+<script><!-- INJECT:module:src/modules/heatmap.js --></script>
+<script><!-- INJECT:module:src/modules/admin.js --></script>
+<script><!-- INJECT:module:src/modules/overview.js --></script>
+<script><!-- INJECT:module:src/modules/crosswalk.js --></script>
+<script><!-- INJECT:module:src/modules/brief.js --></script>
+<script><!-- INJECT:module:src/app.js --></script>
+</body>
+</html>

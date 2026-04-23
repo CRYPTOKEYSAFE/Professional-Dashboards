@@ -839,6 +839,24 @@ body.drawer-open #edit-mode-btn {
   .frf-status { background: #fff3f3; border-color: #c00; }
   .frf-status-title { color: #c00; }
   .org-footer { color: #666; border-color: #ccc; }
+
+  /* APEX OMEGA print hides - strip all interactive chrome */
+  .sidebar { display: none !important; }
+  .main-content { margin-left: 0 !important; }
+  .toolbar { display: none !important; }
+  #edit-mode-btn { display: none !important; }
+  #edit-bar { display: none !important; }
+  .detail-overlay, .cmd-overlay, .modal-overlay, .conf-overlay { display: none !important; }
+  .toast-cont { display: none !important; }
+  body { padding-top: 0 !important; padding-bottom: 0 !important; }
+  body.edit-mode { padding-top: 0 !important; }
+  /* Tab panels: show only the active tab in print */
+  .tab-panel { display: none !important; }
+  .tab-panel.active { display: block !important; }
+  /* Keep the header visible but un-stick it */
+  .main-header, .hdr { position: static !important; top: auto !important; }
+  .hdr-right .clock-row, .hdr-right .mini-cal { display: none; }
+  .hdr-right .frf-countdown { font-size: 11px; }
   @page { size: 17in 11in landscape; margin: 0.35in; }
 }
 
@@ -2247,14 +2265,22 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     <div class="panel-card">
       <h3>How to Use</h3>
       <div style="font-size:12px;color:var(--text);line-height:1.7;">
-        <p><strong>Tabs:</strong> Use the sidebar to switch between Overview, Interactive Map, Phase Grid, Unit Roster, Building Schedule, Timeline, Charts, Editor, and Help. Press <kbd>1</kbd>-<kbd>9</kbd> to jump between tabs.</p>
-        <p style="margin-top:10px;"><strong>Interactive Map:</strong> Open the Map tab, then press <kbd>Space</kbd> or <kbd>&rarr;</kbd> to advance through relocation phases. Press <kbd>R</kbd> to reset to initial posture. The Execute and Reset buttons perform the same actions.</p>
-        <p style="margin-top:10px;"><strong>Edit Mode:</strong> Press <kbd>E</kbd> or click the Edit button. Every text, KPI, badge, building, and unit tile becomes editable. Click any element to open the edit panel. Drag tiles on the map to reposition them. Press <kbd>E</kbd> again to exit.</p>
-        <p style="margin-top:10px;"><strong>Theme:</strong> Press <kbd>T</kbd> to toggle dark/light. Preference is saved to browser storage.</p>
-        <p style="margin-top:10px;"><strong>Search / Filter:</strong> The toolbar search + filter selects apply across the Roster, Buildings, Timeline, and Editor tables.</p>
-        <p style="margin-top:10px;"><strong>Command Palette:</strong> Press <kbd>Ctrl+K</kbd> (or <kbd>Cmd+K</kbd>) to open. Type to filter commands, <kbd>&uarr;</kbd>/<kbd>&darr;</kbd> to navigate, <kbd>Enter</kbd> to execute.</p>
-        <p style="margin-top:10px;"><strong>Detail Drawer:</strong> Click any row in Roster or Buildings, or any tile/building on the Map, to open the detail drawer.</p>
-        <p style="margin-top:10px;"><strong>Export:</strong> Export CSV/JSON per table, or Export HTML Snapshot from the Editor tab for a complete standalone file.</p>
+        <p><strong>Everything is editable.</strong> Units, buildings, labels, dates, phases, statuses, notes, KPI cards, phase cards, footer text - all of it. You can also add new units and buildings or delete existing ones as the plan changes. Nothing requires a developer.</p>
+        <p style="margin-top:10px;"><strong>Four ways to edit:</strong></p>
+        <ol style="margin:4px 0 0 22px;">
+          <li><strong>Detail Drawer (recommended).</strong> Click any tile on the map, any building on the map, or any row in the Unit Roster / Building Schedule tables. The drawer slides in from the right. Click <kbd>Edit</kbd> to swap the read-only view for an editable form with every field (name, echelon, start/end building, phase, move date, status, notes, occupants, etc.). Click <kbd>Save</kbd> to write back to the data and propagate to the map, tables and charts. Click <kbd>Delete</kbd> to remove the record and its map graphic.</li>
+          <li><strong>Data Editor tab (bulk).</strong> Full CRUD tables for Units and Buildings. Add Row, delete row, edit any cell inline. Save Units / Save Buildings commits and syncs to the map.</li>
+          <li><strong>Edit Mode on the map.</strong> Press <kbd>E</kbd> or click Edit Mode. Every text element (headers, KPI labels, badges, card details, card dates) shows a dashed outline. Click any outlined element to edit it inline. Click a tile or building to open its visual edit panel (position, size, color, FY tag). Drag tiles to reposition them.</li>
+          <li><strong>Inline cells.</strong> The Editor tab cells accept text input directly without Edit Mode.</li>
+        </ol>
+        <p style="margin-top:10px;"><strong>Tabs:</strong> Overview, Interactive Map, Phase Grid, Unit Roster, Building Schedule, Timeline, Charts, Data Editor, Help. Press <kbd>1</kbd>-<kbd>9</kbd> to jump between tabs.</p>
+        <p style="margin-top:10px;"><strong>Interactive Map:</strong> Open the Map tab, press <kbd>Space</kbd> or <kbd>&rarr;</kbd> to advance through relocation phases, <kbd>R</kbd> to reset. The phase grid at the top highlights the active phase and pulses the matching card when a tile lands. FY tags pop up on moving tiles when they arrive. The Consolidated Armory tile does not exist before Phase 3 - it materializes at Bldg 1024 when consolidation happens. Bldg 3446 slides into the FRF demo zone when Phase 2 demolishes it.</p>
+        <p style="margin-top:10px;"><strong>Search / Filter:</strong> Toolbar search + Type / Phase / Status selects filter across Roster, Buildings, Timeline, and Editor tables. Reset clears all filters.</p>
+        <p style="margin-top:10px;"><strong>Command Palette:</strong> <kbd>Ctrl+K</kbd> / <kbd>Cmd+K</kbd>. Type to filter, <kbd>&uarr;</kbd>/<kbd>&darr;</kbd> to navigate, <kbd>Enter</kbd> to run.</p>
+        <p style="margin-top:10px;"><strong>Theme:</strong> Press <kbd>T</kbd> to toggle dark/light. Saved between sessions.</p>
+        <p style="margin-top:10px;"><strong>Persistence:</strong> All edits auto-persist to browser localStorage under <code style="background:var(--bg-section);padding:1px 5px;border-radius:3px;">4thMAR_edits_v1</code> and <code style="background:var(--bg-section);padding:1px 5px;border-radius:3px;">4thMAR_data_v1</code>. Data Editor &rarr; Clear All Overrides wipes both and reloads defaults.</p>
+        <p style="margin-top:10px;"><strong>Export / Import:</strong> Per-table CSV and JSON from the Roster and Buildings tabs. Export All JSON from the Data Editor. Export HTML Snapshot produces a complete standalone file with current edits baked in - hand it to anyone, they can open it in a browser, no server needed.</p>
+        <p style="margin-top:10px;"><strong>Print:</strong> <kbd>P</kbd> or Print button. Sidebar, toolbars, edit chrome, overlays and the map simulation are hidden. Only the active tab's content is printed on 17x11 landscape.</p>
       </div>
     </div>
 

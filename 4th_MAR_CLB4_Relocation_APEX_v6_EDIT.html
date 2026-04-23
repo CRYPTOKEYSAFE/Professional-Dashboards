@@ -1376,10 +1376,9 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
     <div class="sb-hdr">
       <div class="sb-logo">
-        <div class="logo-mark" aria-hidden="true">4M</div>
         <div>
           <div class="logo-text">4th MAR / CLB-4</div>
-          <div class="logo-sub">APEX OMEGA v6.0</div>
+          <div class="logo-sub">Master Relocation Plan</div>
         </div>
       </div>
     </div>
@@ -1525,9 +1524,9 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       <label class="tool-label" for="f-type">Type</label>
       <select id="f-type" class="tb-select" aria-label="Filter by unit type">
         <option value="">All Types</option>
-        <option value="div">Division</option>
+        <option value="div">3d MARDIV</option>
         <option value="mlg">MLG</option>
-        <option value="reg">Regiment</option>
+        <option value="reg">4th MAR Regt</option>
         <option value="arm">Armory</option>
         <option value="med">Medical</option>
         <option value="mtr">Motor Transport</option>
@@ -1617,11 +1616,11 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     <div class="grid-2" style="margin-top:14px;">
       <div class="chart-box">
         <div class="chart-title">Units by Echelon</div>
-        <svg id="chart-echelon" class="chart-svg" viewBox="0 0 300 160" aria-label="Unit type distribution"></svg>
+        <svg id="chart-echelon" class="chart-svg" viewBox="0 0 340 200" aria-label="Unit type distribution"></svg>
       </div>
       <div class="chart-box">
         <div class="chart-title">Buildings by Zone</div>
-        <svg id="chart-zones" class="chart-svg" viewBox="0 0 300 160" aria-label="Buildings by zone"></svg>
+        <svg id="chart-zones" class="chart-svg" viewBox="0 0 340 200" aria-label="Buildings by zone"></svg>
       </div>
     </div>
 
@@ -2007,19 +2006,19 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     <!-- 4th MAR Supply - resident in 3237 at init, stays -->
     <div id="t-4th-sup" class="tile t-div" data-editable-tile="true" style="top:88px;left:634px;"
          title="4th MAR Supply - resident in Bldg 3237, remains throughout all phases">
-      <div class="logo-div"></div>4TH MAR SUP<div class="fy-tag resident">RES</div>
+      <div class="logo-div"></div>4TH MAR SUP
     </div>
 
     <!-- CLB-4 Supply - resident in 3237 at init, stays -->
     <div id="t-clb-sup" class="tile t-mlg" data-editable-tile="true" style="top:120px;left:634px;"
          title="CLB-4 Supply - resident in Bldg 3237, remains throughout all phases">
-      <div class="logo-mlg"></div>CLB-4 SUP<div class="fy-tag resident">RES</div>
+      <div class="logo-mlg"></div>CLB-4 SUP
     </div>
 
     <!-- 4th MAR COMM - resident in 3235 at init, stays -->
     <div id="t-4th-com" class="tile t-div" data-editable-tile="true" style="top:278px;left:634px;"
          title="4th MAR COMM - resident in Bldg 3235, remains throughout all phases">
-      <div class="logo-div"></div>4TH MAR COMM<div class="fy-tag resident">RES</div>
+      <div class="logo-div"></div>4TH MAR COMM
     </div>
 
     <!-- Consolidated Armory - starts in FRF zone (existing armory location) -->
@@ -2037,19 +2036,19 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     <!-- Med/ATC - stays at 3510 throughout -->
     <div id="t-med" class="tile t-med" data-editable-tile="true" style="top:456px;left:1084px;"
          title="Med/ATC - remains at Bldg 3510 pending GOJ replacement construction">
-      <div class="logo-div"></div>MED / ATC<div class="fy-tag pending">PEND GOJ</div>
+      <div class="logo-div"></div>MED / ATC
     </div>
 
     <!-- 4th MAR Motor T - resident at 3270, stays -->
     <div id="t-4th-mtr" class="tile t-mtr" data-editable-tile="true" style="top:583px;left:634px;"
          title="4th MAR Motor T - resident at Bldg 3270, remains in place throughout all phases">
-      <div class="logo-div"></div>4TH MAR MTR-T<div class="fy-tag resident">RES</div>
+      <div class="logo-div"></div>4TH MAR MTR-T
     </div>
 
     <!-- CLB-4 Motor T - resident at 3270, stays -->
     <div id="t-clb-mtr" class="tile t-mtr" data-editable-tile="true" style="top:611px;left:634px;"
          title="CLB-4 Motor T - resident at Bldg 3270, remains in place throughout all phases">
-      <div class="logo-mlg"></div>CLB-4 MTR-T<div class="fy-tag resident">RES</div>
+      <div class="logo-mlg"></div>CLB-4 MTR-T
     </div>
 
   </div><!-- /map-stage -->
@@ -2210,7 +2209,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   <!-- TAB: HELP -->
   <section class="tab-panel" id="tab-help" role="tabpanel" aria-labelledby="nav-help">
     <div class="panel-card">
-      <h3>How to Use - APEX OMEGA v6.0</h3>
+      <h3>How to Use</h3>
       <div style="font-size:12px;color:var(--text);line-height:1.7;">
         <p><strong>Tabs:</strong> Use the sidebar to switch between Overview, Interactive Map, Phase Grid, Unit Roster, Building Schedule, Timeline, Charts, Editor, and Help. Press <kbd>1</kbd>-<kbd>9</kbd> to jump between tabs.</p>
         <p style="margin-top:10px;"><strong>Interactive Map:</strong> Open the Map tab, then press <kbd>Space</kbd> or <kbd>&rarr;</kbd> to advance through relocation phases. Press <kbd>R</kbd> to reset to initial posture. The Execute and Reset buttons perform the same actions.</p>
@@ -2246,7 +2245,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
 
   </div><!-- /tab-container -->
 
-  <div class="org-footer" data-editable="text" data-label="Footer Attribution" title="Click to edit in Edit Mode">MCIPAC G-F &bull; PPE &bull; Camp Schwab Consolidation &bull; APEX OMEGA v6.0</div>
+  <div class="org-footer" data-editable="text" data-label="Footer Attribution" title="Click to edit in Edit Mode">MCIPAC G-F &bull; PPE &bull; Camp Schwab Consolidation</div>
 
 </div><!-- /main-wrapper -->
 </div><!-- /main-content -->
@@ -3354,7 +3353,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     });
 
     // Current echelon class
-    var echelons = [['t-div','Division'],['t-mlg','MLG'],['t-reg','Regiment'],
+    var echelons = [['t-div','3d MARDIV'],['t-mlg','MLG'],['t-reg','4th MAR Regt'],
                     ['t-arm','Armory'],['t-med','Medical'],['t-mtr','Motor Transport']];
     var curEch = '';
     echelons.forEach(function(e){ if (tile.classList.contains(e[0])) curEch = e[0]; });
@@ -3720,7 +3719,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     initTileDrag();
     document.addEventListener('click', handleEditClick);
     loadSavedEdits();
-    toast('APEX OMEGA v6.0 ready. Press E to enter Edit Mode.', '');
+    toast('Dashboard ready. Press E to enter Edit Mode.', '');
   }
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -3847,7 +3846,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   function openUnitDetail(unitId) {
     var u = A.UNITS.filter(function(x){ return x.id === unitId; })[0]; if (!u) return;
     currentDetail = { kind:'unit', ref: u };
-    var typeMap = { div:'Division', mlg:'MLG', reg:'Regiment', arm:'Armory', med:'Medical', mtr:'Motor Transport' };
+    var typeMap = { div:'3d MARDIV', mlg:'MLG', reg:'4th MAR Regt', arm:'Armory', med:'Medical', mtr:'Motor Transport' };
     var body = '<div class="dp-section">Unit Record</div>' +
       '<div class="dp-row"><div class="dp-k">Tile ID</div><div class="dp-v"><code>' + A.esc(u.id) + '</code></div></div>' +
       '<div class="dp-row"><div class="dp-k">Name</div><div class="dp-v">' + A.esc(u.name) + '</div></div>' +

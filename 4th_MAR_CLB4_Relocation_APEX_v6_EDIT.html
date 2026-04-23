@@ -3989,10 +3989,122 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     var pr = document.getElementById('dp-print'); if (pr) pr.addEventListener('click', function(){ window.print(); });
     var ed = document.getElementById('dp-edit'); if (ed) ed.addEventListener('click', function(){
       if (!currentDetail) return;
-      closeDetail();
-      var b = document.getElementById('edit-mode-btn'); if (b) b.click();
-      A.toast('Edit mode enabled', '');
+      renderDetailEditForm();
     });
+  }
+
+  /* Build an inline, editable form in the drawer body for the currently-open
+     unit or building. All fields are editable. Save writes back to UNITS /
+     BUILDINGS, updates the map tile / building label, and re-renders any
+     visible table. Delete removes the record. */
+  function renderDetailEditForm() {
+    if (!currentDetail) return;
+    var r = currentDetail.ref;
+    var kind = currentDetail.kind;
+    var TYPES = ['div','mlg','reg','arm','med','mtr'];
+    var ZONES = ['Source','Swing','Final','FRF'];
+    var STATUSES_U = ['Permanent Move','Swing','FRF Action','Consolidation','Resident','Pending'];
+    var STATUSES_B = ['Active','Vacated','Demolish','Pending','Swing','Converted'];
+
+    function sel(k, cur, list, map) {
+      return '<select id="dpf-' + k + '" data-k="' + k + '">' + list.map(function(v){
+        var label = map ? map[v] : v;
+        return '<option value="' + A.esc(v) + '"' + (v===cur?' selected':'') + '>' + A.esc(label) + '</option>';
+      }).join('') + '</select>';
+    }
+    function fld(label, html) {
+      return '<div class="dp-row"><div class="dp-k">' + A.esc(label) + '</div><div class="dp-v">' + html + '</div></div>';
+    }
+    function inp(k, val, extra) {
+      extra = extra || '';
+      return '<input class="editfld" id="dpf-' + k + '" data-k="' + k + '" value="' + A.esc(val == null ? '' : val) + '" ' + extra + ' style="width:100%;">';
+    }
+    function num(k, val) {
+      return '<input class="editfld" id="dpf-' + k + '" data-k="' + k + '" type="number" value="' + (val||0) + '" style="width:80px;">';
+    }
+    function ta(k, val) {
+      return '<textarea class="editfld" id="dpf-' + k + '" data-k="' + k + '" style="width:100%;min-height:70px;resize:vertical;">' + A.esc(val||'') + '</textarea>';
+    }
+
+    var body;
+    if (kind === 'unit') {
+      body = '<div class="dp-section">Edit Unit Record</div>' +
+        fld('Tile ID', inp('id', r.id)) +
+        fld('Name', inp('name', r.name)) +
+        fld('Echelon', sel('type', r.type, TYPES, A.typeMap)) +
+        fld('Start Bldg', inp('startBldg', r.startBldg)) +
+        fld('End Bldg', inp('endBldg', r.endBldg)) +
+        fld('Phase', num('phase', r.phase)) +
+        fld('Move Date', inp('date', r.date)) +
+        fld('Status', sel('status', r.status, STATUSES_U)) +
+        '<div class="dp-section">Notes</div>' + ta('note', r.note);
+    } else {
+      body = '<div class="dp-section">Edit Building Record</div>' +
+        fld('Building ID', inp('id', r.id)) +
+        fld('Number', inp('num', r.num)) +
+        fld('Label', inp('label', r.label)) +
+        fld('Zone', sel('zone', r.zone, ZONES)) +
+        fld('Status', sel('status', r.status, STATUSES_B)) +
+        fld('Phase In', num('phaseIn', r.phaseIn)) +
+        fld('Phase Out', num('phaseOut', r.phaseOut)) +
+        fld('Occupants', inp('occupants', (r.occupants||[]).join(', '), 'placeholder="Comma-separated tile IDs"'));
+    }
+
+    document.getElementById('dp-body').innerHTML = body;
+    // Swap footer to Save / Delete / Cancel
+    var footer = document.querySelector('.detail-panel .dp-footer');
+    if (footer) {
+      footer.innerHTML = '<button class="hdr-btn danger" id="dpf-del" type="button">Delete</button>' +
+        '<button class="hdr-btn" id="dpf-cancel" type="button">Cancel</button>' +
+        '<button class="hdr-btn primary" id="dpf-save" type="button">Save</button>';
+      document.getElementById('dpf-cancel').addEventListener('click', function(){
+        // Re-open the detail view (fresh read)
+        if (kind === 'unit') A.openUnitDetail(r.id); else A.openBuildingDetail(r.id);
+      });
+      document.getElementById('dpf-save').addEventListener('click', function(){
+        saveDetailForm(kind, r);
+      });
+      document.getElementById('dpf-del').addEventListener('click', function(){
+        deleteDetailRecord(kind, r);
+      });
+    }
+  }
+
+  function saveDetailForm(kind, origRef) {
+    var body = document.getElementById('dp-body');
+    var changes = {};
+    Array.prototype.forEach.call(body.querySelectorAll('[data-k]'), function(el){
+      var k = el.getAttribute('data-k');
+      var v = el.value;
+      if (k === 'phase' || k === 'phaseIn' || k === 'phaseOut') v = parseInt(v, 10) || 0;
+      if (k === 'occupants') v = v.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+      changes[k] = v;
+    });
+    Object.keys(changes).forEach(function(k){ origRef[k] = changes[k]; });
+    // Persist and propagate
+    if (A.persistEditedData) A.persistEditedData();
+    if (A.propagateToMap) A.propagateToMap();
+    A.renderRoster(); A.renderBuildings(); A.renderGantt(); A.renderCharts(); A.renderOverview();
+    if (A.renderEditor) A.renderEditor();
+    A.toast(kind === 'unit' ? 'Unit saved' : 'Building saved', 'success');
+    // Re-open read-only detail view with updated values
+    if (kind === 'unit') A.openUnitDetail(origRef.id); else A.openBuildingDetail(origRef.id);
+  }
+
+  function deleteDetailRecord(kind, ref) {
+    if (!confirm((kind === 'unit' ? 'Delete unit "' + ref.name + '"' : 'Delete building "' + ref.num + '"') + '? This also removes any map tile / building graphic.')) return;
+    if (kind === 'unit') {
+      var i = A.UNITS.indexOf(ref); if (i >= 0) A.UNITS.splice(i, 1);
+      var tile = document.getElementById(ref.id); if (tile && tile.parentNode) tile.parentNode.removeChild(tile);
+    } else {
+      var j = A.BUILDINGS.indexOf(ref); if (j >= 0) A.BUILDINGS.splice(j, 1);
+      var bl = document.getElementById(ref.id); if (bl && bl.parentNode) bl.parentNode.removeChild(bl);
+    }
+    if (A.persistEditedData) A.persistEditedData();
+    A.renderRoster(); A.renderBuildings(); A.renderGantt(); A.renderCharts(); A.renderOverview();
+    if (A.renderEditor) A.renderEditor();
+    closeDetail();
+    A.toast((kind === 'unit' ? 'Unit' : 'Building') + ' deleted', 'warning');
   }
 
   A.openUnitDetail = openUnitDetail;
@@ -4442,13 +4554,17 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     });
     var saveU = document.getElementById('ed-save-units');
     if (saveU) saveU.addEventListener('click', function(){
-      commitEditor('u'); persistData(); A.toast('Units saved', 'success');
-      A.renderRoster(); A.renderGantt();
+      commitEditor('u'); persistData();
+      if (A.propagateToMap) A.propagateToMap();
+      A.renderRoster(); A.renderGantt(); A.renderCharts(); A.renderOverview();
+      A.toast('Units saved and propagated to map', 'success');
     });
     var saveB = document.getElementById('ed-save-bldgs');
     if (saveB) saveB.addEventListener('click', function(){
-      commitEditor('b'); persistData(); A.toast('Buildings saved', 'success');
-      A.renderBuildings();
+      commitEditor('b'); persistData();
+      if (A.propagateToMap) A.propagateToMap();
+      A.renderBuildings(); A.renderCharts(); A.renderOverview();
+      A.toast('Buildings saved and propagated to map', 'success');
     });
     var resU = document.getElementById('ed-reset-units');
     if (resU) resU.addEventListener('click', function(){
@@ -4552,6 +4668,45 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   A.renderEditor = renderEditor;
   A.exportCSV = exportCSV;
   A.exportJSON = exportJSON;
+  A.persistEditedData = persistData;
+
+  /* Propagate current UNITS / BUILDINGS data back onto the map tiles and
+     building graphics. Called after any edit so the map label stays in sync
+     with the underlying data source. */
+  function propagateToMap() {
+    // Update tile labels: find the first text node inside each tile and set it to UNITS.name
+    A.UNITS.forEach(function(u){
+      var tile = document.getElementById(u.id);
+      if (!tile) return;
+      // Update title tooltip too
+      tile.title = u.name + ' - ' + (u.startBldg === u.endBldg
+        ? 'Resident at ' + u.endBldg
+        : u.startBldg + ' -> ' + u.endBldg + ' (' + u.date + ')');
+      // Swap echelon color class based on type
+      ['t-div','t-mlg','t-reg','t-arm','t-med','t-mtr'].forEach(function(c){ tile.classList.remove(c); });
+      tile.classList.add('t-' + u.type);
+      // NOTE: the short-form label on the tile is intentionally distinct from
+      // the full UNITS.name (e.g. '4TH MAR SUP' vs '4th MAR Supply'). We do
+      // NOT overwrite the tile label from UNITS.name to avoid destroying the
+      // short abbreviation. Tile label editing is done via the map tile
+      // edit panel directly.
+    });
+    // Update building labels: span inside each building gets the BUILDINGS.label
+    A.BUILDINGS.forEach(function(b){
+      var el = document.getElementById(b.id);
+      if (!el) return;
+      var span = el.querySelector('span');
+      if (span && !span.id) { // don't clobber elements like lbl-3509 that the animation engine manages
+        span.textContent = b.label;
+      }
+      // Update number text node (first text child)
+      for (var i = 0; i < el.childNodes.length; i++) {
+        var n = el.childNodes[i];
+        if (n.nodeType === 3 && n.textContent.trim()) { n.textContent = b.num; break; }
+      }
+    });
+  }
+  A.propagateToMap = propagateToMap;
 
   /* --- GLOBAL KEYBOARD SHORTCUTS --- */
   function wireKeys() {

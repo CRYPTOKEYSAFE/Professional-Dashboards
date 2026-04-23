@@ -1326,7 +1326,58 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
 .chart-legend-item { display: flex; align-items: center; gap: 5px; }
 .chart-legend-dot { width: 10px; height: 10px; border-radius: 2px; }
 
-/* Gantt-style timeline */
+/* Building Lifecycle Swim-Lane */
+.swim { display: grid; grid-template-columns: 170px repeat(5, 1fr);
+  gap: 2px; background: var(--border-light); padding: 2px; border-radius: 6px;
+  font-size: 10.5px; }
+.swim-hdr { background: var(--bg-section); padding: 8px 10px;
+  font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-muted); font-size: 9.5px; text-align: center;
+  border-radius: 3px; }
+.swim-hdr.bldg { text-align: left; }
+.swim-hdr-sub { display: block; font-size: 9px; font-weight: 600;
+  color: var(--text-light); letter-spacing: 0.04em; text-transform: none;
+  margin-top: 2px; }
+.swim-row-lbl { background: var(--bg-card); padding: 9px 12px; color: var(--text);
+  font-weight: 700; font-size: 12px; display: flex; flex-direction: column;
+  gap: 2px; border-radius: 3px; cursor: pointer; transition: background .15s; }
+.swim-row-lbl:hover { background: var(--bg-panel); }
+.swim-row-lbl .sw-num { font-family: var(--font-mono); font-size: 13px;
+  color: var(--accent-bright); font-weight: 800; }
+.swim-row-lbl .sw-zone { font-size: 9px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+.swim-cell { background: var(--bg-card); min-height: 46px; padding: 4px;
+  border-radius: 3px; display: flex; flex-direction: column; gap: 2px;
+  position: relative; cursor: pointer; transition: transform .15s; }
+.swim-cell:hover { transform: translateY(-1px); z-index: 5; }
+.swim-state { display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.06em; border-radius: 2px; padding: 3px 5px;
+  text-align: center; line-height: 1.2; flex-shrink: 0; }
+.swim-state.active    { background: var(--status-green); color: #fff; }
+.swim-state.final     { background: var(--accent); color: #fff; }
+.swim-state.swing     { background: var(--swing-amber); color: #000; }
+.swim-state.vacated   { background: var(--text-light); color: var(--bg); }
+.swim-state.demolished{ background: var(--status-red); color: #fff;
+  background-image: repeating-linear-gradient(135deg, rgba(0,0,0,0.25) 0 3px,
+    transparent 3px 7px); }
+.swim-state.pending   { background: transparent; color: var(--swing-amber);
+  border: 1.5px dashed var(--swing-amber); }
+.swim-state.none      { background: transparent; color: var(--text-light);
+  border: 1px dashed var(--border-light); font-weight: 600; opacity: 0.55; }
+.swim-units { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; }
+.swim-chip { font-size: 8.5px; font-weight: 700; padding: 1px 4px;
+  border-radius: 8px; letter-spacing: 0.02em; border: 1px solid rgba(255,255,255,0.12);
+  white-space: nowrap; }
+.swim-chip.t-div { background: var(--tile-div); color: var(--tile-div-tx); }
+.swim-chip.t-mlg { background: var(--tile-mlg); color: var(--tile-mlg-tx); }
+.swim-chip.t-reg { background: var(--tile-reg); color: var(--tile-reg-tx); }
+.swim-chip.t-arm { background: var(--tile-arm); color: var(--tile-arm-tx); }
+.swim-chip.t-med { background: var(--tile-med); color: var(--tile-med-tx); }
+.swim-chip.t-mtr { background: var(--tile-mtr); color: var(--tile-mtr-tx); }
+.swim-chip.more  { background: var(--bg-section); color: var(--text-muted); }
+
+/* Gantt-style timeline (legacy, kept for potential fallback) */
 .gantt { display: grid; grid-template-columns: 180px repeat(12, 1fr);
   gap: 2px; font-size: 10.5px; background: var(--border-light); padding: 2px; border-radius: 4px; }
 .gantt-hdr { background: var(--bg-section); padding: 6px 8px;
@@ -2245,14 +2296,18 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   <!-- TAB: TIMELINE / GANTT -->
   <section class="tab-panel" id="tab-timeline" role="tabpanel" aria-labelledby="nav-timeline">
     <div class="panel-card">
-      <h3>Unit Movement Timeline (FY26 - FY28)</h3>
-      <div id="gantt-root" class="gantt" aria-label="Gantt timeline of unit movements"></div>
-      <div class="chart-legend" style="margin-top:10px;">
-        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--status-green);"></div>Permanent Move</div>
-        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--swing-amber);"></div>Swing</div>
-        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--status-red);"></div>FRF Action</div>
-        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--accent);"></div>Final Config</div>
-        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--tile-mtr);opacity:.7;"></div>Resident</div>
+      <h3>Building Lifecycle - State of Each Building Across the Five Phases</h3>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;line-height:1.55;">
+        Each row is one building. Each column is a relocation phase. Color shows what is happening to that building in that phase; the unit chips on each segment list who occupies it. Click any segment to open the detail drawer for that building.
+      </div>
+      <div id="swim-root" class="swim" aria-label="Building lifecycle swim-lane"></div>
+      <div class="chart-legend" style="margin-top:12px;gap:16px;">
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--status-green);"></div>Active / Occupied</div>
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--accent);"></div>Final Configuration</div>
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--swing-amber);"></div>Swing / Interim</div>
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--text-light);"></div>Vacated</div>
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--status-red);"></div>Demolished</div>
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:transparent;border:1.5px dashed var(--swing-amber);"></div>Pending (GOJ)</div>
       </div>
     </div>
   </section>
@@ -2345,7 +2400,9 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
           <li><strong>Edit Mode on the map.</strong> Press <kbd>E</kbd> or click Edit Mode. Every text element (headers, KPI labels, badges, card details, card dates) shows a dashed outline. Click any outlined element to edit it inline. Click a tile or building to open its visual edit panel (position, size, color, FY tag). Drag tiles to reposition them.</li>
           <li><strong>Inline cells.</strong> The Editor tab cells accept text input directly without Edit Mode.</li>
         </ol>
-        <p style="margin-top:10px;"><strong>Tabs:</strong> Overview, Interactive Map, Phase Grid, Unit Roster, Building Schedule, Timeline, Charts, Data Editor, Help. Press <kbd>1</kbd>-<kbd>9</kbd> to jump between tabs.</p>
+        <p style="margin-top:10px;"><strong>Tabs:</strong> Overview (<kbd>1</kbd>), Interactive Map (<kbd>2</kbd>), Phase Grid (<kbd>3</kbd>), Unit Roster (<kbd>4</kbd>), Building Schedule (<kbd>5</kbd>), Projects &amp; Cost (<kbd>6</kbd>), Timeline (<kbd>7</kbd>), Charts (<kbd>8</kbd>), Data Editor (<kbd>9</kbd>). Help is available from the sidebar any time.</p>
+        <p style="margin-top:10px;"><strong>Projects &amp; Cost:</strong> Ten-row editable table of the 4th Marines Camp Schwab consolidation projects. Every cell (PAX ID, Building, Cost, Scope, Supported Unit, Completion, Delivery, FRF marker) is editable. The total at the top and in the footer recalculates live as you type. Add Project appends a blank row; each row has a Delete button. FRF marker <code>*</code> = HN-funded DEMO, <code>**</code> = HN-funded renovation. Export CSV or JSON from the tab header.</p>
+        <p style="margin-top:10px;"><strong>Timeline (Building Lifecycle):</strong> One row per building, five columns (one per phase). Each cell shows that building's state (Active / Final / Swing / Vacated / Demolished / Pending) plus the unit chips occupying it during that phase. Click any cell or row label to open the building detail drawer.</p>
         <p style="margin-top:10px;"><strong>Interactive Map:</strong> Open the Map tab, press <kbd>Space</kbd> or <kbd>&rarr;</kbd> to advance through relocation phases, <kbd>R</kbd> to reset. The phase grid at the top highlights the active phase and pulses the matching card when a tile lands. FY tags pop up on moving tiles when they arrive. The Consolidated Armory tile does not exist before Phase 3 - it materializes at Bldg 1024 when consolidation happens. Bldg 3446 slides into the FRF demo zone when Phase 2 demolishes it.</p>
         <p style="margin-top:10px;"><strong>Search / Filter:</strong> Toolbar search + Type / Phase / Status selects filter across Roster, Buildings, Timeline, and Editor tables. Reset clears all filters.</p>
         <p style="margin-top:10px;"><strong>Command Palette:</strong> <kbd>Ctrl+K</kbd> / <kbd>Cmd+K</kbd>. Type to filter, <kbd>&uarr;</kbd>/<kbd>&darr;</kbd> to navigate, <kbd>Enter</kbd> to run.</p>
@@ -4344,33 +4401,148 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     return 'move';
   }
 
+  /* BUILDING LIFECYCLE SWIM-LANE
+     One row per building, five columns (Phases 0..4). Each cell computes
+     that building's state at that phase from BUILDINGS (phaseIn / phaseOut /
+     status / zone) and cross-references UNITS to show occupants in that
+     phase. Click any cell to open the building detail drawer. */
   function renderGantt() {
-    var root = document.getElementById('gantt-root'); if (!root) return;
-    var units = A.filterUnits();
+    var root = document.getElementById('swim-root'); if (!root) return;
+    var bldgs = A.BUILDINGS.slice().sort(function(a,b){
+      var zOrder = { 'Source':0, 'Swing':1, 'Final':2, 'FRF':3 };
+      var za = zOrder[a.zone] != null ? zOrder[a.zone] : 9;
+      var zb = zOrder[b.zone] != null ? zOrder[b.zone] : 9;
+      if (za !== zb) return za - zb;
+      return String(a.num).localeCompare(String(b.num));
+    });
 
-    var html = '<div class="gantt-hdr unit">Unit</div>';
-    QUARTERS.forEach(function(q){ html += '<div class="gantt-hdr">' + A.esc(q) + '</div>'; });
+    // Phase headers
+    var phaseHdrs = [
+      { label:'Phase 0',  sub:'Initial Posture (Pre-FY26)' },
+      { label:'Phase 1',  sub:'FY26 Swing' },
+      { label:'Phase 2',  sub:'FY27 Moves' },
+      { label:'Phase 3',  sub:'FY28 Consolidation' },
+      { label:'Phase 4',  sub:'Post-FRF (1 Jun 2028)' }
+    ];
+    var html = '<div class="swim-hdr bldg">Building</div>';
+    phaseHdrs.forEach(function(h){
+      html += '<div class="swim-hdr">' + h.label + '<span class="swim-hdr-sub">' + A.esc(h.sub) + '</span></div>';
+    });
 
-    units.forEach(function(u){
-      html += '<div class="gantt-row-lbl"><span class="chip-type chip-' + u.type + '"></span>' + A.esc(u.name) + '</div>';
-      var col = dateToCol(u.date);
-      var s = styleFor(u);
-      for (var i = 0; i < QUARTERS.length; i++) {
-        var bar = '';
-        if (u.status === 'Resident' || u.status === 'Pending') {
-          // Resident through all
-          bar = '<div class="gantt-bar ' + s + '">' + A.esc(u.startBldg) + '</div>';
-        } else if (i === col) {
-          bar = '<div class="gantt-bar ' + s + '" title="' + A.esc(u.name + ' - ' + u.date) + '">' + A.esc(u.endBldg) + '</div>';
-        } else if (u.id === 't-clb-com' && QUARTERS[i] === 'Q3 FY26') {
-          // CLB-4 COMM swing phase
-          bar = '<div class="gantt-bar swing">1024</div>';
+    function unitsAt(bldgNum, phase) {
+      var out = [];
+      A.UNITS.forEach(function(u){
+        var res = u.startBldg === u.endBldg;
+        if (res) {
+          if (u.startBldg === bldgNum && u.status !== 'Pending') out.push(u);
+          else if (u.startBldg === bldgNum && u.status === 'Pending') out.push(u);
+        } else {
+          // Moving unit: is at startBldg for phase < u.phase, endBldg for phase >= u.phase
+          // Special cases: CLB-4 COMM swings through 1024 in phase 1-2
+          if (u.id === 't-clb-com') {
+            if (phase <= 0 && bldgNum === u.startBldg) out.push(u);
+            else if ((phase === 1 || phase === 2) && bldgNum === '1024') out.push(u);
+            else if (phase >= 3 && bldgNum === u.endBldg) out.push(u);
+          } else if (u.id === 't-arm') {
+            // Armory only exists from phase 3 at 1024
+            if (phase >= 3 && bldgNum === u.endBldg) out.push(u);
+          } else {
+            if (phase < u.phase && bldgNum === u.startBldg) out.push(u);
+            if (phase >= u.phase && bldgNum === u.endBldg) out.push(u);
+          }
         }
-        html += '<div class="gantt-cell">' + bar + '</div>';
+      });
+      return out;
+    }
+
+    function stateFor(b, phase) {
+      // Determine state (active/final/swing/vacated/demolished/pending/none)
+      var isPending = b.status === 'Pending';
+      if (isPending) return 'pending';
+      // Demolition path: b.phaseOut says when building is demolished
+      var demolishedPhase = 0;
+      if (b.zone === 'FRF' && b.status === 'Demolish') demolishedPhase = b.phaseOut || 4;
+      else if (b.status === 'Vacated') demolishedPhase = b.phaseOut || 99; // marked vacated but not demolished unless FRF
+      if (b.zone === 'FRF' && demolishedPhase && phase >= demolishedPhase) return 'demolished';
+      // Vacated (but not demolished) - source zone buildings whose occupants left
+      if (b.status === 'Vacated' && b.phaseOut && phase >= b.phaseOut && b.zone !== 'FRF') return 'vacated';
+      // Swing status: swing when its swing-role is active
+      if (b.zone === 'Swing' || b.status === 'Swing' || b.status === 'Converted') {
+        // Converted: acts as swing during renovation phases, then final after
+        if (b.id === 'b-1024') {
+          if (phase === 0) return 'active';
+          if (phase === 1 || phase === 2) return 'swing';
+          if (phase >= 3) return 'final';
+        }
+        if (b.id === 'b-3413') {
+          // Safety moves out phase 1, CLB-4 A&B moves in phase 2
+          if (phase === 0) return 'active';
+          if (phase === 1) return 'vacated';
+          if (phase >= 2) return 'final';
+        }
+        return 'swing';
+      }
+      // Final zone buildings
+      if (b.zone === 'Final') {
+        if (b.phaseIn && phase < b.phaseIn) return 'active'; // pre-occupied as-is
+        return 'final';
+      }
+      // Source zone defaults
+      if (b.zone === 'Source') {
+        if (b.phaseOut && phase >= b.phaseOut) {
+          // For 3446 which gets demolished visually when vacated
+          if (b.id === 'b-3446') return 'demolished';
+          return 'vacated';
+        }
+        return 'active';
+      }
+      return 'active';
+    }
+
+    bldgs.forEach(function(b){
+      html += '<div class="swim-row-lbl" data-bldg-row="' + A.esc(b.id) + '" title="Open detail drawer">' +
+        '<span class="sw-num">' + A.esc(b.num) + '</span>' +
+        '<span>' + A.esc(b.label) + '</span>' +
+        '<span class="sw-zone">' + A.esc(b.zone) + '</span></div>';
+      for (var ph = 0; ph <= 4; ph++) {
+        var st = stateFor(b, ph);
+        var occ = unitsAt(b.num, ph);
+        var stLabel = { active:'Active', final:'Final', swing:'Swing', vacated:'Vacated', demolished:'Demo', pending:'Pending' }[st] || '-';
+        var chips = '';
+        var shown = occ.slice(0, 3);
+        shown.forEach(function(u){
+          chips += '<span class="swim-chip t-' + u.type + '" title="' + A.esc(u.name) + '">' + A.esc(shortName(u)) + '</span>';
+        });
+        if (occ.length > 3) {
+          chips += '<span class="swim-chip more" title="' + A.esc(occ.slice(3).map(function(x){return x.name;}).join(', ')) + '">+' + (occ.length - 3) + '</span>';
+        }
+        if (!chips && st !== 'demolished' && st !== 'pending') chips = '<span style="font-size:9px;color:var(--text-light);opacity:0.6;">&mdash;</span>';
+        html += '<div class="swim-cell" data-bldg-cell="' + A.esc(b.id) + '" title="Phase ' + ph + ' - ' + A.esc(stLabel) + '">' +
+          '<div class="swim-state ' + st + '">' + A.esc(stLabel) + '</div>' +
+          '<div class="swim-units">' + chips + '</div></div>';
       }
     });
 
     root.innerHTML = html;
+
+    // Wire clicks: open building detail drawer
+    Array.prototype.forEach.call(root.querySelectorAll('[data-bldg-row], [data-bldg-cell]'), function(el){
+      el.addEventListener('click', function(){
+        var id = el.getAttribute('data-bldg-row') || el.getAttribute('data-bldg-cell');
+        if (id && A.openBuildingDetail) A.openBuildingDetail(id);
+      });
+    });
+  }
+
+  function shortName(u) {
+    // A compact form for the swim-lane chip (max ~9 chars)
+    var map = {
+      't-saf':'SAF','t-udp-sup':'UDP-W S','t-lar':'LAR','t-clb-com':'CLB-COM',
+      't-hq-co':'HQ CO','t-clb-hq':'CLB-HQ','t-clb-ab':'A&B',
+      't-4th-sup':'4TH SUP','t-clb-sup':'CLB-SUP','t-4th-com':'4TH COM',
+      't-arm':'ARM','t-reg':'REGT','t-med':'MED','t-4th-mtr':'4TH MTR','t-clb-mtr':'CLB-MTR'
+    };
+    return map[u.id] || u.name.slice(0,9);
   }
 
   /* --- SVG CHARTS --- */

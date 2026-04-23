@@ -635,20 +635,41 @@ kbd {
   border-color: rgba(43,168,74,0.5);
   background: rgba(13,42,24,0.85);
 }
+/* Stage 1: vacated (occupants have left, building is empty, about to be demolished) */
+.m-bldg.vacated {
+  background: rgba(30,40,55,0.75) !important;
+  border-color: rgba(212,144,10,0.6) !important;
+  border-style: dashed !important;
+  color: #8AA4BE !important;
+  opacity: 0.85;
+}
+.m-bldg.vacated span {
+  color: #8AA4BE; text-decoration: line-through;
+}
+.m-bldg.vacated::after {
+  content: "VACATED"; color: rgba(212,144,10,0.95);
+  font-size: 10px; font-weight: 800; margin-top: 10px;
+  letter-spacing: 1.5px;
+}
+
+/* Stage 2: demolished (~5s after vacated) - red diagonal demo stripes */
 .m-bldg.demolished {
   background: #080E14 !important;
-  border-color: #1A2535 !important;
-  color: #253545 !important;
+  background-image: repeating-linear-gradient(135deg,
+    rgba(193,39,45,0.35) 0 6px,
+    transparent 6px 14px) !important;
+  border-color: rgba(193,39,45,0.7) !important;
+  color: #5A7A98 !important;
   border-style: solid !important;
-  opacity: 0.6;
+  opacity: 0.75;
 }
 .m-bldg.demolished span {
-  color: #253545; text-decoration: line-through;
+  color: #5A7A98; text-decoration: line-through;
 }
 .m-bldg.demolished::after {
-  content: "VACATED"; color: rgba(193,39,45,0.7);
-  font-size: 10px; font-weight: 800; margin-top: 12px;
-  letter-spacing: 1px;
+  content: "DEMOLISHED"; color: #FF6B6B;
+  font-size: 10px; font-weight: 900; margin-top: 10px;
+  letter-spacing: 1.5px; text-shadow: 0 0 6px rgba(193,39,45,0.4);
 }
 
 /* ============================================================
@@ -1445,8 +1466,12 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
 [data-theme="light"] .m-bldg span { color: var(--text-muted); }
 [data-theme="light"] .m-bldg.frf { background: var(--frf-red-bg); border-color: var(--status-red); color: var(--status-red); }
 [data-theme="light"] .m-bldg.swing { background: var(--swing-bg); border-color: var(--swing-amber); color: var(--swing-amber); }
-[data-theme="light"] .m-bldg.demolished { background: #E8ECF0 !important;
-  border-color: #B0BDC9 !important; color: #7A869A !important; opacity: 0.65; }
+[data-theme="light"] .m-bldg.vacated { background: #FFF3CC !important;
+  border-color: #D4AF37 !important; color: #7A5900 !important; }
+[data-theme="light"] .m-bldg.demolished { background: #F8E0DB !important;
+  background-image: repeating-linear-gradient(135deg,
+    rgba(140,43,11,0.35) 0 6px, transparent 6px 14px) !important;
+  border-color: #8C2B0B !important; color: #7A869A !important; opacity: 0.8; }
 [data-theme="light"] .zone-label { color: rgba(30,77,140,0.35); }
 [data-theme="light"] .demo-line { background: repeating-linear-gradient(175deg,
   transparent, transparent 12px, rgba(140,43,11,0.4) 12px, rgba(140,43,11,0.4) 20px);
@@ -2014,8 +2039,8 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
          ==================================================== -->
 
     <!-- SOURCE ZONE buildings -->
-    <div id="b-3446" class="m-bldg" data-editable-bldg="true" style="top:50px;left:28px;width:100px;height:80px;"
-         title="Bldg 3446 - UDP-W Supply (source, moves to 3237 Q3 FY27)">
+    <div id="b-3446" class="m-bldg frf" data-editable-bldg="true" style="top:180px;left:1070px;width:130px;height:80px;"
+         title="Bldg 3446 - UDP-W Supply (starts on FRF demo line, vacated and demolished after UDP-W Supply moves to 3237 Q3 FY27)">
       3446<span>UDP-W SUPPLY</span>
     </div>
     <div id="b-3413" class="m-bldg" data-editable-bldg="true" style="top:175px;left:28px;width:100px;height:100px;"
@@ -2087,7 +2112,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     </div>
 
     <!-- UDP-W Supply - starts at 3446 -->
-    <div id="t-udp-sup" class="tile t-div" data-editable-tile="true" style="top:86px;left:30px;"
+    <div id="t-udp-sup" class="tile t-div" data-editable-tile="true" style="top:206px;left:1076px;"
          title="UDP-W Supply - starts at Bldg 3446, moves to 3237 Q3 FY27">
       <div class="logo-div"></div>UDP-W SUP<div class="fy-tag">Q3 FY27</div>
     </div>
@@ -2529,7 +2554,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   ];
 
   var BUILDINGS = [
-    { id:'b-3446', num:'3446', label:'UDP-W Supply (source)',      zone:'Source', status:'Vacated',   phaseIn:0, phaseOut:2, occupants:['t-udp-sup'] },
+    { id:'b-3446', num:'3446', label:'UDP-W Supply (starts on FRF demo line)', zone:'FRF', status:'Demolish', phaseIn:0, phaseOut:2, occupants:['t-udp-sup'] },
     { id:'b-3413', num:'3413', label:'Safety/Env -> CLB-4 A&B',    zone:'Source', status:'Converted', phaseIn:0, phaseOut:2, occupants:['t-saf','t-clb-ab'] },
     { id:'b-3213', num:'3213', label:'CLB-4 HQ (dest)',            zone:'Source', status:'Active',    phaseIn:3, phaseOut:0, occupants:['t-lar','t-clb-com','t-clb-hq'] },
     { id:'b-3335', num:'3335', label:'Theater -> Safety/Fire/Env', zone:'Final',  status:'Active',    phaseIn:1, phaseOut:0, occupants:['t-saf'] },
@@ -2963,7 +2988,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     // Reset demolished buildings (also clear frf-relocated class)
     ['b-3509', 'b-3446'].forEach(function(bid) {
       var b = document.getElementById(bid);
-      if (b) { b.classList.remove('demolished'); b.classList.remove('frf-relocated'); }
+      if (b) { b.classList.remove('demolished'); b.classList.remove('vacated'); b.classList.remove('frf-relocated'); }
     });
     var lbl3509 = document.getElementById('lbl-3509');
     if (lbl3509) lbl3509.textContent = '4TH MAR HQ';
@@ -3002,7 +3027,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     // Safety/Fire/Env at 3413
     move('t-saf', 211, 30);
     // UDP-W Supply at 3446
-    move('t-udp-sup', 86, 30);
+    move('t-udp-sup', 206, 1076);
     // LAR CO at 3213
     move('t-lar', 370, 36);
     // CLB-4 COMM at 3213
@@ -3065,12 +3090,16 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       move('t-clb-ab', 213, 30);
       showTag('t-clb-ab');
 
-      // 3446 fades to demolished and slides into the FRF demo zone
-      // (UDP-W Supply has vacated, so the building is struck and joins 3509 as FRF-line demo)
+      // 3446: VACATED stage after UDP-W Supply leaves (line-through, amber dashed)
       safeTimeout(function() {
         var b = document.getElementById('b-3446');
-        if (b) { b.classList.add('demolished'); b.classList.add('frf-relocated'); }
+        if (b) { b.classList.add('vacated'); }
       }, 1200);
+      // 3446: DEMOLISHED stage ~5s later (red diagonal stripe, "DEMOLISHED")
+      safeTimeout(function() {
+        var b = document.getElementById('b-3446');
+        if (b) { b.classList.remove('vacated'); b.classList.add('demolished'); }
+      }, 6200);
     }
     else if (phase === 3) {
       // CLB-4 COMM final -> 3235 (top:314, left:634 - below 4th COMM)
@@ -3114,13 +3143,18 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
       move('t-reg', 156, 834);
       showTag('t-reg');
 
-      // 3509 demolished
+      // 3509: VACATED stage (line-through, amber dashed)
       safeTimeout(function() {
         var b = document.getElementById('b-3509');
-        if (b) b.classList.add('demolished');
+        if (b) b.classList.add('vacated');
         var lbl3509 = document.getElementById('lbl-3509');
-        if (lbl3509) lbl3509.textContent = 'VACATED';
+        if (lbl3509) lbl3509.textContent = '4TH MAR HQ';
       }, 1200);
+      // 3509: DEMOLISHED stage ~5s later (red diagonal stripe, "DEMOLISHED")
+      safeTimeout(function() {
+        var b = document.getElementById('b-3509');
+        if (b) { b.classList.remove('vacated'); b.classList.add('demolished'); }
+      }, 6200);
     }
   }
 
@@ -3197,7 +3231,7 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   var SEQ = {
     phase0: {
       't-saf':     { top: 211, left: 30  },
-      't-udp-sup': { top: 86,  left: 30  },
+      't-udp-sup': { top: 206, left: 1076},
       't-lar':     { top: 370, left: 36  },
       't-clb-com': { top: 402, left: 36  },
       't-hq-co':   { top: 328, left: 1074},

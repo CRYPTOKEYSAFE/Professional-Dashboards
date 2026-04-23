@@ -800,6 +800,36 @@ body.layout-brief .app-header{background:#1E3F5C;color:#fff;}
 .instructions-wrap li{margin:3px 0;}
 .instructions-wrap code{font-family:ui-monospace,Menlo,monospace;background:#EDF0F4;padding:1px 5px;border-radius:2px;font-size:12px;color:#1E3F5C;}
 
+/* ==== Phase Distribution fix: track-contained bar, never overlaps number or label ==== */
+.ov-phase{display:flex;flex-direction:column;padding:4px 10px;min-width:200px;}
+.ov-phase-grid{display:flex;align-items:stretch;gap:6px;height:80px;}
+.ov-phase-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:24px;}
+.ov-phase-val{font-size:10px;font-weight:800;color:#1B2535;height:12px;line-height:12px;}
+.ov-phase-track{flex:1 1 auto;display:flex;align-items:flex-end;justify-content:center;width:100%;background:#F2F4F6;border-radius:2px;min-height:2px;}
+.ov-phase-bar{width:70%;background:#2E91AE;border-radius:2px 2px 0 0;max-height:100%;}
+.ov-phase-lbl{font-size:9px;color:#546270;font-weight:700;height:12px;line-height:12px;}
+
+/* ==== Activation Finish timeline: tighter, matches body font scale ==== */
+.ov-timeline-svg text{font-family:'Segoe UI',system-ui,sans-serif;}
+.ov-timeline-wrap{padding:8px 6px;}
+
+/* ==== Matrix clickable cells ==== */
+.ov-matrix-clickable{cursor:pointer;}
+.ov-matrix-clickable:hover{background:#E6F0F5;color:#0D1E30;}
+.ov-section-hint{font-size:11px;margin:4px 0 6px 0;}
+
+/* ==== Heatmap "Delivering by FY" compact chart ==== */
+.hm-delivering-chart{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+.hm-dl-row{display:grid;grid-template-columns:130px 1fr 40px;gap:8px;align-items:center;}
+.hm-dl-label{font-size:11px;font-weight:700;color:#1B2535;text-align:right;}
+.hm-dl-bar{display:flex;align-items:stretch;height:22px;background:#F2F4F6;border-radius:3px;overflow:hidden;}
+.hm-dl-seg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;min-width:0;padding:0 4px;}
+.hm-dl-total{font-size:12px;font-weight:700;color:#1E3F5C;text-align:left;}
+.hm-dl-legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:8px 0 4px;font-size:10px;color:#546270;border-top:1px dashed #E4E9EF;margin-top:8px;}
+.hm-dl-leg{display:inline-flex;align-items:center;gap:4px;}
+.hm-dl-dot{width:10px;height:10px;border-radius:2px;}
+.hm-dl-grand{margin-left:auto;font-weight:700;}
+
 </style>
 </head>
 <body>
@@ -41790,6 +41820,12 @@ window.Sections = window.Sections || {};
         col.headerFilter = "list";
         col.headerFilterParams = { values: vals, clearable: true };
       }
+      if (c.key === "source") {
+        col.formatter = (cell) => {
+          const v = String(cell.getValue() || "").toUpperCase();
+          return `<span class="chip">${v}</span>`;
+        };
+      }
       // Special program/installation cell rendering with colored chips
       if (c.key === "program") col.formatter = (cell) => programChip(cell.getValue(), ctx);
       if (c.key === "installation") col.formatter = (cell) => installationChip(cell.getValue(), ctx);
@@ -43065,7 +43101,7 @@ window.Sections = window.Sections || {};
 
     function renderSide(agg) {
       side.innerHTML = "";
-      side.appendChild($("h3", { class: "section-h3", text: `Projects delivering by FY${state.currentYear}` }));
+      side.appendChild($("h3", { class: "section-h3", text: `Delivering by FY${state.currentYear}` }));
       const progs = {}; store.listPrograms().forEach(p => progs[p.id] = p);
       const delivering = store.getProjects().filter(p => {
         const y = projectActivationFY(p, true);
@@ -43073,22 +43109,59 @@ window.Sections = window.Sections || {};
         return state.mode === "cumulative" ? y <= state.currentYear : y === state.currentYear;
       });
       if (!delivering.length) { side.appendChild($("div", { class: "u-muted", text: "No projects in scope for this year." })); return; }
-      const grouped = {};
-      delivering.forEach(p => { const inst = p.installation || "SACO"; grouped[inst] = grouped[inst] || []; grouped[inst].push(p); });
-      Object.entries(grouped).sort().forEach(([inst, list]) => {
-        side.appendChild($("h4", { class: "section-h4", text: `${inst} (${list.length})` }));
-        const ul = $("ul", { class: "side-list" });
-        list.slice(0, 30).forEach(p => {
-          const u = progs[p.program]?.umbrella || "Other";
-          ul.appendChild($("li", {}, [
-            $("span", { class: "chip chip-small", style: `background:${progs[p.program]?.color || "#546270"}1a;color:${progs[p.program]?.color || "#546270"}`, text: u }),
-            document.createTextNode(" "),
-            $("span", { text: p.title || p.id })
-          ]));
-        });
-        if (list.length > 30) ul.appendChild($("li", { class: "u-muted", text: `…and ${list.length - 30} more` }));
-        side.appendChild(ul);
+
+      // Group by installation, sub-group by program umbrella.
+      const installs = store.listInstallations();
+      const byInst = {};
+      delivering.forEach(p => {
+        const inst = p.installation || "SACO";
+        const u = progs[p.program]?.umbrella || "Other";
+        byInst[inst] = byInst[inst] || { total: 0, byUmb: {} };
+        byInst[inst].total += 1;
+        byInst[inst].byUmb[u] = (byInst[inst].byUmb[u] || 0) + 1;
       });
+      const maxInstTotal = Math.max(1, ...Object.values(byInst).map(v => v.total));
+
+      const chart = $("div", { class: "hm-delivering-chart" });
+      const UMBS = [
+        { key: "DPRI", color: "#1E3F5C" },
+        { key: "12th MLR", color: "#2E91AE" },
+        { key: "3/12", color: "#7A5900" },
+        { key: "Other", color: "#546270" }
+      ];
+      installs.forEach(i => {
+        const entry = byInst[i.name];
+        if (!entry) return;
+        const row = $("div", { class: "hm-dl-row" });
+        row.appendChild($("div", { class: "hm-dl-label", text: i.name }));
+        const bar = $("div", { class: "hm-dl-bar" });
+        const widthPct = (entry.total / maxInstTotal) * 100;
+        UMBS.forEach(u => {
+          const v = entry.byUmb[u.key] || 0;
+          if (!v) return;
+          const segPct = (v / entry.total) * widthPct;
+          bar.appendChild($("div", {
+            class: "hm-dl-seg",
+            style: `width:${segPct}%;background:${u.color}`,
+            "data-tip": `${i.name} | ${u.key}: ${v} project${v === 1 ? "" : "s"}`,
+            text: v >= Math.ceil(maxInstTotal * 0.08) ? String(v) : ""
+          }));
+        });
+        row.appendChild(bar);
+        row.appendChild($("div", { class: "hm-dl-total", text: String(entry.total) }));
+        chart.appendChild(row);
+      });
+      side.appendChild(chart);
+
+      // Compact legend + total
+      const legend = $("div", { class: "hm-dl-legend" }, UMBS.map(u =>
+        $("span", { class: "hm-dl-leg" }, [
+          $("span", { class: "hm-dl-dot", style: `background:${u.color}` }),
+          $("span", { text: u.key })
+        ])
+      ));
+      legend.appendChild($("span", { class: "hm-dl-grand u-muted", text: `Total: ${delivering.length} project${delivering.length === 1 ? "" : "s"}` }));
+      side.appendChild(legend);
     }
 
     render();
@@ -43342,19 +43415,20 @@ window.Sections = window.Sections || {};
 
   function phaseGrid(phaseCounts) {
     const wrap = $("div", { class: "ov-phase" });
-    const label = $("div", { class: "ov-chart-lbl", text: "Phase Distribution" });
-    wrap.appendChild(label);
+    wrap.appendChild($("div", { class: "ov-chart-lbl", text: "Phase Distribution" }));
     const host = $("div", { class: "ov-phase-grid" });
     const max = Math.max(1, ...Object.values(phaseCounts));
     for (let i = 0; i <= 5; i++) {
       const v = phaseCounts[i] || 0;
-      const h = Math.round((v / max) * 36) + 2;
-      const bar = $("div", { class: "ov-phase-col", "data-tip": `Phase ${i}: ${v} projects` }, [
-        $("div", { class: "ov-phase-bar", style: `height:${h}px` }),
+      const pct = (v / max) * 100;
+      const col = $("div", { class: "ov-phase-col", "data-tip": `Phase ${i}: ${v} projects` }, [
         $("div", { class: "ov-phase-val", text: String(v) }),
+        $("div", { class: "ov-phase-track" }, [
+          $("div", { class: "ov-phase-bar", style: `height:${Math.max(2, pct)}%` })
+        ]),
         $("div", { class: "ov-phase-lbl", text: "P" + i })
       ]);
-      host.appendChild(bar);
+      host.appendChild(col);
     }
     wrap.appendChild(host);
     return wrap;
@@ -43422,9 +43496,8 @@ window.Sections = window.Sections || {};
     for (let y = minY; y <= maxY; y++) full.push([y, byYear[y] || 0]);
     const max = Math.max(1, ...full.map(([,v]) => v));
     const wrap = $("div", { class: "ov-timeline-wrap" });
-    const h = 130, leftPad = 40, rightPad = 20, topPad = 14, botPad = 30;
-    const s = svg("svg", { viewBox: `0 0 1000 ${h}`, preserveAspectRatio: "none", class: "ov-timeline-svg" });
-    s.setAttribute("width", "100%");
+    const h = 110, leftPad = 32, rightPad = 14, topPad = 10, botPad = 26;
+    const s = svg("svg", { viewBox: `0 0 1000 ${h}`, preserveAspectRatio: "xMidYMid meet", class: "ov-timeline-svg" });
     s.setAttribute("height", String(h));
     const plotW = 1000 - leftPad - rightPad;
     const plotH = h - topPad - botPad;
@@ -43499,7 +43572,7 @@ window.Sections = window.Sections || {};
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
       bar.appendChild(kpi("", fmtSF(agg.totalSF), "CCN Sq Ft", agg.totalSF === 0 ? "no CCN data yet" : "from CCN assignments", "Sum of SF from all CCN assignments", () => go("heatmap")));
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
-      bar.appendChild(kpi("", `${agg.withActivation}/${agg.projects.length}`, "Activation Set", `${Math.round(100 * agg.withActivation / Math.max(1, agg.projects.length))}% coverage`, "Projects with Activation Finish Date"));
+      bar.appendChild(kpi("", `${agg.withActivation} of ${agg.projects.length}`, "Activation FY Entered", `${Math.round(100 * agg.withActivation / Math.max(1, agg.projects.length))}% have an activation fiscal year set`, "Projects that have either a DPRI Activation Finish date or an Activation FY override entered", () => go("projects")));
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
       bar.appendChild(kpi("warn", fmtInt(agg.missingCCN), "No CCNs", "pending assignment", "Projects that need CCN data entered", () => go("assignment")));
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
@@ -43532,21 +43605,35 @@ window.Sections = window.Sections || {};
       trh.appendChild($("th", { text: "Total" }));
       thead.appendChild(trh); tbl.appendChild(thead);
       const tbody = $("tbody");
+      const setFilter = (umbrella, installation) => {
+        const f = window.FilterState || (window.FilterState = {});
+        f.umbrella = umbrella;
+        f.installation = installation;
+        document.dispatchEvent(new CustomEvent("filter-change", { detail: Object.assign({}, f) }));
+        go("projects");
+      };
       ["DPRI", "12th MLR", "3/12", "Other"].forEach(u => {
         const tr = $("tr");
-        tr.appendChild($("td", { class: "u-strong", text: u }));
+        const umbCell = $("td", { class: "u-strong ov-matrix-clickable", "data-tip": `Filter to ${u} projects`, text: u });
+        umbCell.addEventListener("click", () => setFilter(u, null));
+        tr.appendChild(umbCell);
         let total = 0;
         installs.forEach(i => {
           const c = (matrix[u] && matrix[u][i.name]) || 0;
           total += c;
-          tr.appendChild($("td", { text: c ? String(c) : "" }));
+          const td = $("td", { class: c ? "ov-matrix-clickable" : "", "data-tip": c ? `Filter to ${u} on ${i.name}` : "", text: c ? String(c) : "" });
+          if (c) td.addEventListener("click", () => setFilter(u, i.name));
+          tr.appendChild(td);
         });
-        tr.appendChild($("td", { class: "u-strong", text: String(total) }));
+        const totalCell = $("td", { class: "u-strong" + (total ? " ov-matrix-clickable" : ""), "data-tip": total ? `Filter to ${u} across all installations` : "", text: String(total) });
+        if (total) totalCell.addEventListener("click", () => setFilter(u, null));
+        tr.appendChild(totalCell);
         tbody.appendChild(tr);
       });
       tbl.appendChild(tbody);
       const matrixSection = $("section", { class: "ov-section" }, [
         $("h3", { class: "ov-section-h", text: "Projects by Program and Installation" }),
+        $("div", { class: "ov-section-hint u-muted", text: "Click any count to filter Projects to that Program and Installation." }),
         tbl
       ]);
       container.appendChild(matrixSection);
@@ -43561,8 +43648,8 @@ window.Sections = window.Sections || {};
       const noBod = agg.projects.filter(p => (p.activationFYOverride ?? p.activationFY) == null).length;
       if (noBod) openList.appendChild($("li", {}, [
         $("span", { class: "ov-open-ct", text: String(noBod) }),
-        document.createTextNode(" projects have no A Finish FY. "),
-        $("a", { href: "#projects", onclick: (e) => { e.preventDefault(); go("projects"); }, text: "Set activationFYOverride per row." })
+        document.createTextNode(" projects have no Activation FY set. "),
+        $("a", { href: "#projects", onclick: (e) => { e.preventDefault(); go("projects"); }, text: "Open Projects to set A Finish FY per row." })
       ]));
       const unk = agg.projects.filter(p => p.unknownInstallation).length;
       if (unk) openList.appendChild($("li", {}, [

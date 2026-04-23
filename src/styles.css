@@ -789,3 +789,33 @@ body.layout-brief .app-header{background:#1E3F5C;color:#fff;}
 .instructions-wrap ul{font-size:13px;line-height:1.55;color:#1B2535;margin:4px 0 10px 18px;}
 .instructions-wrap li{margin:3px 0;}
 .instructions-wrap code{font-family:ui-monospace,Menlo,monospace;background:#EDF0F4;padding:1px 5px;border-radius:2px;font-size:12px;color:#1E3F5C;}
+
+/* ==== Phase Distribution fix: track-contained bar, never overlaps number or label ==== */
+.ov-phase{display:flex;flex-direction:column;padding:4px 10px;min-width:200px;}
+.ov-phase-grid{display:flex;align-items:stretch;gap:6px;height:80px;}
+.ov-phase-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:24px;}
+.ov-phase-val{font-size:10px;font-weight:800;color:#1B2535;height:12px;line-height:12px;}
+.ov-phase-track{flex:1 1 auto;display:flex;align-items:flex-end;justify-content:center;width:100%;background:#F2F4F6;border-radius:2px;min-height:2px;}
+.ov-phase-bar{width:70%;background:#2E91AE;border-radius:2px 2px 0 0;max-height:100%;}
+.ov-phase-lbl{font-size:9px;color:#546270;font-weight:700;height:12px;line-height:12px;}
+
+/* ==== Activation Finish timeline: tighter, matches body font scale ==== */
+.ov-timeline-svg text{font-family:'Segoe UI',system-ui,sans-serif;}
+.ov-timeline-wrap{padding:8px 6px;}
+
+/* ==== Matrix clickable cells ==== */
+.ov-matrix-clickable{cursor:pointer;}
+.ov-matrix-clickable:hover{background:#E6F0F5;color:#0D1E30;}
+.ov-section-hint{font-size:11px;margin:4px 0 6px 0;}
+
+/* ==== Heatmap "Delivering by FY" compact chart ==== */
+.hm-delivering-chart{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+.hm-dl-row{display:grid;grid-template-columns:130px 1fr 40px;gap:8px;align-items:center;}
+.hm-dl-label{font-size:11px;font-weight:700;color:#1B2535;text-align:right;}
+.hm-dl-bar{display:flex;align-items:stretch;height:22px;background:#F2F4F6;border-radius:3px;overflow:hidden;}
+.hm-dl-seg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;min-width:0;padding:0 4px;}
+.hm-dl-total{font-size:12px;font-weight:700;color:#1E3F5C;text-align:left;}
+.hm-dl-legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:8px 0 4px;font-size:10px;color:#546270;border-top:1px dashed #E4E9EF;margin-top:8px;}
+.hm-dl-leg{display:inline-flex;align-items:center;gap:4px;}
+.hm-dl-dot{width:10px;height:10px;border-radius:2px;}
+.hm-dl-grand{margin-left:auto;font-weight:700;}

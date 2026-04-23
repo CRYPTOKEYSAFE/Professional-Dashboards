@@ -318,7 +318,7 @@ window.Sections = window.Sections || {};
 
     function renderSide(agg) {
       side.innerHTML = "";
-      side.appendChild($("h3", { class: "section-h3", text: `Projects delivering by FY${state.currentYear}` }));
+      side.appendChild($("h3", { class: "section-h3", text: `Delivering by FY${state.currentYear}` }));
       const progs = {}; store.listPrograms().forEach(p => progs[p.id] = p);
       const delivering = store.getProjects().filter(p => {
         const y = projectActivationFY(p, true);
@@ -326,22 +326,59 @@ window.Sections = window.Sections || {};
         return state.mode === "cumulative" ? y <= state.currentYear : y === state.currentYear;
       });
       if (!delivering.length) { side.appendChild($("div", { class: "u-muted", text: "No projects in scope for this year." })); return; }
-      const grouped = {};
-      delivering.forEach(p => { const inst = p.installation || "SACO"; grouped[inst] = grouped[inst] || []; grouped[inst].push(p); });
-      Object.entries(grouped).sort().forEach(([inst, list]) => {
-        side.appendChild($("h4", { class: "section-h4", text: `${inst} (${list.length})` }));
-        const ul = $("ul", { class: "side-list" });
-        list.slice(0, 30).forEach(p => {
-          const u = progs[p.program]?.umbrella || "Other";
-          ul.appendChild($("li", {}, [
-            $("span", { class: "chip chip-small", style: `background:${progs[p.program]?.color || "#546270"}1a;color:${progs[p.program]?.color || "#546270"}`, text: u }),
-            document.createTextNode(" "),
-            $("span", { text: p.title || p.id })
-          ]));
-        });
-        if (list.length > 30) ul.appendChild($("li", { class: "u-muted", text: `…and ${list.length - 30} more` }));
-        side.appendChild(ul);
+
+      // Group by installation, sub-group by program umbrella.
+      const installs = store.listInstallations();
+      const byInst = {};
+      delivering.forEach(p => {
+        const inst = p.installation || "SACO";
+        const u = progs[p.program]?.umbrella || "Other";
+        byInst[inst] = byInst[inst] || { total: 0, byUmb: {} };
+        byInst[inst].total += 1;
+        byInst[inst].byUmb[u] = (byInst[inst].byUmb[u] || 0) + 1;
       });
+      const maxInstTotal = Math.max(1, ...Object.values(byInst).map(v => v.total));
+
+      const chart = $("div", { class: "hm-delivering-chart" });
+      const UMBS = [
+        { key: "DPRI", color: "#1E3F5C" },
+        { key: "12th MLR", color: "#2E91AE" },
+        { key: "3/12", color: "#7A5900" },
+        { key: "Other", color: "#546270" }
+      ];
+      installs.forEach(i => {
+        const entry = byInst[i.name];
+        if (!entry) return;
+        const row = $("div", { class: "hm-dl-row" });
+        row.appendChild($("div", { class: "hm-dl-label", text: i.name }));
+        const bar = $("div", { class: "hm-dl-bar" });
+        const widthPct = (entry.total / maxInstTotal) * 100;
+        UMBS.forEach(u => {
+          const v = entry.byUmb[u.key] || 0;
+          if (!v) return;
+          const segPct = (v / entry.total) * widthPct;
+          bar.appendChild($("div", {
+            class: "hm-dl-seg",
+            style: `width:${segPct}%;background:${u.color}`,
+            "data-tip": `${i.name} | ${u.key}: ${v} project${v === 1 ? "" : "s"}`,
+            text: v >= Math.ceil(maxInstTotal * 0.08) ? String(v) : ""
+          }));
+        });
+        row.appendChild(bar);
+        row.appendChild($("div", { class: "hm-dl-total", text: String(entry.total) }));
+        chart.appendChild(row);
+      });
+      side.appendChild(chart);
+
+      // Compact legend + total
+      const legend = $("div", { class: "hm-dl-legend" }, UMBS.map(u =>
+        $("span", { class: "hm-dl-leg" }, [
+          $("span", { class: "hm-dl-dot", style: `background:${u.color}` }),
+          $("span", { text: u.key })
+        ])
+      ));
+      legend.appendChild($("span", { class: "hm-dl-grand u-muted", text: `Total: ${delivering.length} project${delivering.length === 1 ? "" : "s"}` }));
+      side.appendChild(legend);
     }
 
     render();

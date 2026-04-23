@@ -75,19 +75,20 @@ window.Sections = window.Sections || {};
 
   function phaseGrid(phaseCounts) {
     const wrap = $("div", { class: "ov-phase" });
-    const label = $("div", { class: "ov-chart-lbl", text: "Phase Distribution" });
-    wrap.appendChild(label);
+    wrap.appendChild($("div", { class: "ov-chart-lbl", text: "Phase Distribution" }));
     const host = $("div", { class: "ov-phase-grid" });
     const max = Math.max(1, ...Object.values(phaseCounts));
     for (let i = 0; i <= 5; i++) {
       const v = phaseCounts[i] || 0;
-      const h = Math.round((v / max) * 36) + 2;
-      const bar = $("div", { class: "ov-phase-col", "data-tip": `Phase ${i}: ${v} projects` }, [
-        $("div", { class: "ov-phase-bar", style: `height:${h}px` }),
+      const pct = (v / max) * 100;
+      const col = $("div", { class: "ov-phase-col", "data-tip": `Phase ${i}: ${v} projects` }, [
         $("div", { class: "ov-phase-val", text: String(v) }),
+        $("div", { class: "ov-phase-track" }, [
+          $("div", { class: "ov-phase-bar", style: `height:${Math.max(2, pct)}%` })
+        ]),
         $("div", { class: "ov-phase-lbl", text: "P" + i })
       ]);
-      host.appendChild(bar);
+      host.appendChild(col);
     }
     wrap.appendChild(host);
     return wrap;
@@ -155,9 +156,8 @@ window.Sections = window.Sections || {};
     for (let y = minY; y <= maxY; y++) full.push([y, byYear[y] || 0]);
     const max = Math.max(1, ...full.map(([,v]) => v));
     const wrap = $("div", { class: "ov-timeline-wrap" });
-    const h = 130, leftPad = 40, rightPad = 20, topPad = 14, botPad = 30;
-    const s = svg("svg", { viewBox: `0 0 1000 ${h}`, preserveAspectRatio: "none", class: "ov-timeline-svg" });
-    s.setAttribute("width", "100%");
+    const h = 110, leftPad = 32, rightPad = 14, topPad = 10, botPad = 26;
+    const s = svg("svg", { viewBox: `0 0 1000 ${h}`, preserveAspectRatio: "xMidYMid meet", class: "ov-timeline-svg" });
     s.setAttribute("height", String(h));
     const plotW = 1000 - leftPad - rightPad;
     const plotH = h - topPad - botPad;
@@ -232,7 +232,7 @@ window.Sections = window.Sections || {};
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
       bar.appendChild(kpi("", fmtSF(agg.totalSF), "CCN Sq Ft", agg.totalSF === 0 ? "no CCN data yet" : "from CCN assignments", "Sum of SF from all CCN assignments", () => go("heatmap")));
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
-      bar.appendChild(kpi("", `${agg.withActivation}/${agg.projects.length}`, "Activation Set", `${Math.round(100 * agg.withActivation / Math.max(1, agg.projects.length))}% coverage`, "Projects with Activation Finish Date"));
+      bar.appendChild(kpi("", `${agg.withActivation} of ${agg.projects.length}`, "Activation FY Entered", `${Math.round(100 * agg.withActivation / Math.max(1, agg.projects.length))}% have an activation fiscal year set`, "Projects that have either a DPRI Activation Finish date or an Activation FY override entered", () => go("projects")));
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
       bar.appendChild(kpi("warn", fmtInt(agg.missingCCN), "No CCNs", "pending assignment", "Projects that need CCN data entered", () => go("assignment")));
       bar.appendChild($("div", { class: "ov-kpi-sep" }));
@@ -265,21 +265,35 @@ window.Sections = window.Sections || {};
       trh.appendChild($("th", { text: "Total" }));
       thead.appendChild(trh); tbl.appendChild(thead);
       const tbody = $("tbody");
+      const setFilter = (umbrella, installation) => {
+        const f = window.FilterState || (window.FilterState = {});
+        f.umbrella = umbrella;
+        f.installation = installation;
+        document.dispatchEvent(new CustomEvent("filter-change", { detail: Object.assign({}, f) }));
+        go("projects");
+      };
       ["DPRI", "12th MLR", "3/12", "Other"].forEach(u => {
         const tr = $("tr");
-        tr.appendChild($("td", { class: "u-strong", text: u }));
+        const umbCell = $("td", { class: "u-strong ov-matrix-clickable", "data-tip": `Filter to ${u} projects`, text: u });
+        umbCell.addEventListener("click", () => setFilter(u, null));
+        tr.appendChild(umbCell);
         let total = 0;
         installs.forEach(i => {
           const c = (matrix[u] && matrix[u][i.name]) || 0;
           total += c;
-          tr.appendChild($("td", { text: c ? String(c) : "" }));
+          const td = $("td", { class: c ? "ov-matrix-clickable" : "", "data-tip": c ? `Filter to ${u} on ${i.name}` : "", text: c ? String(c) : "" });
+          if (c) td.addEventListener("click", () => setFilter(u, i.name));
+          tr.appendChild(td);
         });
-        tr.appendChild($("td", { class: "u-strong", text: String(total) }));
+        const totalCell = $("td", { class: "u-strong" + (total ? " ov-matrix-clickable" : ""), "data-tip": total ? `Filter to ${u} across all installations` : "", text: String(total) });
+        if (total) totalCell.addEventListener("click", () => setFilter(u, null));
+        tr.appendChild(totalCell);
         tbody.appendChild(tr);
       });
       tbl.appendChild(tbody);
       const matrixSection = $("section", { class: "ov-section" }, [
         $("h3", { class: "ov-section-h", text: "Projects by Program and Installation" }),
+        $("div", { class: "ov-section-hint u-muted", text: "Click any count to filter Projects to that Program and Installation." }),
         tbl
       ]);
       container.appendChild(matrixSection);
@@ -294,8 +308,8 @@ window.Sections = window.Sections || {};
       const noBod = agg.projects.filter(p => (p.activationFYOverride ?? p.activationFY) == null).length;
       if (noBod) openList.appendChild($("li", {}, [
         $("span", { class: "ov-open-ct", text: String(noBod) }),
-        document.createTextNode(" projects have no A Finish FY. "),
-        $("a", { href: "#projects", onclick: (e) => { e.preventDefault(); go("projects"); }, text: "Set activationFYOverride per row." })
+        document.createTextNode(" projects have no Activation FY set. "),
+        $("a", { href: "#projects", onclick: (e) => { e.preventDefault(); go("projects"); }, text: "Open Projects to set A Finish FY per row." })
       ]));
       const unk = agg.projects.filter(p => p.unknownInstallation).length;
       if (unk) openList.appendChild($("li", {}, [

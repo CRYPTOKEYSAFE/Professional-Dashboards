@@ -60,6 +60,12 @@ window.Sections = window.Sections || {};
         col.headerFilter = "list";
         col.headerFilterParams = { values: vals, clearable: true };
       }
+      if (c.key === "source") {
+        col.formatter = (cell) => {
+          const v = String(cell.getValue() || "").toUpperCase();
+          return `<span class="chip">${v}</span>`;
+        };
+      }
       // Special program/installation cell rendering with colored chips
       if (c.key === "program") col.formatter = (cell) => programChip(cell.getValue(), ctx);
       if (c.key === "installation") col.formatter = (cell) => installationChip(cell.getValue(), ctx);

@@ -384,7 +384,11 @@ window.Sections = window.Sections || {};
     render();
     const onF = () => render(); const onC = () => render();
     document.addEventListener("filter-change", onF); store.on("change", onC);
-    const mo = new MutationObserver(() => { if (!document.body.contains(container)) { document.removeEventListener("filter-change", onF); store.off("change", onC); if (playInt) clearInterval(playInt); mo.disconnect(); } });
-    mo.observe(container.parentNode || document.body, { childList: true });
+    document.addEventListener("section-unmount", function tear() {
+      document.removeEventListener("filter-change", onF);
+      store.off("change", onC);
+      if (playInt) { clearInterval(playInt); playInt = null; }
+      document.removeEventListener("section-unmount", tear);
+    });
   };
 })();

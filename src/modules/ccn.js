@@ -94,8 +94,10 @@ window.Sections = window.Sections || {};
     render();
     const onC = () => render();
     store.on("change", onC);
-    const mo = new MutationObserver(() => { if (!document.body.contains(container)) { store.off("change", onC); mo.disconnect(); } });
-    mo.observe(container.parentNode || document.body, { childList: true });
+    document.addEventListener("section-unmount", function tear() {
+      store.off("change", onC);
+      document.removeEventListener("section-unmount", tear);
+    });
   };
 
   function seriesColor(series) {
@@ -219,8 +221,10 @@ window.Sections = window.Sections || {};
     render();
     const onC = () => render();
     store.on("change", onC);
-    const mo = new MutationObserver(() => { if (!document.body.contains(container)) { store.off("change", onC); mo.disconnect(); } });
-    mo.observe(container.parentNode || document.body, { childList: true });
+    document.addEventListener("section-unmount", function tear() {
+      store.off("change", onC);
+      document.removeEventListener("section-unmount", tear);
+    });
   }
 
   window.Sections.assignment = function (container) {

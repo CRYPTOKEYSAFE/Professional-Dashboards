@@ -33,6 +33,7 @@ window.CardsView = (function () {
           $("input", {
             type: "checkbox",
             class: "ms-check",
+            "data-focus-key": `${project.id}::ms-check::${checkKey}`,
             checked: checked ? "checked" : null,
             onchange: (e) => {
               const checks = Object.assign({}, project.milestoneChecks || {});
@@ -48,6 +49,7 @@ window.CardsView = (function () {
           $("span", { class: "ms-dl", text: "Start" }),
           $("input", {
             type: "date", class: "ms-date", value: fmtDate(startVal) || "",
+            "data-focus-key": `${project.id}::ms-date::${startKey}`,
             onchange: (e) => {
               const dates = Object.assign({}, project.dates || {});
               dates[startKey] = e.target.value || null;
@@ -59,6 +61,7 @@ window.CardsView = (function () {
           $("span", { class: "ms-dl", text: "Finish" }),
           $("input", {
             type: "date", class: "ms-date", value: fmtDate(finishVal) || "",
+            "data-focus-key": `${project.id}::ms-date::${finishKey}`,
             onchange: (e) => {
               const dates = Object.assign({}, project.dates || {});
               dates[finishKey] = e.target.value || null;
@@ -80,6 +83,7 @@ window.CardsView = (function () {
           $("input", {
             type: "checkbox",
             class: "ms-check",
+            "data-focus-key": `${project.id}::cap-check::${checkKey}`,
             checked: checked ? "checked" : null,
             onchange: (e) => {
               const checks = Object.assign({}, project.milestoneChecks || {});
@@ -94,6 +98,7 @@ window.CardsView = (function () {
         $("span", { class: "ms-dl", text: "Target" }),
         $("input", {
           type: "date", class: "ms-date", value: fmtDate(dateVal) || "",
+          "data-focus-key": `${project.id}::cap-date::${dateKey}`,
           onchange: (e) => {
             const update = {};
             update[dateKey] = e.target.value || null;
@@ -145,19 +150,23 @@ window.CardsView = (function () {
 
       const ccnInput = $("input", {
         value: a.ccn || "", class: "ccn-inp", placeholder: "e.g. 21410",
+        "data-focus-key": `${project.id}::ccn::${idx}::code`,
         oninput: (e) => patchAssignment(idx, { ccn: e.target.value.trim() })
       });
       const qtyInput = $("input", {
         type: "number", value: a.qty || 0, class: "ccn-inp ccn-inp-num",
+        "data-focus-key": `${project.id}::ccn::${idx}::qty`,
         oninput: (e) => patchAssignment(idx, { qty: Number(e.target.value) || 0 })
       });
       const fyInput = $("input", {
         type: "number", value: a.scheduledFY || "", class: "ccn-inp ccn-inp-num",
         min: 2010, max: 2060, placeholder: "FY",
+        "data-focus-key": `${project.id}::ccn::${idx}::fy`,
         oninput: (e) => patchAssignment(idx, { scheduledFY: e.target.value ? Number(e.target.value) : null })
       });
       const noteInput = $("input", {
         value: a.note || "", class: "ccn-inp",
+        "data-focus-key": `${project.id}::ccn::${idx}::note`,
         oninput: (e) => patchAssignment(idx, { note: e.target.value })
       });
       const delBtn = $("button", {
@@ -232,32 +241,32 @@ window.CardsView = (function () {
         (prog && prog.id) || project.program,
         store.listPrograms().map(p => ({ value: p.id, label: p.label })),
         (v) => store.upsertProject(Object.assign({}, project, { program: v }))
-      )),
+      ), `${project.id}::summary::program`),
       summaryField("Installation", selectInput(
         project.installation,
         store.listInstallations().map(i => ({ value: i.name, label: i.name })),
         (v) => store.upsertProject(Object.assign({}, project, { installation: v }))
-      )),
+      ), `${project.id}::summary::installation`),
       project.source === "dpri" ? summaryField("Type", selectInput(
         project.projectType || "",
         ["NEW","REPLACEMENT","DEMO","CONSOLIDATION","CONVERSION","RELOCATION"].map(t => ({ value: t, label: t })),
         (v) => store.upsertProject(Object.assign({}, project, { projectType: v || null })),
         true
-      )) : null,
+      ), `${project.id}::summary::projectType`) : null,
       project.source === "dpri" ? summaryField("Phase", numericInput(
         project.phase,
         (v) => store.upsertProject(Object.assign({}, project, { phase: v }))
-      )) : null,
+      ), `${project.id}::summary::phase`) : null,
       project.source === "mlr" ? summaryField("Funding", selectInput(
         project.fundingSource || "",
         ["FSRM","MILCON","Mod-Camp"].map(t => ({ value: t, label: t })),
         (v) => store.upsertProject(Object.assign({}, project, { fundingSource: v || null })),
         true
-      )) : null,
+      ), `${project.id}::summary::fundingSource`) : null,
       summaryField("Activation FY", numericInput(
         project.activationFYOverride ?? project.activationFY,
         (v) => store.upsertProject(Object.assign({}, project, { activationFYOverride: v }))
-      ))
+      ), `${project.id}::summary::activationFY`)
     ].filter(Boolean));
     card.appendChild(summary);
 
@@ -278,22 +287,24 @@ window.CardsView = (function () {
     // CCN block
     card.appendChild(ccnBlock(project, store));
 
-    // Notes
+    // Notes. Textareas do not honor a `value` attribute; the .value
+    // property must be set after creation so existing notes render.
+    const notesTa = $("textarea", {
+      rows: 2, class: "pc-notes-ta",
+      "data-focus-key": `${project.id}::notes`,
+      placeholder: "Planner notes, linked references, dependencies.",
+      oninput: (e) => {
+        clearTimeout(card._noteTimer);
+        card._noteTimer = setTimeout(() => {
+          store.upsertProject(Object.assign({}, store.getProject(project.id), { notes: e.target.value }));
+        }, 500);
+      }
+    });
+    notesTa.value = project.notes || "";
     const notes = $("div", { class: "pc-notes" }, [
       $("label", {}, [
         $("span", { class: "pc-notes-lbl", text: "Notes" }),
-        $("textarea", {
-          rows: 2, class: "pc-notes-ta",
-          value: project.notes || "",
-          placeholder: "Planner notes, linked references, dependencies.",
-          oninput: (e) => {
-            // Debounce via timer so we don't mutate on every keystroke.
-            clearTimeout(card._noteTimer);
-            card._noteTimer = setTimeout(() => {
-              store.upsertProject(Object.assign({}, store.getProject(project.id), { notes: e.target.value }));
-            }, 500);
-          }
-        })
+        notesTa
       ])
     ]);
     card.appendChild(notes);
@@ -313,7 +324,10 @@ window.CardsView = (function () {
     return card;
   }
 
-  function summaryField(label, controlEl) {
+  function summaryField(label, controlEl, focusKey) {
+    if (focusKey && controlEl && !controlEl.getAttribute("data-focus-key")) {
+      controlEl.setAttribute("data-focus-key", focusKey);
+    }
     return $("div", { class: "pc-field" }, [
       $("div", { class: "pc-field-lbl", text: label }),
       controlEl
@@ -338,7 +352,31 @@ window.CardsView = (function () {
     return inp;
   }
 
+  function saveFocus(container) {
+    const a = document.activeElement;
+    if (!a || !container.contains(a)) return null;
+    const key = a.getAttribute && a.getAttribute("data-focus-key");
+    if (!key) return null;
+    const snap = { key, scrollTop: container.scrollTop || (container.parentNode && container.parentNode.scrollTop) || 0 };
+    try { snap.start = a.selectionStart; snap.end = a.selectionEnd; } catch (_) { /* selects/checkboxes throw */ }
+    return snap;
+  }
+
+  function restoreFocus(container, snap) {
+    if (!snap) return;
+    const el = container.querySelector(`[data-focus-key="${snap.key.replace(/"/g, '\\"')}"]`);
+    if (!el) return;
+    try { el.focus({ preventScroll: true }); } catch (_) { el.focus(); }
+    if (snap.start != null && snap.end != null && el.setSelectionRange) {
+      try { el.setSelectionRange(snap.start, snap.end); } catch (_) {}
+    }
+    // Keep the scroll steady so the edit point does not jump.
+    const scrollEl = container.scrollTop !== undefined ? container : container.parentNode;
+    if (scrollEl && typeof snap.scrollTop === "number") scrollEl.scrollTop = snap.scrollTop;
+  }
+
   function renderGrid(container, projects, store, ctx) {
+    const snap = saveFocus(container);
     container.innerHTML = "";
     if (!projects.length) {
       container.appendChild($("div", { class: "placeholder", text: "No projects match the current filter." }));
@@ -347,6 +385,7 @@ window.CardsView = (function () {
     const grid = $("div", { class: "pc-grid" });
     projects.forEach(p => grid.appendChild(renderCard(p, store, ctx)));
     container.appendChild(grid);
+    restoreFocus(container, snap);
   }
 
   return { renderGrid, renderCard };

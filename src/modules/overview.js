@@ -326,7 +326,10 @@ window.Sections = window.Sections || {};
     const onChange = () => render();
     store.on("change", onChange);
     document.addEventListener("filter-change", onChange);
-    const mo = new MutationObserver(() => { if (!document.body.contains(container)) { store.off("change", onChange); document.removeEventListener("filter-change", onChange); mo.disconnect(); } });
-    mo.observe(container.parentNode || document.body, { childList: true });
+    document.addEventListener("section-unmount", function tear() {
+      store.off("change", onChange);
+      document.removeEventListener("filter-change", onChange);
+      document.removeEventListener("section-unmount", tear);
+    });
   };
 })();

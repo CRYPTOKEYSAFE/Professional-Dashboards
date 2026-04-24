@@ -392,14 +392,10 @@ window.Sections = window.Sections || {};
     };
     document.addEventListener("filter-change", onFilter);
     store.on("change", onChange);
-
-    const mo = new MutationObserver(() => {
-      if (!document.body.contains(host)) {
-        document.removeEventListener("filter-change", onFilter);
-        store.off("change", onChange);
-        mo.disconnect();
-      }
+    document.addEventListener("section-unmount", function tear() {
+      document.removeEventListener("filter-change", onFilter);
+      store.off("change", onChange);
+      document.removeEventListener("section-unmount", tear);
     });
-    mo.observe(container.parentNode || document.body, { childList: true });
   };
 })();

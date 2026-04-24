@@ -215,6 +215,11 @@ window.Shell = (function () {
     if (!SECTIONS.find(s => s.id === section) && section !== "brief") return;
     lastSection = section;
     try { history.pushState({ section }, "", "#" + section); } catch (e) { /* file:// may block */ }
+    // Fire unmount event so the outgoing section (and any subsections) can
+    // unsubscribe from 'change' / 'filter-change' before we wipe mainEl.
+    // Without this, stale handlers kept re-rendering into the shared main
+    // element and clobbered the incoming section on every store mutation.
+    document.dispatchEvent(new CustomEvent("section-unmount"));
     mainEl.innerHTML = "";
     const render = window.Sections && window.Sections[section];
     if (typeof render === "function") render(mainEl);
@@ -226,7 +231,12 @@ window.Shell = (function () {
     const isOn = typeof on === "boolean" ? on : !document.body.classList.contains("layout-brief");
     document.body.classList.toggle("layout-brief", isOn);
     if (isOn && window.Sections && window.Sections.brief) go("brief");
-    else if (!isOn) go(lastSection === "brief" ? "overview" : lastSection);
+    else if (!isOn) {
+      // Ensure the brief's embedded sub-sections (overview, heatmap) unsubscribe
+      // before we route away. go() will fire section-unmount for the outgoing
+      // brief renderer itself.
+      go(lastSection === "brief" ? "overview" : lastSection);
+    }
   }
 
   function promptViewerChange() {

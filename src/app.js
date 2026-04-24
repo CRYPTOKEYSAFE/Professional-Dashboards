@@ -58,7 +58,7 @@
   }
 
   window.addEventListener("error", function (e) {
-    var detail = (e.error && e.error.stack) || e.message || "Unknown error";
+    var detail = (e.error && e.error.stack) || e.message || "Error with no message";
     report("Error: " + (e.message || "unhandled"), detail);
   });
 

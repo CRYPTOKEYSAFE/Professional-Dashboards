@@ -13,6 +13,11 @@ if [[ ! -f "$SRC_TEMPLATE" ]]; then
   exit 1
 fi
 
+# Copy lint per SKILL.md Appendix B. Fails the build on banned copy in UI source.
+if [[ -x scripts/lint-copy.sh ]]; then
+  scripts/lint-copy.sh
+fi
+
 python3 - "$SRC_TEMPLATE" "$OUT" <<'PYEOF'
 import os, re, sys, html
 

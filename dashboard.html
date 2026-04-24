@@ -830,6 +830,41 @@ body.layout-brief .app-header{background:#1E3F5C;color:#fff;}
 .hm-dl-dot{width:10px;height:10px;border-radius:2px;}
 .hm-dl-grand{margin-left:auto;font-weight:700;}
 
+/* ---------- Error overlay (boot fatal + post-mount strip) ---------- */
+.fatal-box{
+  margin:40px;padding:16px;border:1px solid var(--banner-red);
+  background:#FFF0F0;color:#7A0000;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12px;white-space:pre-wrap;border-radius:4px;
+  max-width:900px;line-height:1.4;
+}
+#error-strip{
+  position:fixed;left:0;right:0;top:var(--banner-h);
+  z-index:1100;display:flex;flex-direction:column;gap:4px;
+  padding:4px 8px;pointer-events:none;
+}
+#error-strip:empty{display:none}
+.err-item{
+  pointer-events:auto;position:relative;
+  background:#FFF0F0;color:#7A0000;
+  border:1px solid var(--banner-red);border-left:4px solid var(--banner-red);
+  border-radius:3px;padding:6px 32px 6px 10px;
+  font-size:12px;box-shadow:var(--shadow-sm,0 2px 6px rgba(0,0,0,.08));
+  max-height:180px;overflow:auto;
+}
+.err-item-title{font-weight:700;letter-spacing:.02em;margin-bottom:2px;}
+.err-item-body{
+  margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:11px;white-space:pre-wrap;color:#5c1f1f;line-height:1.35;
+}
+.err-item-close{
+  position:absolute;top:2px;right:4px;
+  background:transparent;border:0;color:#7A0000;
+  font-size:16px;line-height:1;cursor:pointer;padding:4px 6px;
+}
+.err-item-close:hover{background:rgba(200,16,46,.1);border-radius:3px;}
+@media print { #error-strip{display:none !important;} }
+
 </style>
 </head>
 <body>
@@ -44154,22 +44189,74 @@ window.Sections = window.Sections || {};
   };
 })();
 </script>
-<script>/* app.js - boot. Robust to timing; surfaces errors instead of failing silently. */
+<script>/* app.js - boot. Robust to timing; surfaces errors instead of failing silently.
+ * Boot-phase errors replace #app with a fatal banner.
+ * Post-mount errors append a dismissible strip under the top FOUO banner,
+ * so the user keeps their working session and can copy the stack.
+ */
 (function () {
   "use strict";
+
+  var booted = false;
+
+  function ensureStrip() {
+    var strip = document.getElementById("error-strip");
+    if (strip) return strip;
+    strip = document.createElement("div");
+    strip.id = "error-strip";
+    strip.setAttribute("role", "alert");
+    strip.setAttribute("aria-live", "polite");
+    // Insert right after the top banner so it sits inside the FOUO band.
+    var top = document.querySelector(".banner-top");
+    if (top && top.parentNode) top.parentNode.insertBefore(strip, top.nextSibling);
+    else document.body.insertBefore(strip, document.body.firstChild);
+    return strip;
+  }
 
   function showFatal(msg) {
     var app = document.getElementById("app");
     var box = document.createElement("pre");
-    box.style.cssText = "margin:40px;padding:16px;border:1px solid #C8102E;background:#FFF0F0;color:#7A0000;font-family:ui-monospace,monospace;font-size:12px;white-space:pre-wrap;border-radius:4px;";
+    box.className = "fatal-box";
     box.textContent = "Dashboard failed to boot.\n\n" + msg + "\n\nOpen DevTools Console (Cmd+Opt+I on Mac, F12 on Windows) for more detail.";
     if (app) { app.innerHTML = ""; app.appendChild(box); }
     else document.body.appendChild(box);
   }
 
-  // Global error trap - any unhandled error while booting surfaces visibly.
+  function showPostMount(label, detail) {
+    var strip = ensureStrip();
+    var item = document.createElement("div");
+    item.className = "err-item";
+    var title = document.createElement("div");
+    title.className = "err-item-title";
+    title.textContent = label;
+    var body = document.createElement("pre");
+    body.className = "err-item-body";
+    body.textContent = detail;
+    var close = document.createElement("button");
+    close.className = "err-item-close";
+    close.setAttribute("aria-label", "Dismiss");
+    close.textContent = "✕";
+    close.onclick = function () { item.remove(); };
+    item.appendChild(close);
+    item.appendChild(title);
+    item.appendChild(body);
+    strip.appendChild(item);
+  }
+
+  function report(label, detail) {
+    if (!booted) showFatal(detail);
+    else showPostMount(label, detail);
+  }
+
   window.addEventListener("error", function (e) {
-    showFatal((e.error && e.error.stack) || e.message || "Unknown error");
+    var detail = (e.error && e.error.stack) || e.message || "Unknown error";
+    report("Error: " + (e.message || "unhandled"), detail);
+  });
+
+  window.addEventListener("unhandledrejection", function (e) {
+    var r = e.reason;
+    var detail = (r && r.stack) || (r && r.message) || String(r);
+    report("Unhandled promise rejection", detail);
   });
 
   function readEmbeddedJSON(id) {
@@ -44198,13 +44285,12 @@ window.Sections = window.Sections || {};
       if (window.Persistence && window.Persistence.promptForViewerIfNeeded) {
         try { window.Persistence.promptForViewerIfNeeded(); } catch (_) { /* non-fatal */ }
       }
+      booted = true;
     } catch (e) {
       showFatal((e && e.stack) || String(e));
     }
   }
 
-  // This script is the last in <body>, so the DOM is parsed by the time we run.
-  // Boot immediately if possible, else wait.
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", boot);
   } else {

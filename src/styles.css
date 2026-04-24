@@ -819,3 +819,38 @@ body.layout-brief .app-header{background:#1E3F5C;color:#fff;}
 .hm-dl-leg{display:inline-flex;align-items:center;gap:4px;}
 .hm-dl-dot{width:10px;height:10px;border-radius:2px;}
 .hm-dl-grand{margin-left:auto;font-weight:700;}
+
+/* ---------- Error overlay (boot fatal + post-mount strip) ---------- */
+.fatal-box{
+  margin:40px;padding:16px;border:1px solid var(--banner-red);
+  background:#FFF0F0;color:#7A0000;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12px;white-space:pre-wrap;border-radius:4px;
+  max-width:900px;line-height:1.4;
+}
+#error-strip{
+  position:fixed;left:0;right:0;top:var(--banner-h);
+  z-index:1100;display:flex;flex-direction:column;gap:4px;
+  padding:4px 8px;pointer-events:none;
+}
+#error-strip:empty{display:none}
+.err-item{
+  pointer-events:auto;position:relative;
+  background:#FFF0F0;color:#7A0000;
+  border:1px solid var(--banner-red);border-left:4px solid var(--banner-red);
+  border-radius:3px;padding:6px 32px 6px 10px;
+  font-size:12px;box-shadow:var(--shadow-sm,0 2px 6px rgba(0,0,0,.08));
+  max-height:180px;overflow:auto;
+}
+.err-item-title{font-weight:700;letter-spacing:.02em;margin-bottom:2px;}
+.err-item-body{
+  margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:11px;white-space:pre-wrap;color:#5c1f1f;line-height:1.35;
+}
+.err-item-close{
+  position:absolute;top:2px;right:4px;
+  background:transparent;border:0;color:#7A0000;
+  font-size:16px;line-height:1;cursor:pointer;padding:4px 6px;
+}
+.err-item-close:hover{background:rgba(200,16,46,.1);border-radius:3px;}
+@media print { #error-strip{display:none !important;} }

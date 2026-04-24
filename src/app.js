@@ -1,19 +1,71 @@
-/* app.js - boot. Robust to timing; surfaces errors instead of failing silently. */
+/* app.js - boot. Robust to timing; surfaces errors instead of failing silently.
+ * Boot-phase errors replace #app with a fatal banner.
+ * Post-mount errors append a dismissible strip under the top FOUO banner,
+ * so the user keeps their working session and can copy the stack.
+ */
 (function () {
   "use strict";
+
+  var booted = false;
+
+  function ensureStrip() {
+    var strip = document.getElementById("error-strip");
+    if (strip) return strip;
+    strip = document.createElement("div");
+    strip.id = "error-strip";
+    strip.setAttribute("role", "alert");
+    strip.setAttribute("aria-live", "polite");
+    // Insert right after the top banner so it sits inside the FOUO band.
+    var top = document.querySelector(".banner-top");
+    if (top && top.parentNode) top.parentNode.insertBefore(strip, top.nextSibling);
+    else document.body.insertBefore(strip, document.body.firstChild);
+    return strip;
+  }
 
   function showFatal(msg) {
     var app = document.getElementById("app");
     var box = document.createElement("pre");
-    box.style.cssText = "margin:40px;padding:16px;border:1px solid #C8102E;background:#FFF0F0;color:#7A0000;font-family:ui-monospace,monospace;font-size:12px;white-space:pre-wrap;border-radius:4px;";
+    box.className = "fatal-box";
     box.textContent = "Dashboard failed to boot.\n\n" + msg + "\n\nOpen DevTools Console (Cmd+Opt+I on Mac, F12 on Windows) for more detail.";
     if (app) { app.innerHTML = ""; app.appendChild(box); }
     else document.body.appendChild(box);
   }
 
-  // Global error trap - any unhandled error while booting surfaces visibly.
+  function showPostMount(label, detail) {
+    var strip = ensureStrip();
+    var item = document.createElement("div");
+    item.className = "err-item";
+    var title = document.createElement("div");
+    title.className = "err-item-title";
+    title.textContent = label;
+    var body = document.createElement("pre");
+    body.className = "err-item-body";
+    body.textContent = detail;
+    var close = document.createElement("button");
+    close.className = "err-item-close";
+    close.setAttribute("aria-label", "Dismiss");
+    close.textContent = "✕";
+    close.onclick = function () { item.remove(); };
+    item.appendChild(close);
+    item.appendChild(title);
+    item.appendChild(body);
+    strip.appendChild(item);
+  }
+
+  function report(label, detail) {
+    if (!booted) showFatal(detail);
+    else showPostMount(label, detail);
+  }
+
   window.addEventListener("error", function (e) {
-    showFatal((e.error && e.error.stack) || e.message || "Unknown error");
+    var detail = (e.error && e.error.stack) || e.message || "Unknown error";
+    report("Error: " + (e.message || "unhandled"), detail);
+  });
+
+  window.addEventListener("unhandledrejection", function (e) {
+    var r = e.reason;
+    var detail = (r && r.stack) || (r && r.message) || String(r);
+    report("Unhandled promise rejection", detail);
   });
 
   function readEmbeddedJSON(id) {
@@ -42,13 +94,12 @@
       if (window.Persistence && window.Persistence.promptForViewerIfNeeded) {
         try { window.Persistence.promptForViewerIfNeeded(); } catch (_) { /* non-fatal */ }
       }
+      booted = true;
     } catch (e) {
       showFatal((e && e.stack) || String(e));
     }
   }
 
-  // This script is the last in <body>, so the DOM is parsed by the time we run.
-  // Boot immediately if possible, else wait.
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", boot);
   } else {

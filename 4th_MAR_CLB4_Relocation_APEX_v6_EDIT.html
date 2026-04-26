@@ -1683,6 +1683,80 @@ body[data-coa="coa2"] .coa-context-tag {
 }
 .swim-chip.tbd::after { content: " TBD"; font-weight:900; font-size:8px; }
 
+/* ============================================================
+   COA COMPARISON tab styling
+   ============================================================ */
+.cmp-summary {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+  margin: 6px 0 16px; font-family: var(--font-mono);
+}
+.cmp-summary .cs-card {
+  background: var(--bg-section); border: 1px solid var(--border);
+  border-radius: 6px; padding: 12px 14px;
+}
+.cmp-summary .cs-card.cs-coa1 { border-left: 4px solid var(--accent); }
+.cmp-summary .cs-card.cs-coa2 { border-left: 4px solid var(--swing-amber); }
+.cmp-summary .cs-card.cs-delta { border-left: 4px solid var(--text-light); }
+.cs-lbl  { font-size: 10px; color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.1em; font-weight: 800; }
+.cs-num  { font-size: 22px; font-weight: 800; color: var(--text); margin-top: 4px; line-height: 1; }
+.cs-coa1 .cs-num { color: var(--accent-bright); }
+.cs-coa2 .cs-num { color: var(--swing-amber); }
+.cs-coa1 .cs-num.savings { color: #4CAF50; }
+.cs-coa2 .cs-num.addition { color: var(--swing-amber); }
+.cs-sub  { font-size: 10.5px; color: var(--text-muted); margin-top: 4px; }
+
+.cmp-section { margin-top: 18px; padding-top: 14px;
+  border-top: 1px solid var(--border-light); }
+.cmp-section h4 {
+  font-size: 12px; font-weight: 800; color: var(--accent-bright);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
+}
+.cmp-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+@media (max-width: 1200px) { .cmp-grid { grid-template-columns: 1fr; } }
+
+.cmp-card {
+  display: grid; grid-template-columns: 110px 1fr 1fr;
+  gap: 0; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden;
+}
+.cmp-card-key {
+  background: var(--bg-section); padding: 12px;
+  font-weight: 800; font-size: 13px; color: var(--text);
+  display: flex; flex-direction: column; gap: 2px;
+  border-right: 1px solid var(--border);
+}
+.cmp-card-key .cmp-card-id   { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-muted); font-weight: 600; }
+.cmp-card-side {
+  padding: 10px 12px; font-size: 11.5px; line-height: 1.55;
+  display: flex; flex-direction: column; gap: 4px;
+  border-left: 3px solid transparent;
+}
+.cmp-card-side.coa1 { border-left-color: var(--accent); background: rgba(46,155,181,0.04); }
+.cmp-card-side.coa2 { border-left-color: var(--swing-amber); background: rgba(212,144,10,0.05); }
+.cmp-card-side .cmp-side-lbl {
+  font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em;
+  font-weight: 800; color: var(--text-muted); margin-bottom: 2px;
+}
+.cmp-card-side.coa1 .cmp-side-lbl { color: var(--accent-bright); }
+.cmp-card-side.coa2 .cmp-side-lbl { color: var(--swing-amber); }
+.cmp-card-side .cmp-row {
+  display: flex; justify-content: space-between; gap: 10px;
+  font-size: 11px; color: var(--text); padding: 1px 0;
+}
+.cmp-card-side .cmp-row .k { color: var(--text-muted); font-weight: 700; flex: 0 0 auto; }
+.cmp-card-side .cmp-row .v { text-align: right; font-family: var(--font-mono); }
+.cmp-card-note { grid-column: 1/-1; padding: 8px 12px;
+  font-size: 11px; color: var(--text-muted); line-height: 1.5;
+  background: var(--bg-section); border-top: 1px solid var(--border-light); }
+.cmp-card-note.unresolved { color: #FF8A80; background: rgba(193,39,45,0.12); }
+.cmp-card-note strong { color: var(--text); }
+
+.cmp-empty { font-size: 12px; color: var(--text-muted);
+  text-align: center; padding: 20px; font-style: italic; }
+
 </style>
 </head>
 <body>
@@ -1749,6 +1823,9 @@ body[data-coa="coa2"] .coa-context-tag {
       <div class="nav-grp-lbl">Tools</div>
       <button class="nav-btn" data-tab="editor" type="button" aria-label="Data editor tab" title="Data Editor (9)">
         <span class="nav-icon" aria-hidden="true">&#9998;</span><span class="nav-label">Data Editor</span>
+      </button>
+      <button class="nav-btn" data-tab="compare" type="button" aria-label="COA comparison tab" title="COA Comparison (Primary vs Alternate)">
+        <span class="nav-icon" aria-hidden="true">&#8644;</span><span class="nav-label">COA Comparison</span>
       </button>
       <button class="nav-btn" data-tab="help" type="button" aria-label="Help tab" title="Help">
         <span class="nav-icon" aria-hidden="true">?</span><span class="nav-label">How to Use</span>
@@ -2625,6 +2702,39 @@ body[data-coa="coa2"] .coa-context-tag {
     </div>
   </section>
 
+  <!-- TAB: COA COMPARISON -->
+  <section class="tab-panel" id="tab-compare" role="tabpanel" aria-labelledby="nav-compare">
+    <div class="panel-card">
+      <h3 style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        COA Comparison: Primary vs Alternate
+        <span style="font-size:11px;font-weight:500;color:var(--text-muted);text-transform:none;letter-spacing:normal;">
+          Side-by-side. Only items that differ are listed.
+        </span>
+      </h3>
+      <div id="cmp-summary" class="cmp-summary"></div>
+
+      <div class="cmp-section">
+        <h4>Project Cost Delta</h4>
+        <div id="cmp-cost"></div>
+      </div>
+
+      <div class="cmp-section">
+        <h4>Building Scope Changes</h4>
+        <div id="cmp-projects" class="cmp-grid"></div>
+      </div>
+
+      <div class="cmp-section">
+        <h4>Unit Re-routes</h4>
+        <div id="cmp-units" class="cmp-grid"></div>
+      </div>
+
+      <div class="cmp-section">
+        <h4>Building Role Changes</h4>
+        <div id="cmp-buildings" class="cmp-grid"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- TAB: HELP -->
   <section class="tab-panel" id="tab-help" role="tabpanel" aria-labelledby="nav-help">
     <div class="panel-card">
@@ -2638,7 +2748,10 @@ body[data-coa="coa2"] .coa-context-tag {
           <li><strong>Edit Mode on the map.</strong> Press <kbd>E</kbd> or click Edit Mode. Every text element (headers, KPI labels, badges, card details, card dates) shows a dashed outline. Click any outlined element to edit it inline. Click a tile or building to open its visual edit panel (position, size, color, FY tag). Drag tiles to reposition them.</li>
           <li><strong>Inline cells.</strong> The Editor tab cells accept text input directly without Edit Mode.</li>
         </ol>
-        <p style="margin-top:10px;"><strong>Tabs:</strong> Overview (<kbd>1</kbd>), Interactive Map (<kbd>2</kbd>), Phase Grid (<kbd>3</kbd>), Unit Roster (<kbd>4</kbd>), Building Schedule (<kbd>5</kbd>), Projects &amp; Cost (<kbd>6</kbd>), Timeline (<kbd>7</kbd>), Charts (<kbd>8</kbd>), Data Editor (<kbd>9</kbd>). Help is available from the sidebar any time.</p>
+        <p style="margin-top:10px;"><strong>Tabs:</strong> Overview (<kbd>1</kbd>), Interactive Map (<kbd>2</kbd>), Phase Grid (<kbd>3</kbd>), Unit Roster (<kbd>4</kbd>), Building Schedule (<kbd>5</kbd>), Projects &amp; Cost (<kbd>6</kbd>), Timeline (<kbd>7</kbd>), Charts (<kbd>8</kbd>), Data Editor (<kbd>9</kbd>). COA Comparison and Help are available from the sidebar and command palette.</p>
+        <p style="margin-top:10px;"><strong>COA toggle (Course of Action):</strong> Top-right of the toolbar - segmented switch <kbd>COA 1</kbd> / <kbd>COA 2</kbd>. <strong>COA 1 (Primary)</strong> = current scope, the baseline plan. <strong>COA 2 (Alternate)</strong> = the proposed scope amendment from the PMO recommendation slide. Switching the toggle re-renders the Roster, Building Schedule, Timeline, Projects &amp; Cost, Overview total, and any open detail drawer to show that COA's data. Selection persists across sessions. The Projects &amp; Cost tab always shows BOTH totals on the hero card so you can see the cost delta at a glance.</p>
+        <p style="margin-top:10px;"><strong>COA Comparison tab:</strong> Side-by-side Primary vs Alternate cards for everything that differs - cost delta summary, Project scope additions / removals, Unit re-routes (e.g. CLB-4 Supply 3237 -> 3213 in COA 2), and Building role changes (3410/3413 swing-space designation, 3237 removed from scope). UNRESOLVED items (e.g. 4th MAR Regt Supply during the SCH-3235 DPRI 2-yr window) are flagged in red so unresolved gaps are visible at a glance.</p>
+        <p style="margin-top:10px;"><strong>Editing COA 2 fields:</strong> Open any unit / building / project in the detail drawer, click Edit. The form shows BOTH a COA 1 (Primary) section and a COA 2 (Alternate) section. Leave any alt field blank to inherit from Primary; fill it to override. The "Mark as unresolved" checkbox flags units (like 4th MAR Regt Supply) where the alt plan has a known gap.</p>
         <p style="margin-top:10px;"><strong>Projects &amp; Cost:</strong> Ten-row editable table of the 4th Marines Camp Schwab consolidation projects. Every cell (PAX ID, FIWEB ID, Building, Cost, Scope, Supported Unit, Completion, Delivery, Note) is editable free-text. The Note column takes any string; the conventions <code>*</code> (HN-funded FRF DEMO) and <code>**</code> (HN-funded renovation) tint the row for quick scanning but are not enforced - write anything you want there. The Total at the top, in the footer, and on the Overview card recalculates live as you type any Cost value. Add Project appends a blank row; each row has a Delete button. Export CSV or JSON from the tab header.</p>
         <p style="margin-top:10px;"><strong>Map demolition choreography:</strong> When a building is vacated (Phase 2 for Bldg 3446, Phase 4 for Bldg 3509) the building first takes a VACATED state (amber dashed border, line-through, "VACATED" label) for five seconds, then transitions to DEMOLISHED (red diagonal stripe pattern, "DEMOLISHED" label). Reset returns the buildings to active.</p>
         <p style="margin-top:10px;"><strong>Timeline (Building Lifecycle):</strong> One row per building, five columns (one per phase). Each cell shows that building's state (Active / Final / Swing / Vacated / Demolished / Pending) plus the unit chips occupying it during that phase. Click any cell or row label to open the building detail drawer.</p>
@@ -2851,6 +2964,7 @@ body[data-coa="coa2"] .coa-context-tag {
     if (name === 'charts') renderCharts();
     if (name === 'editor') renderEditor();
     if (name === 'overview') renderOverview();
+    if (name === 'compare' && window.__APEX.renderCompare) window.__APEX.renderCompare();
   }
   function announce(msg) {
     var a = $('#a11y-announce'); if (a) a.textContent = msg;
@@ -4240,7 +4354,10 @@ body[data-coa="coa2"] .coa-context-tag {
     { id:'tab-timeline',  cat:'Navigate', label:'Go to Timeline',          key:'7', run:function(){ A.switchTab('timeline'); } },
     { id:'tab-charts',    cat:'Navigate', label:'Go to Charts',            key:'8', run:function(){ A.switchTab('charts'); } },
     { id:'tab-editor',    cat:'Navigate', label:'Go to Data Editor',       key:'9', run:function(){ A.switchTab('editor'); } },
+    { id:'tab-compare',   cat:'Navigate', label:'Go to COA Comparison',           run:function(){ A.switchTab('compare'); } },
     { id:'tab-help',      cat:'Navigate', label:'Go to Help',                     run:function(){ A.switchTab('help'); } },
+    { id:'coa-1',         cat:'COA',      label:'Switch to COA 1 (Primary)',      run:function(){ if (A.setActiveCoa) A.setActiveCoa('coa1'); } },
+    { id:'coa-2',         cat:'COA',      label:'Switch to COA 2 (Alternate)',    run:function(){ if (A.setActiveCoa) A.setActiveCoa('coa2'); } },
     { id:'csv-projects',  cat:'Export',   label:'Export Projects & Cost CSV',     run:function(){ var b=document.getElementById('pj-export-csv'); if (b) b.click(); } },
     { id:'theme',         cat:'View',     label:'Toggle Theme (Dark/Light)', key:'T', run:function(){ A.toggleTheme(); } },
     { id:'sidebar',       cat:'View',     label:'Collapse Sidebar',      key:'K', run:function(){ A.toggleSidebar(); } },
@@ -5422,6 +5539,150 @@ body[data-coa="coa2"] .coa-context-tag {
   } else {
     wireProjects(); refreshTotal();
   }
+})();
+</script>
+
+<script>
+/* ============================================================
+   APEX OMEGA v6.0 - COA COMPARISON RENDERER
+   Side-by-side cards showing every Primary vs Alternate delta.
+   ============================================================ */
+(function(){
+  'use strict';
+  var A = window.__APEX; if (!A) return;
+
+  function fmtUSD(n) {
+    return '$' + (Number(n)||0).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 });
+  }
+
+  function renderCompare() {
+    // ----- Summary cards -----
+    var t1 = A.totalForCoa ? A.totalForCoa('coa1') : 0;
+    var t2 = A.totalForCoa ? A.totalForCoa('coa2') : 0;
+    var delta = t2 - t1;
+    var sumEl = document.getElementById('cmp-summary');
+    if (sumEl) {
+      var deltaCls = delta < 0 ? 'savings' : (delta > 0 ? 'addition' : '');
+      var deltaPrefix = delta > 0 ? '+' : (delta < 0 ? '-' : '');
+      sumEl.innerHTML =
+        '<div class="cs-card cs-coa1"><div class="cs-lbl">COA 1 (Primary) Total</div><div class="cs-num">' + fmtUSD(t1) + '</div><div class="cs-sub">Current scope baseline</div></div>' +
+        '<div class="cs-card cs-coa2"><div class="cs-lbl">COA 2 (Alternate) Total</div><div class="cs-num">' + fmtUSD(t2) + '</div><div class="cs-sub">Proposed scope amendment</div></div>' +
+        '<div class="cs-card cs-delta"><div class="cs-lbl">Delta (COA 2 - COA 1)</div><div class="cs-num ' + deltaCls + '">' + deltaPrefix + fmtUSD(Math.abs(delta)) + '</div><div class="cs-sub">' + (delta < 0 ? 'Net savings under Alternate' : (delta > 0 ? 'Net cost increase under Alternate' : 'No net change')) + '</div></div>';
+    }
+
+    // ----- Project cost delta -----
+    var costEl = document.getElementById('cmp-cost');
+    if (costEl) {
+      var changes = (A.PROJECTS || []).filter(function(p){
+        if (p.coa === 'coa1' || p.coa === 'coa2') return true;
+        if (p.altCost != null && Number(p.altCost) !== Number(p.cost)) return true;
+        return false;
+      });
+      if (!changes.length) {
+        costEl.innerHTML = '<div class="cmp-empty">No project cost differences between COAs.</div>';
+      } else {
+        costEl.innerHTML = changes.map(function(p){
+          var c1 = (p.coa === 'coa2') ? '<em>not in COA 1</em>' : fmtUSD(p.cost);
+          var c2 = (p.coa === 'coa1') ? '<em>removed in COA 2</em>' : fmtUSD(p.altCost != null ? p.altCost : p.cost);
+          return '<div class="cmp-card">' +
+            '<div class="cmp-card-key">' + A.esc(p.bldg) + '<span class="cmp-card-id">' + A.esc(p.paxId || 'N/A') + '</span></div>' +
+            '<div class="cmp-card-side coa1"><div class="cmp-side-lbl">COA 1</div><div class="cmp-row"><span class="k">Cost</span><span class="v">' + c1 + '</span></div></div>' +
+            '<div class="cmp-card-side coa2"><div class="cmp-side-lbl">COA 2</div><div class="cmp-row"><span class="k">Cost</span><span class="v">' + c2 + '</span></div></div>' +
+            (p.scope ? '<div class="cmp-card-note">' + A.esc(p.scope) + '</div>' : '') +
+            '</div>';
+        }).join('');
+      }
+    }
+
+    // ----- Project scope additions / removals -----
+    var prjEl = document.getElementById('cmp-projects');
+    if (prjEl) {
+      var scoped = (A.PROJECTS || []).filter(function(p){ return p.coa === 'coa1' || p.coa === 'coa2'; });
+      if (!scoped.length) {
+        prjEl.innerHTML = '<div class="cmp-empty">No scope-only changes between COAs.</div>';
+      } else {
+        prjEl.innerHTML = scoped.map(function(p){
+          var inCoa1 = p.coa !== 'coa2';
+          var inCoa2 = p.coa !== 'coa1';
+          return '<div class="cmp-card">' +
+            '<div class="cmp-card-key">' + A.esc(p.bldg) + '<span class="cmp-card-id">' + A.esc(p.paxId || 'N/A') + '</span></div>' +
+            '<div class="cmp-card-side coa1"><div class="cmp-side-lbl">COA 1</div>' +
+              (inCoa1 ? '<div class="cmp-row"><span class="k">In scope</span><span class="v">YES</span></div><div class="cmp-row"><span class="k">Cost</span><span class="v">' + fmtUSD(p.cost) + '</span></div>' : '<div class="cmp-row"><span class="k">In scope</span><span class="v" style="color:var(--text-light);">NO</span></div>') +
+            '</div>' +
+            '<div class="cmp-card-side coa2"><div class="cmp-side-lbl">COA 2</div>' +
+              (inCoa2 ? '<div class="cmp-row"><span class="k">In scope</span><span class="v">YES</span></div><div class="cmp-row"><span class="k">Cost</span><span class="v">' + fmtUSD(p.altCost != null ? p.altCost : p.cost) + '</span></div>' : '<div class="cmp-row"><span class="k">In scope</span><span class="v" style="color:var(--text-light);">REMOVED</span></div>') +
+            '</div>' +
+            '<div class="cmp-card-note">' + A.esc(p.scope) + '</div>' +
+            '</div>';
+        }).join('');
+      }
+    }
+
+    // ----- Unit re-routes -----
+    var uEl = document.getElementById('cmp-units');
+    if (uEl) {
+      var changedU = (A.UNITS || []).filter(function(u){
+        return u.altEndBldg || u.altPhase != null || u.altDate || u.altStatus || u.altUnresolved || u.altNote;
+      });
+      if (!changedU.length) {
+        uEl.innerHTML = '<div class="cmp-empty">No unit destination changes between COAs.</div>';
+      } else {
+        uEl.innerHTML = changedU.map(function(u){
+          var altEnd = u.altEndBldg || u.endBldg;
+          var altPh  = (u.altPhase != null) ? u.altPhase : u.phase;
+          var altDt  = u.altDate || u.date;
+          var altSt  = u.altStatus || u.status;
+          var rows1 =
+            '<div class="cmp-row"><span class="k">End Bldg</span><span class="v">' + A.esc(u.endBldg) + '</span></div>' +
+            '<div class="cmp-row"><span class="k">Phase</span><span class="v">' + (u.phase === 0 ? '-' : u.phase) + '</span></div>' +
+            '<div class="cmp-row"><span class="k">Date</span><span class="v">' + A.esc(u.date) + '</span></div>' +
+            '<div class="cmp-row"><span class="k">Status</span><span class="v">' + A.esc(u.status) + '</span></div>';
+          var rows2 =
+            '<div class="cmp-row"><span class="k">End Bldg</span><span class="v">' + A.esc(altEnd) + '</span></div>' +
+            '<div class="cmp-row"><span class="k">Phase</span><span class="v">' + (altPh === 0 ? '-' : altPh) + '</span></div>' +
+            '<div class="cmp-row"><span class="k">Date</span><span class="v">' + A.esc(altDt) + '</span></div>' +
+            '<div class="cmp-row"><span class="k">Status</span><span class="v">' + A.esc(altSt) + '</span></div>';
+          var noteCls = u.altUnresolved ? 'unresolved' : '';
+          var noteTxt = u.altNote || '';
+          if (u.altUnresolved) noteTxt = '<strong>UNRESOLVED in COA 2:</strong> ' + (noteTxt || 'No alt destination resolved.');
+          return '<div class="cmp-card">' +
+            '<div class="cmp-card-key">' + A.esc(u.name) + '<span class="cmp-card-id">' + A.esc(u.id) + '</span></div>' +
+            '<div class="cmp-card-side coa1"><div class="cmp-side-lbl">COA 1</div>' + rows1 + '</div>' +
+            '<div class="cmp-card-side coa2"><div class="cmp-side-lbl">COA 2</div>' + rows2 + '</div>' +
+            (noteTxt ? '<div class="cmp-card-note ' + noteCls + '">' + (u.altUnresolved ? noteTxt : A.esc(noteTxt)) + '</div>' : '') +
+            '</div>';
+        }).join('');
+      }
+    }
+
+    // ----- Building role changes -----
+    var bEl = document.getElementById('cmp-buildings');
+    if (bEl) {
+      var changedB = (A.BUILDINGS || []).filter(function(b){
+        return b.coa2Note || b.altOccupants;
+      });
+      if (!changedB.length) {
+        bEl.innerHTML = '<div class="cmp-empty">No building role changes between COAs.</div>';
+      } else {
+        var nameOf = function(uid){
+          var u = (A.UNITS||[]).filter(function(x){return x.id===uid;})[0];
+          return u ? u.name : uid;
+        };
+        bEl.innerHTML = changedB.map(function(b){
+          var occ1 = (b.occupants || []).map(nameOf).join(', ') || '-';
+          var occ2 = b.altOccupants ? ((b.altOccupants.map(nameOf).join(', ')) || '<em>building empty in COA 2</em>') : occ1;
+          return '<div class="cmp-card">' +
+            '<div class="cmp-card-key">Bldg ' + A.esc(b.num) + '<span class="cmp-card-id">' + A.esc(b.label) + '</span></div>' +
+            '<div class="cmp-card-side coa1"><div class="cmp-side-lbl">COA 1</div><div class="cmp-row"><span class="k">Occupants</span><span class="v" style="text-align:right;font-family:inherit;">' + occ1 + '</span></div></div>' +
+            '<div class="cmp-card-side coa2"><div class="cmp-side-lbl">COA 2</div><div class="cmp-row"><span class="k">Occupants</span><span class="v" style="text-align:right;font-family:inherit;">' + occ2 + '</span></div></div>' +
+            (b.coa2Note ? '<div class="cmp-card-note">' + A.esc(b.coa2Note) + '</div>' : '') +
+            '</div>';
+        }).join('');
+      }
+    }
+  }
+
+  A.renderCompare = renderCompare;
 })();
 </script>
 

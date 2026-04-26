@@ -1543,6 +1543,99 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
 [data-theme="light"] .class-bar { background: var(--primary); color: #fff; }
 [data-theme="light"] .fy-tag { background: var(--primary); color: #fff; border-color: var(--accent); }
 
+/* ============================================================
+   COA (Course of Action) toolbar segmented control
+   ============================================================ */
+.coa-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--bg-section); border: 1px solid var(--border);
+  border-radius: 5px; padding: 3px 6px 3px 9px;
+}
+.coa-toggle-lbl {
+  font-size: 9.5px; font-weight: 800; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.coa-btn {
+  background: transparent; color: var(--text-muted);
+  border: 1px solid transparent; border-radius: 3px;
+  padding: 3px 10px; font-size: 11.5px; font-weight: 800;
+  cursor: pointer; font-family: inherit; min-width: 26px;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.coa-btn:hover { color: var(--text); background: var(--bg-panel); }
+.coa-btn.active[data-coa-btn="coa1"] {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(105,199,222,0.25);
+}
+.coa-btn.active[data-coa-btn="coa2"] {
+  background: var(--swing-amber); color: #1A1108; border-color: var(--swing-amber);
+  box-shadow: 0 0 0 1px rgba(255,193,7,0.3);
+}
+
+/* Body data-coa attribute drives subtle color cues across COA-aware regions */
+body[data-coa="coa2"] .coa-toggle { border-color: var(--swing-amber); }
+
+/* ============================================================
+   PROJECTS hero card + COA-aware row styling
+   ============================================================ */
+.pj-hero {
+  display: grid; grid-template-columns: 1fr auto; gap: 16px;
+  align-items: center; background: var(--bg-section);
+  border: 1px solid var(--border); border-left: 4px solid var(--accent);
+  border-radius: 6px; padding: 14px 18px; margin-bottom: 14px;
+}
+body[data-coa="coa2"] .pj-hero { border-left-color: var(--swing-amber); }
+.pj-hero-left { min-width: 0; }
+.pj-hero-label {
+  font-size: 11px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.1em; font-weight: 800;
+}
+.pj-hero-hint {
+  font-size: 11px; color: var(--text-light); margin-top: 4px;
+}
+.pj-hero-num {
+  font-family: var(--font-mono); font-size: 30px; font-weight: 800;
+  color: var(--accent-bright); letter-spacing: 0.02em; line-height: 1;
+}
+body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
+
+.pj-hero-compare {
+  margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 11.5px;
+}
+.pj-cmp { color: var(--text-muted); padding: 2px 6px; border-radius: 3px; }
+.pj-cmp-active {
+  color: var(--text); background: var(--bg-panel); padding: 2px 8px;
+  border-radius: 3px; font-weight: 700; border: 1px solid var(--border-light);
+}
+.pj-cmp-sep { color: var(--border); }
+.pj-cmp-delta { padding: 2px 8px; border-radius: 3px; font-weight: 800;
+  background: var(--bg-panel); border: 1px solid var(--border-light); color: var(--text); }
+.pj-cmp-delta.savings { color: #4CAF50; border-color: rgba(76,175,80,0.4); background: rgba(76,175,80,0.12); }
+.pj-cmp-delta.addition { color: var(--swing-amber); border-color: rgba(212,144,10,0.4); background: rgba(212,144,10,0.12); }
+
+/* Per-row scope badges (COA 1 / COA 2 / BOTH) */
+.pj-scope-badge {
+  display: inline-block; font-size: 9.5px; font-weight: 800;
+  padding: 2px 8px; border-radius: 10px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  border: 1px solid transparent; white-space: nowrap;
+}
+.pj-scope-badge.sc-both { background: var(--bg-panel); color: var(--text-muted); border-color: var(--border); }
+.pj-scope-badge.sc-coa1 { background: rgba(46,155,181,0.16); color: var(--accent-bright); border-color: var(--accent); }
+.pj-scope-badge.sc-coa2 { background: rgba(212,144,10,0.18); color: var(--swing-amber); border-color: var(--swing-amber); }
+
+/* Subtle row tints by COA scope (kept low-saturation so it's not busy) */
+.pj-row-coa1 td { background: rgba(46,155,181,0.04); }
+.pj-row-coa2 td { background: rgba(212,144,10,0.05); }
+.pj-row-frfdemo td { background: rgba(193,39,45,0.05); }
+.pj-row-frfreno td { background: rgba(212,144,10,0.07); }
+
+/* When the row's scope is OUT of the active COA, fade it heavily so the
+   active COA reads at a glance. Inputs stay editable but visually pushed back. */
+.pj-row-inactive td { opacity: 0.42; }
+.pj-row-inactive .pj-cost { text-decoration: line-through; }
+
 </style>
 </head>
 <body>
@@ -1750,6 +1843,11 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
     </div>
     <button class="hdr-btn" id="f-reset" type="button" aria-label="Reset all filters">Reset</button>
     <div style="margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+      <div class="coa-toggle" role="group" aria-label="Course of Action selector" title="Switch between COA 1 (Primary) and COA 2 (Alternate)">
+        <span class="coa-toggle-lbl">COA</span>
+        <button class="coa-btn active" data-coa-btn="coa1" type="button" aria-label="COA 1 Primary">1</button>
+        <button class="coa-btn" data-coa-btn="coa2" type="button" aria-label="COA 2 Alternate">2</button>
+      </div>
       <button class="hdr-btn" id="btn-theme" type="button" aria-label="Toggle theme" title="Toggle theme (T)">&#9681; Theme</button>
       <button class="hdr-btn" id="btn-cmd" type="button" aria-label="Open command palette" title="Command palette (Ctrl+K)">&#8984; Commands</button>
       <button class="hdr-btn primary" id="btn-edit-tool" type="button" aria-label="Toggle edit mode" title="Toggle edit mode (E)">&#9998; Edit</button>
@@ -2336,36 +2434,38 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
         </span>
       </h3>
 
-      <!-- Total cost hero card -->
-      <div style="display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;background:var(--bg-section);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:6px;padding:12px 16px;margin-bottom:14px;">
-        <div>
-          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-weight:800;">Total Project Cost</div>
-          <div style="font-size:11px;color:var(--text-light);margin-top:3px;">Auto-calculated from all project rows. Edit any Cost cell and this updates live.</div>
+      <!-- Total cost hero card (COA-aware) -->
+      <div class="pj-hero">
+        <div class="pj-hero-left">
+          <div id="pj-total-label" class="pj-hero-label">COA 1 (Primary) Total Project Cost</div>
+          <div class="pj-hero-hint">Edit any Cost cell to update live. Switch COA via the toolbar; both totals stay synced.</div>
+          <div id="pj-total-compare" class="pj-hero-compare"></div>
         </div>
-        <div id="pj-total" style="font-family:var(--font-mono);font-size:28px;font-weight:800;color:var(--accent-bright);letter-spacing:0.02em;">$0</div>
+        <div id="pj-total" class="pj-hero-num">$0</div>
       </div>
 
       <div class="tbl-scroll" style="max-height:calc(100vh - 360px);">
         <table class="ed-table" id="tbl-projects" aria-label="Projects and costs">
           <thead>
             <tr>
-              <th style="width:80px;">PAX ID</th>
-              <th style="width:130px;">FIWEB ID</th>
-              <th style="width:100px;">Building</th>
+              <th style="width:78px;">PAX ID</th>
+              <th style="width:120px;">FIWEB ID</th>
+              <th style="width:96px;">Building</th>
+              <th style="width:78px;" title="Which COA (Course of Action) this scope item applies to">COA</th>
               <th style="width:140px;">Cost</th>
               <th>Scope</th>
               <th style="width:140px;">Supported Unit</th>
-              <th style="width:95px;">Completion</th>
-              <th style="width:115px;">Delivery</th>
+              <th style="width:92px;">Completion</th>
+              <th style="width:110px;">Delivery</th>
               <th style="width:150px;">Note</th>
-              <th style="width:60px;">Actions</th>
+              <th style="width:58px;">Actions</th>
             </tr>
           </thead>
           <tbody id="tbody-projects"></tbody>
           <tfoot>
             <tr>
-              <td colspan="3" style="text-align:right;font-weight:800;">TOTAL</td>
-              <td id="pj-total-cell" class="num" style="font-weight:800;font-family:var(--font-mono);color:var(--accent-bright);">$0</td>
+              <td colspan="4" style="text-align:right;font-weight:800;">TOTAL</td>
+              <td id="pj-total-cell" class="num" style="font-weight:800;font-family:var(--font-mono);color:var(--accent-bright);">COA 1: $0</td>
               <td colspan="6"></td>
             </tr>
           </tfoot>
@@ -4849,24 +4949,74 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   var A = window.__APEX; if (!A) return;
 
   // Seed from the "4th Marines Consolidation on Camp Schwab Projects" slide.
-  // All 10 rows. Edit any cell; the total recalculates live.
-  // note: free text. Conventions: '*' = HN-funded FRF DEMO (2030);
-  //                               '**' = HN-funded FRF renovation (2030)
-  // fiweb: Fire Web project ID (e.g. BU26PPE...). Top 5 buildings have a
-  //        FIWEB ID; fill in the exact number from the source slide.
+  // All rows. Edit any cell; the total recalculates live.
+  // note:  free text. Conventions: '*' = HN-funded FRF DEMO (2030);
+  //                                '**' = HN-funded FRF renovation (2030)
+  // fiweb: Fire Web project ID (e.g. BU26PPE...)
+  // coa:   'both' = applies to both COA 1 (Primary) and COA 2 (Alternate)
+  //        'coa1' = COA 1 only (removed in alternate plan)
+  //        'coa2' = COA 2 only (added in alternate plan)
+  // altCost: cost in COA 2 if it differs from COA 1. Falls back to cost when null.
   var PROJECTS = [
-    { paxId:'387356', fiweb:'BU26PPE70M', bldg:'SCH-1024', cost:10413140.40, scope:'Repair Bldg 1024, Armory Expansion & Admin Conversion (construct armory, secured storage, telecomm room, exterior overhang, OSS Vault)', supported:'4th MAR Regt, CLB-4', completion:'Q3 FY27', delivery:'DB to FEAD', note:'' },
-    { paxId:'387624', fiweb:'BU26PPE72M', bldg:'SCH-3213', cost:5428425.00, scope:'Repair Bldg 3213, Convert to CLB-4 Headquarters', supported:'CLB-4', completion:'Q2 FY28', delivery:'DB to FEAD', note:'' },
-    { paxId:'387568', fiweb:'BU26PPE74R', bldg:'SCH-3270', cost:3527753.00, scope:'Repair Bldg 3270, HVAC Upgrade and Telecommunications', supported:'4th MAR Regt, CLB-4', completion:'Q4 FY27', delivery:'DB to FEAD', note:'' },
-    { paxId:'387433', fiweb:'BU26PPE71M', bldg:'SCH-3314', cost:1949382.00, scope:'Repair Bldg 3314, Convert to 4th MAR Regt Regimental HQ / UDP West', supported:'4th MAR Regt', completion:'Q3 FY28', delivery:'DB to FEAD', note:'' },
-    { paxId:'387622', fiweb:'BU26PPE73M', bldg:'SCH-3237', cost:1486818.00, scope:'Repair Bldg 3237, Warehouse Partition Multi-Unit Storage (re-partition for three units; Telecomm Room w/ Fire Suppression Design)', supported:'4th MAR Regt, CLB-4', completion:'Q2 FY27', delivery:'DB to FEAD', note:'**' },
-    { paxId:'N/A',    fiweb:'',           bldg:'SCH-3235', cost:388000,     scope:'Add IT / Comms', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', note:'' },
-    { paxId:'N/A',    fiweb:'',           bldg:'SCH-3410', cost:180000,     scope:'Add IT / Comms', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', note:'*' },
-    { paxId:'N/A',    fiweb:'',           bldg:'SCH-3413', cost:178000,     scope:'Convert to A & B Co, CLB-4', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', note:'*' },
-    { paxId:'N/A',    fiweb:'',           bldg:'SCH-3210', cost:14000,      scope:'Upgrade Female Head', supported:'4th MAR Regt', completion:'Q4 FY26', delivery:'DOW to P&E', note:'**' },
-    { paxId:'N/A',    fiweb:'',           bldg:'SCH-3335', cost:0,          scope:'G-6 Coordination MCEN switch install', supported:'MCB Butler', completion:'Q3 FY26', delivery:'N/A', note:'' }
+    { paxId:'387356', fiweb:'BU26PPE70M', bldg:'SCH-1024', cost:10413140.40, altCost:null, scope:'Repair Bldg 1024, Armory Expansion & Admin Conversion (construct armory, secured storage, telecomm room, exterior overhang, OSS Vault)', supported:'4th MAR Regt, CLB-4', completion:'Q3 FY27', delivery:'DB to FEAD', note:'', coa:'both' },
+    { paxId:'387624', fiweb:'BU26PPE72M', bldg:'SCH-3213', cost:5428425.00, altCost:null, scope:'Repair Bldg 3213, Convert to CLB-4 Headquarters', supported:'CLB-4', completion:'Q2 FY28', delivery:'DB to FEAD', note:'', coa:'both' },
+    { paxId:'387568', fiweb:'BU26PPE74R', bldg:'SCH-3270', cost:3527753.00, altCost:null, scope:'Repair Bldg 3270, HVAC Upgrade and Telecommunications', supported:'4th MAR Regt, CLB-4', completion:'Q4 FY27', delivery:'DB to FEAD', note:'', coa:'both' },
+    { paxId:'387433', fiweb:'BU26PPE71M', bldg:'SCH-3314', cost:1949382.00, altCost:null, scope:'Repair Bldg 3314, Convert to 4th MAR Regt Regimental HQ / UDP West', supported:'4th MAR Regt', completion:'Q3 FY28', delivery:'DB to FEAD', note:'', coa:'both' },
+    { paxId:'387622', fiweb:'BU26PPE73M', bldg:'SCH-3237', cost:1486818.00, altCost:null, scope:'Repair Bldg 3237, Warehouse Partition Multi-Unit Storage (re-partition for three units; Telecomm Room w/ Fire Suppression Design)', supported:'4th MAR Regt, CLB-4', completion:'Q2 FY27', delivery:'DB to FEAD', note:'**', coa:'coa1' },
+    { paxId:'N/A',    fiweb:'',           bldg:'SCH-3235', cost:388000,     altCost:null, scope:'Add IT / Comms', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', note:'', coa:'both' },
+    { paxId:'N/A',    fiweb:'',           bldg:'SCH-3410', cost:180000,     altCost:null, scope:'Add IT / Comms', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', note:'*', coa:'both' },
+    { paxId:'N/A',    fiweb:'',           bldg:'SCH-3413', cost:178000,     altCost:null, scope:'Convert to A & B Co, CLB-4', supported:'CLB-4', completion:'Q2 FY27', delivery:'DOW to P&E', note:'*', coa:'both' },
+    { paxId:'N/A',    fiweb:'',           bldg:'SCH-3210', cost:14000,      altCost:null, scope:'Upgrade Female Head', supported:'4th MAR Regt', completion:'Q4 FY26', delivery:'DOW to P&E', note:'**', coa:'both' },
+    { paxId:'N/A',    fiweb:'',           bldg:'SCH-3335', cost:0,          altCost:null, scope:'G-6 Coordination MCEN switch install', supported:'MCB Butler', completion:'Q3 FY26', delivery:'N/A', note:'', coa:'both' },
+    // ----- COA 2 (Alternate) only -----
+    { paxId:'TBD',    fiweb:'',           bldg:'SCH-1024', cost:0,          altCost:0, scope:'ADD SCOPE: Convert 2nd-floor barracks rooms (above 4th MAR Regt Armory) into Admin spaces. Lose 16x barracks rooms, gain 8x Co HQ spaces. Cost minimal, mostly telecom-related.', supported:'4th MAR Regt Co HQs', completion:'TBD', delivery:'TBD', note:'COA 2 add', coa:'coa2' },
+    { paxId:'TBD',    fiweb:'',           bldg:'SCH-3235', cost:0,          altCost:0, scope:'ADD SCOPE: Upgrade / refurbish HVAC (same status / life cycle as SCH-3270). Best to address now; can roll into existing project for approx the savings from removing SCH-3237.', supported:'CLB-4', completion:'TBD', delivery:'TBD', note:'COA 2 add', coa:'coa2' }
   ];
   A.PROJECTS = PROJECTS;
+
+  /* ---- COA (Course of Action) state ----------------------------------
+     'coa1' = Primary plan (current scope). 'coa2' = Alternate plan from
+     the PROPOSAL: Amend Scope of 4th Marines Project slide. The active
+     COA decides which Cost field is shown / edited and which rows are
+     included in the live total. Persisted to localStorage so the user
+     stays on the COA they were last viewing. */
+  var COA_KEY = '4thMAR_active_coa';
+  function getActiveCoa() {
+    try { return localStorage.getItem(COA_KEY) === 'coa2' ? 'coa2' : 'coa1'; }
+    catch(e) { return 'coa1'; }
+  }
+  function setActiveCoa(v) {
+    try { localStorage.setItem(COA_KEY, v); } catch(e) {}
+    document.body.setAttribute('data-coa', v);
+    // Re-render anything that's COA-aware
+    renderProjects();
+    refreshTotal();
+    // Sync the toolbar segment buttons
+    Array.prototype.forEach.call(document.querySelectorAll('[data-coa-btn]'), function(b){
+      b.classList.toggle('active', b.getAttribute('data-coa-btn') === v);
+    });
+    // Toast feedback
+    if (A.toast) A.toast(v === 'coa2' ? 'Switched to COA 2 (Alternate)' : 'Switched to COA 1 (Primary)', '');
+  }
+  A.getActiveCoa = getActiveCoa;
+  A.setActiveCoa = setActiveCoa;
+
+  // Cost a row contributes for a given COA. Rows scoped to the other COA
+  // contribute 0. coa2 prefers altCost and falls back to cost.
+  function costFor(p, coa) {
+    if (p.coa === 'coa1' && coa === 'coa2') return 0;
+    if (p.coa === 'coa2' && coa === 'coa1') return 0;
+    if (coa === 'coa2') {
+      var c = (p.altCost === null || p.altCost === undefined || p.altCost === '') ? p.cost : p.altCost;
+      return Number(c) || 0;
+    }
+    return Number(p.cost) || 0;
+  }
+  A.costForCoa = costFor;
+  function totalForCoa(coa) {
+    return PROJECTS.reduce(function(sum, p){ return sum + costFor(p, coa); }, 0);
+  }
+  A.totalForCoa = totalForCoa;
 
   function fmtUSD(n) {
     n = Number(n) || 0;
@@ -4882,17 +5032,44 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
 
   function renderProjects() {
     var body = document.getElementById('tbody-projects'); if (!body) return;
+    var coa = getActiveCoa();
     var html = PROJECTS.map(function(p, idx){
-      // Tint the row based on the note content (convention, not enforced)
       var noteTrim = String(p.note || p.frf || '').trim();
-      var rowStyle = '';
-      if (noteTrim === '*' || /FRF.*DEMO/i.test(noteTrim)) rowStyle = 'style="background:rgba(193,39,45,0.05);"';
-      else if (noteTrim === '**' || /renov/i.test(noteTrim)) rowStyle = 'style="background:rgba(212,144,10,0.05);"';
-      return '<tr data-idx="' + idx + '" ' + rowStyle + '>' +
+      var rowCls = 'pj-row';
+      var coaScope = p.coa || 'both';
+      // Subtle scope tint
+      if (coaScope === 'coa1') rowCls += ' pj-row-coa1';
+      else if (coaScope === 'coa2') rowCls += ' pj-row-coa2';
+      // Note-based tint (FRF DEMO / Renovation) layers on top
+      if (noteTrim === '*' || /FRF.*DEMO/i.test(noteTrim)) rowCls += ' pj-row-frfdemo';
+      else if (noteTrim === '**' || /renov/i.test(noteTrim)) rowCls += ' pj-row-frfreno';
+      // Inactive in current COA -> faded
+      var inactive = (coaScope === 'coa1' && coa === 'coa2') || (coaScope === 'coa2' && coa === 'coa1');
+      if (inactive) rowCls += ' pj-row-inactive';
+
+      // Pick the cost field for the active COA; edits write back to the
+      // matching field. coa2 prefers altCost (falls back to cost when null).
+      var displayCost;
+      var costFieldKey;
+      if (coa === 'coa2') {
+        costFieldKey = 'altCost';
+        displayCost = (p.altCost === null || p.altCost === undefined || p.altCost === '') ? (p.cost || 0) : p.altCost;
+      } else {
+        costFieldKey = 'cost';
+        displayCost = p.cost || 0;
+      }
+
+      var scopeBadge =
+        coaScope === 'coa1' ? '<span class="pj-scope-badge sc-coa1" title="Primary plan only">COA 1</span>' :
+        coaScope === 'coa2' ? '<span class="pj-scope-badge sc-coa2" title="Alternate plan only">COA 2</span>' :
+                              '<span class="pj-scope-badge sc-both" title="Both plans">BOTH</span>';
+
+      return '<tr data-idx="' + idx + '" class="' + rowCls + '">' +
         '<td><input data-k="paxId" value="' + A.esc(p.paxId) + '" style="font-family:var(--font-mono);"></td>' +
         '<td><input data-k="fiweb" value="' + A.esc(p.fiweb || '') + '" style="font-family:var(--font-mono);font-size:11px;"></td>' +
         '<td><input data-k="bldg"  value="' + A.esc(p.bldg)  + '" style="font-family:var(--font-mono);font-weight:700;"></td>' +
-        '<td><input data-k="cost"  value="' + p.cost + '" type="number" step="0.01" class="pj-cost" style="text-align:right;font-family:var(--font-mono);"></td>' +
+        '<td>' + scopeBadge + '</td>' +
+        '<td><input data-k="' + costFieldKey + '" value="' + displayCost + '" type="number" step="0.01" class="pj-cost" style="text-align:right;font-family:var(--font-mono);" ' + (inactive ? 'tabindex="-1"' : '') + '></td>' +
         '<td><input data-k="scope" value="' + A.esc(p.scope) + '" style="min-width:240px;"></td>' +
         '<td><input data-k="supported"  value="' + A.esc(p.supported)  + '"></td>' +
         '<td><input data-k="completion" value="' + A.esc(p.completion) + '" style="text-align:center;"></td>' +
@@ -4911,9 +5088,9 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
         if (isNaN(idx) || !PROJECTS[idx]) return;
         var k = inp.getAttribute('data-k');
         var v = inp.value;
-        if (k === 'cost') v = parseCost(v);
+        if (k === 'cost' || k === 'altCost') v = parseCost(v);
         PROJECTS[idx][k] = v;
-        if (k === 'cost') refreshTotal();
+        if (k === 'cost' || k === 'altCost') refreshTotal();
         if (k === 'note') {
           // Update row tint based on the note convention (debounced via setTimeout)
           clearTimeout(inp._noteTimer);
@@ -4940,23 +5117,53 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   }
 
   function refreshTotal() {
-    var total = PROJECTS.reduce(function(sum, p){ return sum + (Number(p.cost) || 0); }, 0);
-    var s = fmtUSD(total);
-    var cell = document.getElementById('pj-total-cell'); if (cell) cell.textContent = s;
-    var hero = document.getElementById('pj-total');      if (hero) hero.textContent = s;
-    // Also update Overview total-cost badge if present
+    var coa = getActiveCoa();
+    var t1 = totalForCoa('coa1');
+    var t2 = totalForCoa('coa2');
+    var active = coa === 'coa2' ? t2 : t1;
+    var s = fmtUSD(active);
+    var delta = t2 - t1;
+    var deltaSign = delta > 0 ? '+' : (delta < 0 ? '-' : '');
+    var deltaStr = deltaSign + fmtUSD(Math.abs(delta));
+
+    // Hero ticker: bigsig + COA label
+    var hero = document.getElementById('pj-total');
+    if (hero) hero.textContent = s;
+    var heroLbl = document.getElementById('pj-total-label');
+    if (heroLbl) heroLbl.textContent = (coa === 'coa2' ? 'COA 2 (Alternate)' : 'COA 1 (Primary)') + ' Total Project Cost';
+
+    // Comparison sub-line on the hero card (always shows both)
+    var heroSub = document.getElementById('pj-total-compare');
+    if (heroSub) {
+      heroSub.innerHTML =
+        '<span class="' + (coa === 'coa1' ? 'pj-cmp-active' : 'pj-cmp') + '">COA 1: ' + fmtUSD(t1) + '</span>' +
+        '<span class="pj-cmp-sep">|</span>' +
+        '<span class="' + (coa === 'coa2' ? 'pj-cmp-active' : 'pj-cmp') + '">COA 2: ' + fmtUSD(t2) + '</span>' +
+        '<span class="pj-cmp-sep">|</span>' +
+        '<span class="pj-cmp-delta ' + (delta < 0 ? 'savings' : (delta > 0 ? 'addition' : '')) + '">' +
+        '&Delta;: ' + deltaStr + '</span>';
+    }
+
+    // Footer total cell of the projects table
+    var cell = document.getElementById('pj-total-cell');
+    if (cell) cell.textContent = (coa === 'coa2' ? 'COA 2: ' : 'COA 1: ') + s;
+
+    // Overview total-cost card (mirrors active COA)
     var ov = document.getElementById('ov-total-cost'); if (ov) ov.textContent = s;
-    // And KPI if tagged
+    var ovLbl = document.getElementById('ov-total-cost-label');
+    if (ovLbl) ovLbl.textContent = (coa === 'coa2' ? 'COA 2 (Alternate)' : 'COA 1 (Primary)') + ' Total';
+
+    // KPI if tagged
     var kpi = document.querySelector('[data-kpi="total-cost"]');
     if (kpi) kpi.textContent = s;
   }
 
   function persistProjects() {
-    try { localStorage.setItem('4thMAR_projects_v3', JSON.stringify(PROJECTS)); } catch(e) {}
+    try { localStorage.setItem('4thMAR_projects_v4', JSON.stringify(PROJECTS)); } catch(e) {}
   }
   function loadProjects() {
     try {
-      var raw = localStorage.getItem('4thMAR_projects_v3');
+      var raw = localStorage.getItem('4thMAR_projects_v4');
       if (!raw) return;
       var arr = JSON.parse(raw);
       if (Array.isArray(arr) && arr.length) {
@@ -4967,6 +5174,19 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   }
 
   function wireProjects() {
+    // Wire the COA segmented control in the toolbar
+    Array.prototype.forEach.call(document.querySelectorAll('[data-coa-btn]'), function(b){
+      b.addEventListener('click', function(){
+        setActiveCoa(b.getAttribute('data-coa-btn'));
+      });
+    });
+    // Apply saved COA state on init
+    var savedCoa = getActiveCoa();
+    document.body.setAttribute('data-coa', savedCoa);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-coa-btn]'), function(b){
+      b.classList.toggle('active', b.getAttribute('data-coa-btn') === savedCoa);
+    });
+
     var add = document.getElementById('pj-add');
     if (add) add.addEventListener('click', function(){
       PROJECTS.push({ paxId:'N/A', fiweb:'', bldg:'SCH-XXXX', cost:0, scope:'New project',

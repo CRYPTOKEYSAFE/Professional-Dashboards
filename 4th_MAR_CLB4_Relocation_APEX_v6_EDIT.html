@@ -1636,6 +1636,53 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
 .pj-row-inactive td { opacity: 0.42; }
 .pj-row-inactive .pj-cost { text-decoration: line-through; }
 
+/* ============================================================
+   DETAIL DRAWER - COA banner + delta markers
+   ============================================================ */
+.dp-coa-banner {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 6px 10px; margin: 14px -18px 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+.dp-coa-banner:first-child { margin-top: 0; }
+.dp-coa-banner.dp-coa1 {
+  background: rgba(46,155,181,0.15); color: var(--accent-bright);
+  border-top: 1px solid var(--accent); border-bottom: 1px solid var(--accent);
+}
+.dp-coa-banner.dp-coa2 {
+  background: rgba(212,144,10,0.16); color: var(--swing-amber);
+  border-top: 1px solid var(--swing-amber); border-bottom: 1px solid var(--swing-amber);
+}
+.dp-unresolved {
+  background: var(--status-red); color: #fff; font-size: 9px;
+  padding: 2px 8px; border-radius: 3px; letter-spacing: 0.1em;
+  margin-left: auto; font-weight: 900;
+}
+.dp-delta {
+  display: inline-block; background: var(--swing-amber); color: #1A1108;
+  font-size: 10px; font-weight: 900; padding: 0 6px; border-radius: 3px;
+  margin-left: 6px; letter-spacing: 0.05em;
+}
+
+/* Tag that shows the active COA next to a tab heading
+   (swim-lane, comparison, etc). Auto-updates with body[data-coa]. */
+.coa-context-tag {
+  display: inline-block; font-size: 10px; font-weight: 800;
+  padding: 3px 10px; border-radius: 11px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  background: rgba(46,155,181,0.18); color: var(--accent-bright);
+  border: 1px solid var(--accent);
+}
+body[data-coa="coa2"] .coa-context-tag {
+  background: rgba(212,144,10,0.20); color: var(--swing-amber);
+  border-color: var(--swing-amber);
+}
+.swim-chip.tbd {
+  background: var(--swing-amber); color: #1A1108;
+  border: 1px dashed #FFC107;
+}
+.swim-chip.tbd::after { content: " TBD"; font-weight:900; font-size:8px; }
+
 </style>
 </head>
 <body>
@@ -2484,9 +2531,12 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
   <!-- TAB: TIMELINE / GANTT -->
   <section class="tab-panel" id="tab-timeline" role="tabpanel" aria-labelledby="nav-timeline">
     <div class="panel-card">
-      <h3>Building Lifecycle - State of Each Building Across the Five Phases</h3>
+      <h3 style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        Building Lifecycle - State of Each Building Across the Five Phases
+        <span id="swim-coa-tag" class="coa-context-tag">COA 1</span>
+      </h3>
       <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;line-height:1.55;">
-        Each row is one building. Each column is a relocation phase. Color shows what is happening to that building in that phase; the unit chips on each segment list who occupies it. Click any segment to open the detail drawer for that building.
+        Each row is one building. Each column is a relocation phase. Color shows what is happening to that building in that phase; the unit chips on each segment list who occupies it. Click any segment to open the detail drawer. <strong>Toolbar COA toggle</strong> swaps the displayed plan; an <span style="color:var(--swing-amber);font-weight:700;">amber TBD chip</span> means a unit's destination is unresolved in that COA.
       </div>
       <div id="swim-root" class="swim" aria-label="Building lifecycle swim-lane"></div>
       <div class="chart-legend" style="margin-top:12px;gap:16px;">
@@ -4285,18 +4335,39 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
     var u = A.UNITS.filter(function(x){ return x.id === unitId; })[0]; if (!u) return;
     currentDetail = { kind:'unit', ref: u };
     var typeMap = { div:'3d MARDIV', mlg:'MLG', reg:'4th MAR Regt', arm:'Armory', med:'Medical', mtr:'Motor Transport' };
-    var body = '<div class="dp-section">Unit Record</div>' +
+    var body =
+      '<div class="dp-coa-banner dp-coa1"><strong>COA 1 (Primary Plan)</strong></div>' +
       '<div class="dp-row"><div class="dp-k">Tile ID</div><div class="dp-v"><code>' + A.esc(u.id) + '</code></div></div>' +
       '<div class="dp-row"><div class="dp-k">Name</div><div class="dp-v">' + A.esc(u.name) + '</div></div>' +
       '<div class="dp-row"><div class="dp-k">Echelon</div><div class="dp-v"><span class="chip-type chip-' + u.type + '"></span>' + A.esc(typeMap[u.type] || u.type) + '</div></div>' +
       '<div class="dp-row"><div class="dp-k">Status</div><div class="dp-v">' + statusPill(u.status) + '</div></div>' +
-      '<div class="dp-section">Movement</div>' +
       '<div class="dp-row"><div class="dp-k">Start Building</div><div class="dp-v">' + A.esc(u.startBldg) + '</div></div>' +
       '<div class="dp-row"><div class="dp-k">End Building</div><div class="dp-v">' + A.esc(u.endBldg) + '</div></div>' +
       '<div class="dp-row"><div class="dp-k">Phase</div><div class="dp-v">' + (u.phase === 0 ? 'No Move' : 'Phase ' + u.phase) + '</div></div>' +
       '<div class="dp-row"><div class="dp-k">Date</div><div class="dp-v">' + A.esc(u.date) + '</div></div>' +
       '<div class="dp-section">Notes</div>' +
       '<div style="font-size:12px;color:var(--text);line-height:1.55;">' + A.esc(u.note) + '</div>';
+
+    // COA 2 (Alternate) section - only render when there is an actual delta
+    var hasAlt = u.altEndBldg || u.altPhase !== undefined || u.altDate || u.altStatus || u.altNote || u.altUnresolved;
+    if (hasAlt) {
+      var altEnd = u.altEndBldg || u.endBldg;
+      var altPh  = (u.altPhase !== undefined && u.altPhase !== null) ? u.altPhase : u.phase;
+      var altDt  = u.altDate || u.date;
+      var altSt  = u.altStatus || u.status;
+      var deltaEnd = (u.altEndBldg && u.altEndBldg !== u.endBldg) ? '<span class="dp-delta">&Delta;</span>' : '';
+      var deltaPh  = (u.altPhase !== undefined && u.altPhase !== null && u.altPhase !== u.phase) ? '<span class="dp-delta">&Delta;</span>' : '';
+      var deltaDt  = (u.altDate && u.altDate !== u.date) ? '<span class="dp-delta">&Delta;</span>' : '';
+      var deltaSt  = (u.altStatus && u.altStatus !== u.status) ? '<span class="dp-delta">&Delta;</span>' : '';
+      body += '<div class="dp-coa-banner dp-coa2"><strong>COA 2 (Alternate Plan)</strong>' +
+        (u.altUnresolved ? '<span class="dp-unresolved">UNRESOLVED</span>' : '') + '</div>' +
+        '<div class="dp-row"><div class="dp-k">End Building</div><div class="dp-v">' + A.esc(altEnd) + ' ' + deltaEnd + '</div></div>' +
+        '<div class="dp-row"><div class="dp-k">Phase</div><div class="dp-v">' + (altPh === 0 ? 'No Move' : 'Phase ' + altPh) + ' ' + deltaPh + '</div></div>' +
+        '<div class="dp-row"><div class="dp-k">Date</div><div class="dp-v">' + A.esc(altDt) + ' ' + deltaDt + '</div></div>' +
+        '<div class="dp-row"><div class="dp-k">Status</div><div class="dp-v">' + statusPill(altSt) + ' ' + deltaSt + '</div></div>' +
+        (u.altNote ? '<div class="dp-section">COA 2 Notes</div><div style="font-size:12px;color:var(--text);line-height:1.55;">' + A.esc(u.altNote) + '</div>' : '');
+    }
+
     document.getElementById('dp-title').textContent = u.name;
     document.getElementById('dp-sub').textContent = u.id + ' - ' + (u.startBldg === u.endBldg ? 'Resident at ' + u.endBldg : u.startBldg + ' -> ' + u.endBldg);
     document.getElementById('dp-body').innerHTML = body;
@@ -4307,22 +4378,40 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
   function openBuildingDetail(bldgId) {
     var b = A.BUILDINGS.filter(function(x){ return x.id === bldgId; })[0]; if (!b) return;
     currentDetail = { kind:'building', ref: b };
-    var occ = (b.occupants||[]).map(function(uid){
+    var nameOf = function(uid){
       var u = A.UNITS.filter(function(x){ return x.id === uid; })[0];
       return u ? u.name : uid;
-    });
-    var body = '<div class="dp-section">Building Record</div>' +
+    };
+    var occ = (b.occupants || []).map(nameOf);
+    var altOcc = b.altOccupants ? b.altOccupants.map(nameOf) : null;
+
+    var body =
+      '<div class="dp-coa-banner dp-coa1"><strong>COA 1 (Primary Plan)</strong></div>' +
       '<div class="dp-row"><div class="dp-k">Number</div><div class="dp-v">' + A.esc(b.num) + '</div></div>' +
       '<div class="dp-row"><div class="dp-k">Label</div><div class="dp-v">' + A.esc(b.label) + '</div></div>' +
       '<div class="dp-row"><div class="dp-k">Zone</div><div class="dp-v">' + A.esc(b.zone) + '</div></div>' +
       '<div class="dp-row"><div class="dp-k">Status</div><div class="dp-v">' + bldgPill(b.status) + '</div></div>' +
-      '<div class="dp-section">Phasing</div>' +
       '<div class="dp-row"><div class="dp-k">Phase In</div><div class="dp-v">' + (b.phaseIn || 'Initial') + '</div></div>' +
       '<div class="dp-row"><div class="dp-k">Phase Out</div><div class="dp-v">' + (b.phaseOut ? 'Phase ' + b.phaseOut : 'N/A') + '</div></div>' +
-      '<div class="dp-section">Occupants</div>' +
+      '<div class="dp-section">Occupants (COA 1)</div>' +
       '<div style="font-size:12px;color:var(--text);line-height:1.6;">' +
       (occ.length ? occ.map(function(n){ return '<div style="padding:3px 0;">&bull; ' + A.esc(n) + '</div>'; }).join('') : '<em style="color:var(--text-muted);">None listed</em>') +
       '</div>';
+
+    // COA 2 section - only when this building has notes or different occupants
+    if (b.coa2Note || altOcc) {
+      body += '<div class="dp-coa-banner dp-coa2"><strong>COA 2 (Alternate Plan)</strong></div>';
+      if (b.coa2Note) {
+        body += '<div style="font-size:12px;color:var(--text);line-height:1.55;padding:6px 0;">' + A.esc(b.coa2Note) + '</div>';
+      }
+      if (altOcc) {
+        body += '<div class="dp-section">Occupants (COA 2)</div>' +
+          '<div style="font-size:12px;color:var(--text);line-height:1.6;">' +
+          (altOcc.length ? altOcc.map(function(n){ return '<div style="padding:3px 0;">&bull; ' + A.esc(n) + '</div>'; }).join('') : '<em style="color:var(--text-muted);">None - building empty in COA 2</em>') +
+          '</div>';
+      }
+    }
+
     document.getElementById('dp-title').textContent = 'Bldg ' + b.num;
     document.getElementById('dp-sub').textContent = b.label;
     document.getElementById('dp-body').innerHTML = body;
@@ -4412,9 +4501,13 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
       return '<textarea class="editfld" id="dpf-' + k + '" data-k="' + k + '" style="width:100%;min-height:70px;resize:vertical;">' + A.esc(val||'') + '</textarea>';
     }
 
+    function chk(k, val) {
+      return '<label style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--text);"><input type="checkbox" data-k="' + k + '" id="dpf-' + k + '"' + (val ? ' checked' : '') + '> ' + (val ? 'Marked unresolved' : 'Mark as unresolved') + '</label>';
+    }
+
     var body;
     if (kind === 'unit') {
-      body = '<div class="dp-section">Edit Unit Record</div>' +
+      body = '<div class="dp-coa-banner dp-coa1"><strong>Edit COA 1 (Primary)</strong></div>' +
         fld('Tile ID', inp('id', r.id)) +
         fld('Name', inp('name', r.name)) +
         fld('Echelon', sel('type', r.type, TYPES, A.typeMap)) +
@@ -4423,7 +4516,16 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
         fld('Phase', num('phase', r.phase)) +
         fld('Move Date', inp('date', r.date)) +
         fld('Status', sel('status', r.status, STATUSES_U)) +
-        '<div class="dp-section">Notes</div>' + ta('note', r.note);
+        '<div class="dp-section">Notes</div>' + ta('note', r.note) +
+        // ----- COA 2 Alternate fields -----
+        '<div class="dp-coa-banner dp-coa2"><strong>Edit COA 2 (Alternate)</strong></div>' +
+        '<div style="font-size:11px;color:var(--text-muted);padding:4px 0 8px;line-height:1.5;">Leave blank to inherit from Primary. Fill any field to override that value when COA 2 is active.</div>' +
+        fld('Alt End Bldg', inp('altEndBldg', r.altEndBldg)) +
+        fld('Alt Phase', '<input class="editfld" id="dpf-altPhase" data-k="altPhase" type="number" value="' + (r.altPhase != null ? r.altPhase : '') + '" placeholder="(inherit)" style="width:80px;">') +
+        fld('Alt Move Date', inp('altDate', r.altDate, 'placeholder="(inherit)"')) +
+        fld('Alt Status', sel('altStatus', r.altStatus || '', [''].concat(STATUSES_U))) +
+        fld('Unresolved', chk('altUnresolved', r.altUnresolved)) +
+        '<div class="dp-section">COA 2 Notes</div>' + ta('altNote', r.altNote);
     } else {
       body = '<div class="dp-section">Edit Building Record</div>' +
         fld('Building ID', inp('id', r.id)) +
@@ -4433,7 +4535,12 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
         fld('Status', sel('status', r.status, STATUSES_B)) +
         fld('Phase In', num('phaseIn', r.phaseIn)) +
         fld('Phase Out', num('phaseOut', r.phaseOut)) +
-        fld('Occupants', inp('occupants', (r.occupants||[]).join(', '), 'placeholder="Comma-separated tile IDs"'));
+        fld('Occupants', inp('occupants', (r.occupants||[]).join(', '), 'placeholder="Comma-separated tile IDs"')) +
+        // ----- COA 2 Alternate fields for buildings -----
+        '<div class="dp-coa-banner dp-coa2"><strong>Edit COA 2 (Alternate)</strong></div>' +
+        '<div style="font-size:11px;color:var(--text-muted);padding:4px 0 8px;line-height:1.5;">Leave blank to inherit from Primary. altOccupants overrides the occupant list when COA 2 is active.</div>' +
+        fld('Alt Occupants', inp('altOccupants', (r.altOccupants || []).join(', '), 'placeholder="(inherit) or comma-separated tile IDs"')) +
+        '<div class="dp-section">COA 2 Notes</div>' + ta('coa2Note', r.coa2Note);
     }
 
     document.getElementById('dp-body').innerHTML = body;
@@ -4461,16 +4568,41 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
     var changes = {};
     Array.prototype.forEach.call(body.querySelectorAll('[data-k]'), function(el){
       var k = el.getAttribute('data-k');
-      var v = el.value;
-      if (k === 'phase' || k === 'phaseIn' || k === 'phaseOut') v = parseInt(v, 10) || 0;
-      if (k === 'occupants') v = v.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+      var v;
+      if (el.type === 'checkbox') {
+        v = el.checked;
+      } else {
+        v = el.value;
+      }
+      // Numeric fields
+      if (k === 'phase' || k === 'phaseIn' || k === 'phaseOut') {
+        v = parseInt(v, 10) || 0;
+      }
+      // Alt phase: blank means inherit (null), otherwise number
+      if (k === 'altPhase') {
+        v = (v === '' || v == null) ? null : (parseInt(v, 10) || 0);
+      }
+      // Array fields
+      if (k === 'occupants') {
+        v = String(v).split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+      }
+      if (k === 'altOccupants') {
+        var trimmed = String(v).trim();
+        // Empty string => inherit (delete the field). Else array.
+        v = trimmed === '' ? undefined : trimmed.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+      }
+      // Empty alt-string fields collapse to undefined so the renderer falls back
+      if ((k === 'altEndBldg' || k === 'altDate' || k === 'altStatus' || k === 'altNote' || k === 'coa2Note') && v === '') {
+        v = undefined;
+      }
       changes[k] = v;
     });
-    Object.keys(changes).forEach(function(k){ origRef[k] = changes[k]; });
-    // Persist and propagate everywhere (single unified call)
+    Object.keys(changes).forEach(function(k){
+      if (changes[k] === undefined) { delete origRef[k]; }
+      else { origRef[k] = changes[k]; }
+    });
     if (A.propagateAll) A.propagateAll();
     A.toast(kind === 'unit' ? 'Unit saved & propagated' : 'Building saved & propagated', 'success');
-    // Re-open read-only detail view with updated values
     if (kind === 'unit') A.openUnitDetail(origRef.id); else A.openBuildingDetail(origRef.id);
   }
 
@@ -4530,17 +4662,29 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
 
   function renderRoster() {
     var body = document.getElementById('tbody-roster'); if (!body) return;
+    var coa = (A.getActiveCoa && A.getActiveCoa()) || 'coa1';
     var rows = A.sortRows(A.filterUnits(), A.sortState.roster.key, A.sortState.roster.dir);
     var html = rows.map(function(u){
-      return '<tr class="row-click" data-unit="' + A.esc(u.id) + '">' +
+      // Pick the active-COA fields with fallback
+      var endB   = (coa === 'coa2' && u.altEndBldg) ? u.altEndBldg : u.endBldg;
+      var ph     = (coa === 'coa2' && u.altPhase != null) ? u.altPhase : u.phase;
+      var dt     = (coa === 'coa2' && u.altDate) ? u.altDate : u.date;
+      var st     = (coa === 'coa2' && u.altStatus) ? u.altStatus : u.status;
+      var diffEnd = coa === 'coa2' && u.altEndBldg && u.altEndBldg !== u.endBldg;
+      var diffPh  = coa === 'coa2' && u.altPhase != null && u.altPhase !== u.phase;
+      var diffDt  = coa === 'coa2' && u.altDate && u.altDate !== u.date;
+      var diffSt  = coa === 'coa2' && u.altStatus && u.altStatus !== u.status;
+      var unresolved = coa === 'coa2' && u.altUnresolved;
+      var deltaTag = function(d){ return d ? ' <span class="dp-delta" style="font-size:8.5px;padding:0 4px;">&Delta;</span>' : ''; };
+      return '<tr class="row-click' + (unresolved ? ' row-unresolved' : '') + '" data-unit="' + A.esc(u.id) + '">' +
         '<td><code>' + A.esc(u.id) + '</code></td>' +
-        '<td><strong>' + A.esc(u.name) + '</strong></td>' +
+        '<td><strong>' + A.esc(u.name) + '</strong>' + (unresolved ? ' <span class="dp-unresolved" style="font-size:8.5px;padding:1px 6px;margin-left:6px;">UNRESOLVED</span>' : '') + '</td>' +
         '<td><span class="chip-type chip-' + u.type + '"></span>' + A.esc(typeMap[u.type]||u.type) + '</td>' +
         '<td>' + A.esc(u.startBldg) + '</td>' +
-        '<td>' + A.esc(u.endBldg) + '</td>' +
-        '<td class="cen">' + (u.phase === 0 ? '<span style="color:var(--text-muted);">&mdash;</span>' : u.phase) + '</td>' +
-        '<td>' + A.esc(u.date) + '</td>' +
-        '<td>' + A.statusPill(u.status) + '</td>' +
+        '<td>' + A.esc(endB) + deltaTag(diffEnd) + '</td>' +
+        '<td class="cen">' + (ph === 0 ? '<span style="color:var(--text-muted);">&mdash;</span>' : ph) + deltaTag(diffPh) + '</td>' +
+        '<td>' + A.esc(dt) + deltaTag(diffDt) + '</td>' +
+        '<td>' + A.statusPill(st) + deltaTag(diffSt) + '</td>' +
         '</tr>';
     }).join('');
     body.innerHTML = html || '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted);">No units match current filters</td></tr>';
@@ -4550,19 +4694,23 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
   function renderBuildings() {
     var body = document.getElementById('tbody-buildings'); if (!body) return;
     var rows = A.sortRows(A.filterBuildings(), A.sortState.buildings.key, A.sortState.buildings.dir);
+    var coa = (A.getActiveCoa && A.getActiveCoa()) || 'coa1';
     var html = rows.map(function(b){
-      var occ = (b.occupants||[]).map(function(uid){
+      var occList = (coa === 'coa2' && b.altOccupants) ? b.altOccupants : (b.occupants || []);
+      var diffOcc = coa === 'coa2' && b.altOccupants;
+      var occ = occList.map(function(uid){
         var u = A.UNITS.filter(function(x){return x.id===uid;})[0];
         return u ? u.name : uid;
       }).join(', ') || '<em style="color:var(--text-muted);">None</em>';
+      var coa2Badge = (coa === 'coa2' && b.coa2Note) ? ' <span class="dp-delta" style="font-size:8.5px;padding:0 4px;" title="' + A.esc(b.coa2Note) + '">&Delta;</span>' : '';
       return '<tr class="row-click" data-bldg="' + A.esc(b.id) + '">' +
-        '<td><strong>' + A.esc(b.num) + '</strong></td>' +
+        '<td><strong>' + A.esc(b.num) + '</strong>' + coa2Badge + '</td>' +
         '<td>' + A.esc(b.label) + '</td>' +
         '<td>' + A.esc(b.zone) + '</td>' +
         '<td>' + A.bldgPill(b.status) + '</td>' +
         '<td class="cen">' + (b.phaseIn || '<span style="color:var(--text-muted);">&mdash;</span>') + '</td>' +
         '<td class="cen">' + (b.phaseOut || '<span style="color:var(--text-muted);">&mdash;</span>') + '</td>' +
-        '<td style="font-size:11px;">' + occ + '</td>' +
+        '<td style="font-size:11px;">' + occ + (diffOcc ? ' <span class="dp-delta" style="font-size:8px;padding:0 4px;">&Delta;</span>' : '') + '</td>' +
         '</tr>';
     }).join('');
     body.innerHTML = html || '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-muted);">No buildings match current filters</td></tr>';
@@ -4653,26 +4801,29 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
       html += '<div class="swim-hdr">' + h.label + '<span class="swim-hdr-sub">' + A.esc(h.sub) + '</span></div>';
     });
 
+    var coaActive = (A.getActiveCoa && A.getActiveCoa()) || 'coa1';
+    function endFor(u)   { return (coaActive === 'coa2' && u.altEndBldg) ? u.altEndBldg : u.endBldg; }
+    function phaseFor(u) { return (coaActive === 'coa2' && u.altPhase != null) ? u.altPhase : u.phase; }
+
     function unitsAt(bldgNum, phase) {
       var out = [];
       A.UNITS.forEach(function(u){
-        var res = u.startBldg === u.endBldg;
+        var endB = endFor(u);
+        var ph = phaseFor(u);
+        var res = u.startBldg === endB;
         if (res) {
-          if (u.startBldg === bldgNum && u.status !== 'Pending') out.push(u);
-          else if (u.startBldg === bldgNum && u.status === 'Pending') out.push(u);
+          if (u.startBldg === bldgNum) out.push(u);
         } else {
-          // Moving unit: is at startBldg for phase < u.phase, endBldg for phase >= u.phase
-          // Special cases: CLB-4 COMM swings through 1024 in phase 1-2
+          // Moving unit: is at startBldg for phase < ph, endB for phase >= ph
           if (u.id === 't-clb-com') {
             if (phase <= 0 && bldgNum === u.startBldg) out.push(u);
             else if ((phase === 1 || phase === 2) && bldgNum === '1024') out.push(u);
-            else if (phase >= 3 && bldgNum === u.endBldg) out.push(u);
+            else if (phase >= 3 && bldgNum === endB) out.push(u);
           } else if (u.id === 't-arm') {
-            // Armory only exists from phase 3 at 1024
-            if (phase >= 3 && bldgNum === u.endBldg) out.push(u);
+            if (phase >= 3 && bldgNum === endB) out.push(u);
           } else {
-            if (phase < u.phase && bldgNum === u.startBldg) out.push(u);
-            if (phase >= u.phase && bldgNum === u.endBldg) out.push(u);
+            if (phase < ph && bldgNum === u.startBldg) out.push(u);
+            if (phase >= ph && bldgNum === endB) out.push(u);
           }
         }
       });
@@ -4735,7 +4886,9 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
         var chips = '';
         var shown = occ.slice(0, 3);
         shown.forEach(function(u){
-          chips += '<span class="swim-chip t-' + u.type + '" title="' + A.esc(u.name) + '">' + A.esc(shortName(u)) + '</span>';
+          var tbd = (coaActive === 'coa2' && u.altUnresolved) ? ' tbd' : '';
+          var ttl = u.name + (tbd ? ' - UNRESOLVED in COA 2' : '');
+          chips += '<span class="swim-chip t-' + u.type + tbd + '" title="' + A.esc(ttl) + '">' + A.esc(shortName(u)) + '</span>';
         });
         if (occ.length > 3) {
           chips += '<span class="swim-chip more" title="' + A.esc(occ.slice(3).map(function(x){return x.name;}).join(', ')) + '">+' + (occ.length - 3) + '</span>';
@@ -5007,14 +5160,21 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
   function setActiveCoa(v) {
     try { localStorage.setItem(COA_KEY, v); } catch(e) {}
     document.body.setAttribute('data-coa', v);
-    // Re-render anything that's COA-aware
+    // Re-render every COA-aware view
     renderProjects();
     refreshTotal();
+    if (A.renderRoster)    A.renderRoster();
+    if (A.renderBuildings) A.renderBuildings();
+    if (A.renderGantt)     A.renderGantt();
+    if (A.renderCharts)    A.renderCharts();
+    if (A.renderOverview)  A.renderOverview();
+    // Update any context tag that displays the active COA
+    var tag = document.getElementById('swim-coa-tag');
+    if (tag) tag.textContent = v === 'coa2' ? 'COA 2 (Alternate)' : 'COA 1 (Primary)';
     // Sync the toolbar segment buttons
     Array.prototype.forEach.call(document.querySelectorAll('[data-coa-btn]'), function(b){
       b.classList.toggle('active', b.getAttribute('data-coa-btn') === v);
     });
-    // Toast feedback
     if (A.toast) A.toast(v === 'coa2' ? 'Switched to COA 2 (Alternate)' : 'Switched to COA 1 (Primary)', '');
   }
   A.getActiveCoa = getActiveCoa;

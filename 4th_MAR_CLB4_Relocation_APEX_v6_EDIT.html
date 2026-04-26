@@ -2698,36 +2698,55 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
   'use strict';
 
   /* --- DATA MODEL --- */
+  // alt* fields = the Alternate (COA 2) plan from the PROPOSAL: Amend Scope
+  // of 4th Marines Project slide. When the COA toggle is set to coa2,
+  // renderers prefer alt* fields (with fallback to the primary field).
+  // altUnresolved = true means the Alternate plan has a known gap for this
+  // unit (e.g. swing space TBD). Renders as an amber TBD indicator.
   var UNITS = [
     { id:'t-saf',    name:'Safety/Fire/Env',       type:'div', startBldg:'3413', endBldg:'3335', phase:1, date:'Q3 FY26', status:'Permanent Move', note:'Moves to converted Base Theater offices. Bldg 3413 vacated for CLB-4 A&B backfill.' },
-    { id:'t-udp-sup',name:'UDP-W Supply',          type:'div', startBldg:'3446', endBldg:'3237', phase:2, date:'Q3 FY27', status:'Consolidation', note:'Consolidates into Bldg 3237 with 4th MAR Regt Supply and CLB-4 Supply already resident.' },
+    { id:'t-udp-sup',name:'UDP-W Supply',          type:'div', startBldg:'3446', endBldg:'3237', phase:2, date:'Q3 FY27', status:'Consolidation', note:'Consolidates into Bldg 3237 with 4th MAR Regt Supply already resident.',
+      altEndBldg:'3237', altPhase:2, altDate:'Q3 FY27', altStatus:'Consolidation', altNote:'COA 2: UDP-W Supply still moves SCH-3446 -> SCH-3237. 3446 still demolished. CLB-4 Supply goes to SCH-3213 instead, so no re-partition of 3237 is required.' },
     { id:'t-lar',    name:'LAR CO',                type:'div', startBldg:'3213', endBldg:'3210', phase:2, date:'Q2 FY27', status:'Permanent Move', note:'Co-locates with ACV CO at Bldg 3210.' },
     { id:'t-clb-com',name:'CLB-4 COMM',            type:'mlg', startBldg:'3213', endBldg:'3235', phase:1, date:'Q3 FY26', status:'Swing', note:'Swings to Bldg 1024 Q3 FY26 (NIPR/phones on gym; servers on court). Returns to Bldg 3235 final Q3 FY28.' },
     { id:'t-hq-co',  name:'HQ CO, 4th MAR',        type:'div', startBldg:'3509', endBldg:'3410', phase:2, date:'Q4 FY27', status:'FRF Action', note:'Vacates FRF demolition line (3509). Relocates to renovated Bldg 3410.' },
     { id:'t-clb-hq', name:'CLB-4 HQ',              type:'mlg', startBldg:'3314', endBldg:'3213', phase:3, date:'Q3 FY28', status:'Permanent Move', note:'Moves to renovated Bldg 3213. Frees 3314 2nd deck for 4th MAR Regt HQ.' },
     { id:'t-clb-ab', name:'CLB-4 A&B CO',          type:'mlg', startBldg:'3314', endBldg:'3413', phase:2, date:'Q2 FY27', status:'Permanent Move', note:'Occupies former Safety/Env building after renovation.' },
-    { id:'t-4th-sup',name:'4th MAR Supply',        type:'div', startBldg:'3237', endBldg:'3237', phase:0, date:'Resident', status:'Resident', note:'Resident in Bldg 3237, remains throughout all phases.' },
-    { id:'t-clb-sup',name:'CLB-4 Supply',          type:'mlg', startBldg:'3237', endBldg:'3237', phase:0, date:'Resident', status:'Resident', note:'Resident in Bldg 3237, remains throughout all phases.' },
+    { id:'t-4th-sup',name:'4th MAR Supply',        type:'div', startBldg:'3237', endBldg:'3237', phase:0, date:'Resident', status:'Resident', note:'Resident in Bldg 3237, remains throughout all phases.',
+      altEndBldg:'3237', altStatus:'Resident', altUnresolved:true, altNote:'COA 2: Stays at SCH-3237. UNRESOLVED - no swing space plan for 4th MAR Regt Supply during the 2-yr SCH-3235 DPRI renovation (post-2-yr horizon).' },
+    { id:'t-clb-sup',name:'CLB-4 Supply',          type:'mlg', startBldg:'3237', endBldg:'3237', phase:0, date:'Resident', status:'Resident', note:'Resident in Bldg 3237, remains throughout all phases.',
+      altEndBldg:'3213', altPhase:2, altDate:'Q2 FY27', altStatus:'Permanent Move', altNote:'COA 2: CLB-4 Supply moves to SCH-3213 (DOD/EOD WHSE space, CCN 21730; 2,045 sq ft). Removes requirement to re-partition SCH-3237.' },
     { id:'t-4th-com',name:'4th MAR COMM',          type:'div', startBldg:'3235', endBldg:'3235', phase:0, date:'Resident', status:'Resident', note:'Resident in Bldg 3235, remains throughout all phases.' },
     { id:'t-arm',    name:'Consolidated Armory',   type:'arm', startBldg:'3509', endBldg:'1024', phase:3, date:'Q3 FY28', status:'Permanent Move', note:'Consolidated Armory (4th MAR Regt / CLB-4) occupies renovated 1st floor of Bldg 1024.' },
-    { id:'t-reg',    name:'4th MAR Regimental HQ', type:'reg', startBldg:'3509', endBldg:'3314', phase:4, date:'Q3 FY28', status:'FRF Action', note:'Occupies renovated 2nd Deck of Bldg 3314. 1st Deck: 1st Bn, 4th MAR (UDP). Frees 3509 for demolition.' },
+    { id:'t-reg',    name:'4th MAR Regimental HQ', type:'reg', startBldg:'3509', endBldg:'3314', phase:4, date:'Q3 FY28', status:'FRF Action', note:'Occupies renovated 2nd Deck of Bldg 3314. 1st Deck: 1st Bn, 4th MAR (UDP). Frees 3509 for demolition.',
+      altEndBldg:'1024', altPhase:4, altDate:'Q3 FY28', altStatus:'FRF Action', altNote:'COA 2: SCH-3314 not expected to be complete in time. 4th MAR Regt HQ + 1st Bn 4th MAR (UDP) re-route to SCH-1024 2nd floor (Admin space converted from barracks rooms above the Armory; lose 16x barracks, gain 8x Co HQ spaces).' },
     { id:'t-med',    name:'Med / ATC',             type:'med', startBldg:'3510', endBldg:'3510', phase:0, date:'Pending GOJ', status:'Pending', note:'Remains at Bldg 3510 pending GOJ replacement Medical/Dental clinic.' },
     { id:'t-4th-mtr',name:'4th MAR Motor T',       type:'mtr', startBldg:'3270', endBldg:'3270', phase:0, date:'Resident', status:'Resident', note:'Resident at Bldg 3270 Motor Pool, remains in place throughout all phases.' },
     { id:'t-clb-mtr',name:'CLB-4 Motor T',         type:'mtr', startBldg:'3270', endBldg:'3270', phase:0, date:'Resident', status:'Resident', note:'Resident at Bldg 3270 Motor Pool, remains in place throughout all phases.' }
   ];
 
+  // coa2Note documents how each building's role differs in COA 2.
+  // altOccupants lists the COA 2 occupant roster (when it differs from the
+  // primary). When omitted, the COA 2 occupants equal the primary occupants.
   var BUILDINGS = [
     { id:'b-3446', num:'3446', label:'UDP-W Supply (starts on FRF demo line)', zone:'FRF', status:'Demolish', phaseIn:0, phaseOut:2, occupants:['t-udp-sup'] },
-    { id:'b-3413', num:'3413', label:'Safety/Fire/Env -> CLB-4 A&B CO', zone:'Source', status:'Converted', phaseIn:0, phaseOut:2, occupants:['t-saf','t-clb-ab'] },
-    { id:'b-3213', num:'3213', label:'CLB-4 HQ (dest)',            zone:'Source', status:'Active',    phaseIn:3, phaseOut:0, occupants:['t-lar','t-clb-com','t-clb-hq'] },
+    { id:'b-3413', num:'3413', label:'Safety/Fire/Env -> CLB-4 A&B CO', zone:'Source', status:'Converted', phaseIn:0, phaseOut:2, occupants:['t-saf','t-clb-ab'],
+      coa2Note:'COA 2: Continue as planned DOW project. Designated swing space for CLB-4 (HQ, A, B, GS Cos) displaced during future SCH-3235 DPRI renovation.' },
+    { id:'b-3213', num:'3213', label:'CLB-4 HQ (dest)',            zone:'Source', status:'Active',    phaseIn:3, phaseOut:0, occupants:['t-lar','t-clb-com','t-clb-hq'],
+      coa2Note:'COA 2: ALSO houses CLB-4 Supply (re-routed from SCH-3237). Uses EOD/DOD WHSE space, CCN 21730; 2,045 sq ft.', altOccupants:['t-lar','t-clb-com','t-clb-hq','t-clb-sup'] },
     { id:'b-3335', num:'3335', label:'Theater -> Safety/Fire/Env', zone:'Final',  status:'Active',    phaseIn:1, phaseOut:0, occupants:['t-saf'] },
-    { id:'b-1024', num:'1024', label:'BEQ / SWING -> Armory',      zone:'Swing',  status:'Swing',     phaseIn:1, phaseOut:0, occupants:['t-clb-com','t-arm'] },
-    { id:'b-3410', num:'3410', label:'HQ CO, 4th MAR Regt',        zone:'Final',  status:'Active',    phaseIn:2, phaseOut:0, occupants:['t-hq-co'] },
-    { id:'b-3237', num:'3237', label:'Consol Supply',              zone:'Final',  status:'Active',    phaseIn:0, phaseOut:0, occupants:['t-4th-sup','t-clb-sup','t-udp-sup'] },
-    { id:'b-3235', num:'3235', label:'Consol Comms',               zone:'Final',  status:'Active',    phaseIn:0, phaseOut:0, occupants:['t-4th-com','t-clb-com'] },
+    { id:'b-1024', num:'1024', label:'BEQ / SWING -> Armory',      zone:'Swing',  status:'Swing',     phaseIn:1, phaseOut:0, occupants:['t-clb-com','t-arm'],
+      coa2Note:'COA 2: Adds 8x Co HQ spaces on 2nd floor (Admin conversion from barracks rooms, above the Armory). 4th MAR Regt HQ + 1st Bn 4th MAR (UDP) land here because SCH-3314 not expected ready in time.', altOccupants:['t-clb-com','t-arm','t-reg'] },
+    { id:'b-3410', num:'3410', label:'HQ CO, 4th MAR Regt',        zone:'Final',  status:'Active',    phaseIn:2, phaseOut:0, occupants:['t-hq-co'],
+      coa2Note:'COA 2: Continue as planned DOW project. Designated swing space for 4th MAR Regt (HQ, ACV, LAR Cos) displaced during future SCH-3235 DPRI renovation.' },
+    { id:'b-3237', num:'3237', label:'Consol Supply',              zone:'Final',  status:'Active',    phaseIn:0, phaseOut:0, occupants:['t-4th-sup','t-clb-sup','t-udp-sup'],
+      coa2Note:'COA 2: REMOVED from project scope (SCH-3237 re-partition no longer required). Houses 4th MAR Regt + UDP-W Supply only; CLB-4 Supply re-routes to SCH-3213. UNRESOLVED: no swing space plan for 4th MAR Regt Supply during 2-yr SCH-3235 DPRI renovation.', altOccupants:['t-4th-sup','t-udp-sup'] },
+    { id:'b-3235', num:'3235', label:'Consol Comms',               zone:'Final',  status:'Active',    phaseIn:0, phaseOut:0, occupants:['t-4th-com','t-clb-com'],
+      coa2Note:'COA 2: ADD SCOPE - HVAC upgrade / refurbish (same status / life cycle as SCH-3270). Future DPRI renovation timeline drives the swing-space plan for 3410 and 3413.' },
     { id:'b-3210', num:'3210', label:'ACV / LAR CO',               zone:'Final',  status:'Active',    phaseIn:2, phaseOut:0, occupants:['t-lar'] },
     { id:'b-3270', num:'3270', label:'Motor Pool',                 zone:'Final',  status:'Active',    phaseIn:0, phaseOut:0, occupants:['t-4th-mtr','t-clb-mtr'] },
-    { id:'b-3314', num:'3314', label:'4th MAR HQ (dest)',          zone:'Final',  status:'Active',    phaseIn:4, phaseOut:0, occupants:['t-reg'] },
+    { id:'b-3314', num:'3314', label:'4th MAR HQ (dest)',          zone:'Final',  status:'Active',    phaseIn:4, phaseOut:0, occupants:['t-reg'],
+      coa2Note:'COA 2: Not expected to be complete in time. 4th MAR Regt HQ + 1st Bn 4th MAR (UDP) re-route to SCH-1024 2nd floor.', altOccupants:[] },
     { id:'b-3509', num:'3509', label:'4th MAR HQ (current)',       zone:'FRF',    status:'Demolish',  phaseIn:0, phaseOut:4, occupants:['t-hq-co','t-reg','t-arm'] },
     { id:'b-3510', num:'3510', label:'Med / ATC',                  zone:'FRF',    status:'Pending',   phaseIn:0, phaseOut:0, occupants:['t-med'] }
   ];

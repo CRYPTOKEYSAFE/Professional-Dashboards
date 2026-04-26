@@ -1625,6 +1625,19 @@ body[data-coa="coa2"] .pj-hero-num { color: var(--swing-amber); }
 .pj-scope-badge.sc-coa1 { background: rgba(46,155,181,0.16); color: var(--accent-bright); border-color: var(--accent); }
 .pj-scope-badge.sc-coa2 { background: rgba(212,144,10,0.18); color: var(--swing-amber); border-color: var(--swing-amber); }
 
+/* Editable COA scope select (replaces the static badge in the table) */
+.pj-scope-sel {
+  width: 100%; padding: 4px 6px; border-radius: 10px;
+  font-size: 10.5px; font-weight: 800; letter-spacing: 0.04em;
+  text-transform: uppercase; cursor: pointer; font-family: inherit;
+  border: 1px solid transparent;
+}
+.pj-scope-sel.sc-both { background: var(--bg-panel); color: var(--text-muted); border-color: var(--border); }
+.pj-scope-sel.sc-coa1 { background: rgba(46,155,181,0.16); color: var(--accent-bright); border-color: var(--accent); }
+.pj-scope-sel.sc-coa2 { background: rgba(212,144,10,0.18); color: var(--swing-amber); border-color: var(--swing-amber); }
+.pj-scope-sel:hover { filter: brightness(1.1); }
+.pj-scope-sel:focus { outline: 2px solid var(--accent-bright); outline-offset: 1px; }
+
 /* Subtle row tints by COA scope (kept low-saturation so it's not busy) */
 .pj-row-coa1 td { background: rgba(46,155,181,0.04); }
 .pj-row-coa2 td { background: rgba(212,144,10,0.05); }
@@ -5499,16 +5512,20 @@ body[data-coa="coa2"] .coa-context-tag {
         displayCost = p.cost || 0;
       }
 
-      var scopeBadge =
-        coaScope === 'coa1' ? '<span class="pj-scope-badge sc-coa1" title="Primary plan only">COA 1</span>' :
-        coaScope === 'coa2' ? '<span class="pj-scope-badge sc-coa2" title="Alternate plan only">COA 2</span>' :
-                              '<span class="pj-scope-badge sc-both" title="Both plans">BOTH</span>';
+      // Editable COA scope select. Color tint via .sc-coa1 / .sc-coa2 / .sc-both
+      // matches the static badge colors so the cell still reads at a glance.
+      var scopeSelect =
+        '<select data-k="coa" class="pj-scope-sel sc-' + coaScope + '" title="Which COA this scope item applies to">' +
+          '<option value="both"' + (coaScope==='both'?' selected':'') + '>Both</option>' +
+          '<option value="coa1"' + (coaScope==='coa1'?' selected':'') + '>COA 1 only</option>' +
+          '<option value="coa2"' + (coaScope==='coa2'?' selected':'') + '>COA 2 only</option>' +
+        '</select>';
 
       return '<tr data-idx="' + idx + '" class="' + rowCls + '">' +
         '<td><input data-k="paxId" value="' + A.esc(p.paxId) + '" style="font-family:var(--font-mono);"></td>' +
         '<td><input data-k="fiweb" value="' + A.esc(p.fiweb || '') + '" style="font-family:var(--font-mono);font-size:11px;"></td>' +
         '<td><input data-k="bldg"  value="' + A.esc(p.bldg)  + '" style="font-family:var(--font-mono);font-weight:700;"></td>' +
-        '<td>' + scopeBadge + '</td>' +
+        '<td>' + scopeSelect + '</td>' +
         '<td><input data-k="' + costFieldKey + '" value="' + displayCost + '" type="number" step="0.01" class="pj-cost" style="text-align:right;font-family:var(--font-mono);" ' + (inactive ? 'tabindex="-1"' : '') + '></td>' +
         '<td><input data-k="scope" value="' + A.esc(p.scope) + '" style="min-width:240px;"></td>' +
         '<td><input data-k="supported"  value="' + A.esc(p.supported)  + '"></td>' +
@@ -5520,9 +5537,12 @@ body[data-coa="coa2"] .coa-context-tag {
     }).join('');
     body.innerHTML = html;
 
-    // Live cost update on any cost input
+    // Live update on any input / select. Cost edits recompute the totals;
+    // coa edits move a row between Primary / Alternate and re-render so the
+    // active-COA column hides/shows the row appropriately.
     Array.prototype.forEach.call(body.querySelectorAll('[data-k]'), function(inp){
-      inp.addEventListener('input', function(){
+      var evtName = inp.tagName === 'SELECT' ? 'change' : 'input';
+      inp.addEventListener(evtName, function(){
         var tr = inp.closest('tr');
         var idx = parseInt(tr.getAttribute('data-idx'), 10);
         if (isNaN(idx) || !PROJECTS[idx]) return;
@@ -5531,8 +5551,14 @@ body[data-coa="coa2"] .coa-context-tag {
         if (k === 'cost' || k === 'altCost') v = parseCost(v);
         PROJECTS[idx][k] = v;
         if (k === 'cost' || k === 'altCost') refreshTotal();
+        if (k === 'coa') {
+          // Row moved between scopes - re-render and recompute totals
+          renderProjects();
+          refreshTotal();
+          if (A.renderCompare) A.renderCompare();
+          A.toast('Project scope set to ' + (v === 'both' ? 'BOTH' : v.toUpperCase()), 'success');
+        }
         if (k === 'note') {
-          // Update row tint based on the note convention (debounced via setTimeout)
           clearTimeout(inp._noteTimer);
           inp._noteTimer = setTimeout(function(){ renderProjects(); }, 600);
         }

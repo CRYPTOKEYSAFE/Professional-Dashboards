@@ -2283,7 +2283,7 @@ body[data-coa="coa2"] .coa-context-tag {
   <div class="map-section" role="region" aria-label="Interactive execution demonstration">
   <div class="map-header">
     <div>
-      <div class="map-title">Interactive Execution Demonstration - Camp Schwab Consolidation</div>
+      <div class="map-title">Interactive Execution Demonstration - Camp Schwab Consolidation <span id="map-coa-tag" class="coa-context-tag" style="margin-left:10px;font-size:10px;vertical-align:middle;">COA 1 (Primary)</span></div>
       <div class="map-status">Phase Status: <span id="status">Initial Posture - Current Configuration</span></div>
       <div class="kb-hint">Keyboard: <kbd>Space</kbd> or <kbd>&rarr;</kbd> advance phase &nbsp; <kbd>R</kbd> reset &nbsp; <kbd>P</kbd> print</div>
     </div>
@@ -3324,6 +3324,33 @@ body[data-coa="coa2"] .coa-context-tag {
   window.__APEX_pulse = pulseCardFor;
 
   /* ============================================================
+     COA 2 (Alternate) overlay positions for the animation engine.
+     Only the units whose destinations differ from COA 1 are listed
+     here - everything else uses the primary SEQ destinations.
+       - t-clb-sup (CLB-4 Supply): COA 1 = resident at 3237 (no anim).
+         COA 2 = moves into SCH-3213 (DOD/EOD WHSE) in Phase 2 so 3237
+         doesn't need re-partitioning.
+       - t-reg (4th MAR Regt HQ): COA 1 = lands at 3314 2nd deck in
+         Phase 4. COA 2 = SCH-3314 won't be ready in time, lands at
+         SCH-1024 2nd floor (Admin space converted from barracks
+         rooms above the Armory) in Phase 4.
+     ============================================================ */
+  var COA2_PHASE2 = {
+    't-clb-sup': { top: 410, left: 42 }   // 3213, below t-clb-hq's Phase 3 spot
+  };
+  var COA2_PHASE4 = {
+    't-reg':     { top: 280, left: 344 }  // 1024 2nd floor, below the armory tile
+  };
+  function activeCoa() {
+    try { return localStorage.getItem('4thMAR_active_coa') === 'coa2' ? 'coa2' : 'coa1'; }
+    catch(e) { return 'coa1'; }
+  }
+  // Expose so the COA toggle in the toolbar can ask the map to re-render
+  window.__APEX_resetMapForCoa = function(){
+    if (typeof resetMap === 'function') resetMap();
+  };
+
+  /* ============================================================
      RESET
      ============================================================ */
   function resetMap() {
@@ -3424,6 +3451,28 @@ body[data-coa="coa2"] .coa-context-tag {
       move('t-clb-ab', 100, 30);
       showTag('t-clb-ab');
 
+      // COA 2 only: CLB-4 Supply moves out of 3237 into 3213 (DOD WHSE).
+      // Tile is initially placed at 3237 in resetMap (when COA 2 is active);
+      // here it animates to its 3213 destination.
+      if (activeCoa() === 'coa2' && COA2_PHASE2['t-clb-sup']) {
+        var p = COA2_PHASE2['t-clb-sup'];
+        move('t-clb-sup', p.top, p.left);
+        // Show a fy-tag if present, otherwise create one
+        var tile = document.getElementById('t-clb-sup');
+        if (tile) {
+          var tag = tile.querySelector('.fy-tag');
+          if (!tag) {
+            tag = document.createElement('div');
+            tag.className = 'fy-tag';
+            tag.textContent = 'Q2 FY27';
+            tile.appendChild(tag);
+          } else {
+            tag.textContent = 'Q2 FY27';
+          }
+          showTag('t-clb-sup');
+        }
+      }
+
       // 3446: VACATED stage after UDP-W Supply leaves (line-through, amber dashed)
       safeTimeout(function() {
         var b = document.getElementById('b-3446');
@@ -3472,8 +3521,14 @@ body[data-coa="coa2"] .coa-context-tag {
       showTag('t-clb-hq');
     }
     else if (phase === 4) {
-      // 4th MAR HQ -> 3314 2nd deck (top:156, left:834)
-      move('t-reg', 170, 834);
+      // 4th MAR Regt HQ destination differs by COA:
+      //   COA 1 (Primary)   -> 3314 2nd deck (top:170, left:834)
+      //   COA 2 (Alternate) -> 1024 2nd floor (top:280, left:344) because
+      //                        SCH-3314 is not expected to be ready in time.
+      var regDest = (activeCoa() === 'coa2' && COA2_PHASE4['t-reg'])
+        ? COA2_PHASE4['t-reg']
+        : { top: 170, left: 834 };
+      move('t-reg', regDest.top, regDest.left);
       showTag('t-reg');
 
       // 3509: VACATED stage (line-through, amber dashed)
@@ -5285,9 +5340,23 @@ body[data-coa="coa2"] .coa-context-tag {
     if (A.renderGantt)     A.renderGantt();
     if (A.renderCharts)    A.renderCharts();
     if (A.renderOverview)  A.renderOverview();
+    if (A.renderCompare)   A.renderCompare();
+    // Reset the map animation so it replays in the new COA's destinations
+    if (typeof window.__APEX_resetMapForCoa === 'function') window.__APEX_resetMapForCoa();
+    // Update the map status banner to show which COA is active
+    var statusEl = document.getElementById('status');
+    if (statusEl) {
+      statusEl.textContent = (v === 'coa2'
+        ? 'COA 2 (Alternate) - Initial Posture - press EXECUTE to advance'
+        : 'COA 1 (Primary) - Initial Posture - Current Configuration');
+    }
+    var phaseLbl = document.getElementById('phase-label');
+    if (phaseLbl) phaseLbl.textContent = (v === 'coa2' ? 'COA 2 - INITIAL POSTURE' : 'INITIAL POSTURE');
     // Update any context tag that displays the active COA
     var tag = document.getElementById('swim-coa-tag');
     if (tag) tag.textContent = v === 'coa2' ? 'COA 2 (Alternate)' : 'COA 1 (Primary)';
+    var mapCoaTag = document.getElementById('map-coa-tag');
+    if (mapCoaTag) mapCoaTag.textContent = v === 'coa2' ? 'COA 2 (Alternate)' : 'COA 1 (Primary)';
     // Sync the toolbar segment buttons
     Array.prototype.forEach.call(document.querySelectorAll('[data-coa-btn]'), function(b){
       b.classList.toggle('active', b.getAttribute('data-coa-btn') === v);

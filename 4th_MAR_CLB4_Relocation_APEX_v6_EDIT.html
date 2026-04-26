@@ -1757,6 +1757,45 @@ body[data-coa="coa2"] .coa-context-tag {
 .cmp-empty { font-size: 12px; color: var(--text-muted);
   text-align: center; padding: 20px; font-style: italic; }
 
+/* Section header with title + per-section view-mode segment */
+.cmp-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 10px;
+}
+.cmp-section-head h4 { margin: 0; }
+
+/* Compare mode segmented control */
+.cmp-mode-seg {
+  display: inline-flex; background: var(--bg-section);
+  border: 1px solid var(--border); border-radius: 5px; overflow: hidden;
+}
+.cmp-mode-btn {
+  background: transparent; color: var(--text-muted);
+  border: none; border-right: 1px solid var(--border);
+  padding: 4px 11px; font-size: 11px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  transition: background .15s, color .15s;
+}
+.cmp-mode-btn:last-child { border-right: none; }
+.cmp-mode-btn:hover:not(.active) { background: var(--bg-panel); color: var(--text); }
+.cmp-mode-btn.active { background: var(--accent); color: #fff; }
+.cmp-mode-btn[data-cmp-view="coa2"].active,
+.cmp-mode-btn[data-cmp-all="coa2"].active { background: var(--swing-amber); color: #1A1108; }
+
+/* Hide one column when section view is single-COA */
+.cmp-section[data-view="coa1"] .cmp-card { grid-template-columns: 110px 1fr; }
+.cmp-section[data-view="coa1"] .cmp-card-side.coa2 { display: none; }
+.cmp-section[data-view="coa1"] .cmp-card-side.coa1 { background: rgba(46,155,181,0.07); }
+
+.cmp-section[data-view="coa2"] .cmp-card { grid-template-columns: 110px 1fr; }
+.cmp-section[data-view="coa2"] .cmp-card-side.coa1 { display: none; }
+.cmp-section[data-view="coa2"] .cmp-card-side.coa2 { background: rgba(212,144,10,0.09); }
+
+/* When single-COA view is active, the section's cards stack 1-up
+   (no need for 2-column grid since cards are wider) */
+.cmp-section[data-view="coa1"] .cmp-grid,
+.cmp-section[data-view="coa2"] .cmp-grid { grid-template-columns: 1fr; }
+
 </style>
 </head>
 <body>
@@ -2708,28 +2747,64 @@ body[data-coa="coa2"] .coa-context-tag {
       <h3 style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
         COA Comparison: Primary vs Alternate
         <span style="font-size:11px;font-weight:500;color:var(--text-muted);text-transform:none;letter-spacing:normal;">
-          Side-by-side. Only items that differ are listed.
+          Click the per-section toggle to flip between side-by-side and single-COA views.
+        </span>
+        <span class="cmp-global-mode" style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:9.5px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;">All Sections:</span>
+          <div class="cmp-mode-seg" role="group" aria-label="Global view mode">
+            <button class="cmp-mode-btn active" data-cmp-all="both"  type="button">Both</button>
+            <button class="cmp-mode-btn"        data-cmp-all="coa1"  type="button">COA 1</button>
+            <button class="cmp-mode-btn"        data-cmp-all="coa2"  type="button">COA 2</button>
+          </div>
         </span>
       </h3>
       <div id="cmp-summary" class="cmp-summary"></div>
 
-      <div class="cmp-section">
-        <h4>Project Cost Delta</h4>
+      <div class="cmp-section" data-cmp-section data-view="both">
+        <div class="cmp-section-head">
+          <h4>Project Cost Delta</h4>
+          <div class="cmp-mode-seg" role="group" aria-label="View mode">
+            <button class="cmp-mode-btn active" data-cmp-view="both" type="button" title="Side-by-side">&#8644; Both</button>
+            <button class="cmp-mode-btn"        data-cmp-view="coa1" type="button" title="COA 1 only">&#9664; COA 1</button>
+            <button class="cmp-mode-btn"        data-cmp-view="coa2" type="button" title="COA 2 only">COA 2 &#9654;</button>
+          </div>
+        </div>
         <div id="cmp-cost"></div>
       </div>
 
-      <div class="cmp-section">
-        <h4>Building Scope Changes</h4>
+      <div class="cmp-section" data-cmp-section data-view="both">
+        <div class="cmp-section-head">
+          <h4>Building Scope Changes</h4>
+          <div class="cmp-mode-seg" role="group" aria-label="View mode">
+            <button class="cmp-mode-btn active" data-cmp-view="both" type="button">&#8644; Both</button>
+            <button class="cmp-mode-btn"        data-cmp-view="coa1" type="button">&#9664; COA 1</button>
+            <button class="cmp-mode-btn"        data-cmp-view="coa2" type="button">COA 2 &#9654;</button>
+          </div>
+        </div>
         <div id="cmp-projects" class="cmp-grid"></div>
       </div>
 
-      <div class="cmp-section">
-        <h4>Unit Re-routes</h4>
+      <div class="cmp-section" data-cmp-section data-view="both">
+        <div class="cmp-section-head">
+          <h4>Unit Re-routes</h4>
+          <div class="cmp-mode-seg" role="group" aria-label="View mode">
+            <button class="cmp-mode-btn active" data-cmp-view="both" type="button">&#8644; Both</button>
+            <button class="cmp-mode-btn"        data-cmp-view="coa1" type="button">&#9664; COA 1</button>
+            <button class="cmp-mode-btn"        data-cmp-view="coa2" type="button">COA 2 &#9654;</button>
+          </div>
+        </div>
         <div id="cmp-units" class="cmp-grid"></div>
       </div>
 
-      <div class="cmp-section">
-        <h4>Building Role Changes</h4>
+      <div class="cmp-section" data-cmp-section data-view="both">
+        <div class="cmp-section-head">
+          <h4>Building Role Changes</h4>
+          <div class="cmp-mode-seg" role="group" aria-label="View mode">
+            <button class="cmp-mode-btn active" data-cmp-view="both" type="button">&#8644; Both</button>
+            <button class="cmp-mode-btn"        data-cmp-view="coa1" type="button">&#9664; COA 1</button>
+            <button class="cmp-mode-btn"        data-cmp-view="coa2" type="button">COA 2 &#9654;</button>
+          </div>
+        </div>
         <div id="cmp-buildings" class="cmp-grid"></div>
       </div>
     </div>
@@ -5751,7 +5826,50 @@ body[data-coa="coa2"] .coa-context-tag {
     }
   }
 
-  A.renderCompare = renderCompare;
+  // Wire per-section view-mode segment toggles + the global "All sections"
+  // toggle. Wired once on first render so handlers don't double up.
+  function wireCompareControls() {
+    if (wireCompareControls._wired) return;
+    var compareTab = document.getElementById('tab-compare'); if (!compareTab) return;
+
+    // Per-section toggles
+    Array.prototype.forEach.call(compareTab.querySelectorAll('[data-cmp-view]'), function(btn){
+      btn.addEventListener('click', function(){
+        var section = btn.closest('[data-cmp-section]'); if (!section) return;
+        var v = btn.getAttribute('data-cmp-view');
+        section.setAttribute('data-view', v);
+        Array.prototype.forEach.call(section.querySelectorAll('[data-cmp-view]'), function(b){
+          b.classList.toggle('active', b.getAttribute('data-cmp-view') === v);
+        });
+      });
+    });
+
+    // Global "All Sections" toggle
+    Array.prototype.forEach.call(compareTab.querySelectorAll('[data-cmp-all]'), function(btn){
+      btn.addEventListener('click', function(){
+        var v = btn.getAttribute('data-cmp-all');
+        Array.prototype.forEach.call(compareTab.querySelectorAll('[data-cmp-section]'), function(sec){
+          sec.setAttribute('data-view', v);
+          Array.prototype.forEach.call(sec.querySelectorAll('[data-cmp-view]'), function(b){
+            b.classList.toggle('active', b.getAttribute('data-cmp-view') === v);
+          });
+        });
+        Array.prototype.forEach.call(compareTab.querySelectorAll('[data-cmp-all]'), function(b){
+          b.classList.toggle('active', b.getAttribute('data-cmp-all') === v);
+        });
+      });
+    });
+
+    wireCompareControls._wired = true;
+  }
+
+  // Wrap renderCompare so wiring runs after each render (handles tab
+  // switch -> first render, then re-renders after edits)
+  var _origRender = renderCompare;
+  A.renderCompare = function(){
+    _origRender();
+    wireCompareControls();
+  };
 })();
 </script>
 

@@ -592,14 +592,13 @@ kbd {
    ============================================================ */
 .map-section .map-stage-wrap { overflow-x: auto; overflow-y: hidden; }
 .map-stage {
-  width: 100%; height: 700px; position: relative;
-  min-width: 1240px;
+  width: 1240px; height: 700px; position: relative;
   background: #0A1520;
   background-image:
     linear-gradient(rgba(46,155,181,0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(46,155,181,0.04) 1px, transparent 1px);
   background-size: 40px 40px;
-  overflow: visible;
+  overflow: hidden;
 }
 
 /* FRF demolition line */
@@ -3447,6 +3446,7 @@ body[data-coa="coa2"] .coa-context-tag {
      ============================================================ */
   function resetMap() {
     clearAllTimeouts();
+    phaseAnimating = false;
     phase = 0;
     updatePips();
 
@@ -3515,8 +3515,12 @@ body[data-coa="coa2"] .coa-context-tag {
   /* ============================================================
      NEXT PHASE
      ============================================================ */
+  var phaseAnimating = false;
   function nextPhase() {
     if (phase >= 4) return;
+    if (phaseAnimating) return;          // Re-entry guard - don't kick a new phase while transitions are still flying
+    phaseAnimating = true;
+    safeTimeout(function(){ phaseAnimating = false; }, 1700);  // ~1.5s transition + small buffer
     phase++;
     updatePips();
     updateStatus(PHASE_NAMES[phase]);

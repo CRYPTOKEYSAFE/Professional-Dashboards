@@ -590,14 +590,16 @@ kbd {
 /* ============================================================
    MAP STAGE
    ============================================================ */
+.map-section .map-stage-wrap { overflow-x: auto; overflow-y: hidden; }
 .map-stage {
   width: 100%; height: 700px; position: relative;
+  min-width: 1240px;
   background: #0A1520;
   background-image:
     linear-gradient(rgba(46,155,181,0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(46,155,181,0.04) 1px, transparent 1px);
   background-size: 40px 40px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* FRF demolition line */
@@ -2357,6 +2359,7 @@ body[data-coa="coa2"] .coa-context-tag {
     <div class="phase-label-bar" id="phase-label">INITIAL POSTURE</div>
   </div>
 
+  <div class="map-stage-wrap">
   <div class="map-stage" id="map" tabindex="0" role="application"
        aria-label="Camp Schwab relocation map. Use Space or Right Arrow to advance phases. R to reset.">
 
@@ -2534,6 +2537,7 @@ body[data-coa="coa2"] .coa-context-tag {
     </div>
 
   </div><!-- /map-stage -->
+  </div><!-- /map-stage-wrap -->
 
   <div class="map-footer">MCIPAC G-F &bull; PPE &bull; Camp Schwab Consolidation &bull; UNCLASSIFIED // FOR INTERNAL PLANNING PURPOSES ONLY</div>
 </div><!-- /map-section -->

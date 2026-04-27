@@ -3470,9 +3470,11 @@ body[data-coa="coa2"] .coa-context-tag {
     var b1024 = document.getElementById('b-1024');
     if (b1024) { b1024.style.borderColor = ''; b1024.style.borderStyle = ''; }
 
-    // Hide moveable fy-tags only (not RESIDENT or STAY tags)
+    // Hide moveable fy-tags only (not RESIDENT or STAY tags).
+    // t-clb-sup is included because it MOVES in COA 2 (3237 -> 3213) so its
+    // dynamically-attached fy-tag must be hidden on reset.
     var moverIds = ['t-saf','t-udp-sup','t-lar','t-hq-co','t-clb-com',
-                    't-clb-hq','t-clb-ab','t-arm','t-reg'];
+                    't-clb-hq','t-clb-ab','t-arm','t-reg','t-clb-sup'];
     moverIds.forEach(function(id) {
       var el = document.getElementById(id);
       if (el) {
@@ -3498,12 +3500,13 @@ body[data-coa="coa2"] .coa-context-tag {
     // Position it at its destination (1024) so reveal is in-place, no travel.
     move('t-arm', 225, 344);
     move('t-reg', 370, 1074);
+    // CLB-4 Supply: in COA 1 it stays resident at 3237 the whole time; in
+    // COA 2 it moves to 3213 in Phase 2. Reset must always return it to
+    // its 3237 home position so re-running phases works correctly.
+    move('t-clb-sup', 132, 634);
 
-    // Resident tiles stay in place (they never move)
-    // t-4th-sup, t-clb-sup at 3237
-    // t-4th-com at 3235
-    // t-4th-mtr, t-clb-mtr at 3270
-    // t-med at 3510
+    // Other resident tiles never move (4th-sup, 4th-com, 4th-mtr, clb-mtr,
+    // med) - their inline style positions remain valid through animations.
 
     updateStatus(PHASE_NAMES[0]);
     announce('Map reset to initial posture.');

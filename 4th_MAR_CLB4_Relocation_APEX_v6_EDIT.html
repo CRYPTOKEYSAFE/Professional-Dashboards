@@ -1963,7 +1963,7 @@ body[data-coa="coa2"] .coa-context-tag {
   <header class="hdr">
     <div class="hdr-title">
       <h1 data-editable="title" data-label="Dashboard Title" title="Click to edit in Edit Mode">4th Marine Regiment / CLB-4<br>Master Relocation Plan</h1>
-      <h2 data-editable="subtitle" data-label="Subtitle" title="Click to edit in Edit Mode">Phased Facility Utilization &amp; Unit Movement Sequence - FY26 through FRF Vacation (1 June 2028)</h2>
+      <h2 data-editable="subtitle" data-label="Subtitle" title="Click to edit in Edit Mode">Phased Facility Utilization &amp; Unit Movement Sequence - FY26 through SCH-3237 DPRI Renovation (FY33), centered on the FRF Vacation deadline (1 June 2028)</h2>
       <div class="hdr-org" data-editable="org" data-label="Org Attribution" title="Click to edit in Edit Mode">MCIPAC G-F &bull; PPE &bull; Camp Schwab Consolidation</div>
     </div>
     <div class="hdr-right">
@@ -1985,7 +1985,7 @@ body[data-coa="coa2"] .coa-context-tag {
     <div class="kpi-card">
       <div class="kpi-label" data-editable="text" data-label="KPI Label" title="Click to edit in Edit Mode">Total Units Moving</div>
       <div class="kpi-value" data-kpi="units-moving" data-editable="text" data-label="KPI Value" title="Auto-calculated from UNITS data">9</div>
-      <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">Unit elements relocating FY26-FY28</div>
+      <div class="kpi-sub" data-editable="text" data-label="KPI Sublabel" title="Click to edit in Edit Mode">Unit elements relocating FY26-FY28 (post-FRF DPRI work continues through FY33)</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label" data-editable="text" data-label="KPI Label" title="Click to edit in Edit Mode">Phases</div>
@@ -2089,9 +2089,11 @@ body[data-coa="coa2"] .coa-context-tag {
         <p style="font-size:12px;color:var(--text-muted);line-height:1.6;">
           Consolidation of 4th Marine Regiment and CLB-4 units across Camp Schwab
           to enable vacation of FRF demolition zone (Bldg 3509) no later than
-          <strong style="color:var(--status-red);">1 June 2028</strong>. Phased over
-          FY26&ndash;FY28 with 15 unit elements relocating across 13 buildings in 4
-          distinct zones.
+          <strong style="color:var(--status-red);">1 June 2028</strong>. Phased
+          over FY26&ndash;FY28 with 15 unit elements relocating across 13 buildings
+          in 4 distinct zones. Post-FRF DPRI work continues through FY33 (SCH-3235
+          HVAC FY29-30, SCH-3410 / 3413 HN-funded FRF DEMO FY31, SCH-3237 DPRI
+          Renovation FY32-33).
         </p>
         <div style="margin-top:12px;">
           <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Phase Progress</div>
@@ -2115,7 +2117,7 @@ body[data-coa="coa2"] .coa-context-tag {
         <h3>Total Project Cost</h3>
         <div style="text-align:center;padding:16px 0 8px;">
           <div id="ov-total-cost" style="font-family:var(--font-mono);font-size:30px;font-weight:800;color:var(--status-green);letter-spacing:0.02em;">$0</div>
-          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.15em;margin-top:6px;">Across All 10 Projects</div>
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.15em;margin-top:6px;">Across All 12 Projects (10 base + 2 COA-2 add-scope)</div>
         </div>
         <div style="font-size:11px;color:var(--text-muted);line-height:1.5;margin-top:8px;border-top:1px solid var(--border-light);padding-top:8px;">
           Live sum from the Projects &amp; Cost tab. Edit any cost there and this updates immediately.
@@ -3030,9 +3032,10 @@ body[data-coa="coa2"] .coa-context-tag {
         <p style="margin-top:10px;"><strong>COA toggle (Course of Action):</strong> Top-right of the toolbar - segmented switch <kbd>COA 1</kbd> / <kbd>COA 2</kbd>. <strong>COA 1 (Primary)</strong> = current scope, the baseline plan. <strong>COA 2 (Alternate)</strong> = the proposed scope amendment from the PMO recommendation slide. Switching the toggle re-renders the Roster, Building Schedule, Timeline, Projects &amp; Cost, Overview total, and any open detail drawer to show that COA's data. Selection persists across sessions. The Projects &amp; Cost tab always shows BOTH totals on the hero card so you can see the cost delta at a glance.</p>
         <p style="margin-top:10px;"><strong>COA Comparison tab:</strong> Side-by-side Primary vs Alternate cards for everything that differs - cost delta summary, Project scope additions / removals, Unit re-routes (e.g. CLB-4 Supply 3237 -> 3213 in COA 2), and Building role changes (3410/3413 swing-space designation, 3237 removed from scope). UNRESOLVED items (e.g. 4th MAR Regt Supply during the SCH-3235 DPRI 2-yr window) are flagged in red so unresolved gaps are visible at a glance.</p>
         <p style="margin-top:10px;"><strong>Editing COA 2 fields:</strong> Open any unit / building / project in the detail drawer, click Edit. The form shows BOTH a COA 1 (Primary) section and a COA 2 (Alternate) section. Leave any alt field blank to inherit from Primary; fill it to override. The "Mark as unresolved" checkbox flags units (like 4th MAR Regt Supply) where the alt plan has a known gap.</p>
-        <p style="margin-top:10px;"><strong>Projects &amp; Cost:</strong> Ten-row editable table of the 4th Marines Camp Schwab consolidation projects. Every cell (PAX ID, FIWEB ID, Building, Cost, Scope, Supported Unit, Completion, Delivery, Note) is editable free-text. The Note column takes any string; the conventions <code>*</code> (HN-funded FRF DEMO) and <code>**</code> (HN-funded renovation) tint the row for quick scanning but are not enforced - write anything you want there. The Total at the top, in the footer, and on the Overview card recalculates live as you type any Cost value. Add Project appends a blank row; each row has a Delete button. Export CSV or JSON from the tab header.</p>
-        <p style="margin-top:10px;"><strong>Map demolition choreography:</strong> When a building is vacated (Phase 2 for Bldg 3446, Phase 4 for Bldg 3509) the building first takes a VACATED state (amber dashed border, line-through, "VACATED" label) for five seconds, then transitions to DEMOLISHED (red diagonal stripe pattern, "DEMOLISHED" label). Reset returns the buildings to active.</p>
-        <p style="margin-top:10px;"><strong>Timeline (Building Lifecycle):</strong> One row per building, five columns (one per phase). Each cell shows that building's state (Active / Final / Swing / Vacated / Demolished / Pending) plus the unit chips occupying it during that phase. Click any cell or row label to open the building detail drawer.</p>
+        <p style="margin-top:10px;"><strong>Projects &amp; Cost:</strong> Twelve-row editable table (10 base 4th Marines / Camp Schwab projects + 2 COA-2 / 2A add-scope rows for SCH-1024 admin and SCH-3235 HVAC). Every cell (PAX ID, FIWEB ID, Building, COA scope, Cost, Scope, Supported Unit, Completion, Delivery, Note) is editable free-text. The Note column takes any string; the conventions <code>*</code> (HN-funded FRF DEMO) and <code>**</code> (HN-funded renovation) tint the row for quick scanning but are not enforced - write anything you want there. The Total at the top, in the footer, and on the Overview card recalculates live and tracks the active COA. Add Project appends a blank row; each row has a Delete button. Export CSV or JSON from the tab header.</p>
+        <p style="margin-top:10px;"><strong>Map demolition choreography:</strong> When a building is vacated, it first takes a VACATED state (amber dashed border, line-through, "VACATED" label) for five seconds, then transitions to DEMOLISHED (red diagonal stripe pattern, "DEMOLISHED" label). Phase 2: Bldg 3446 (UDP-W Supply old). Phase 4: Bldg 3509 (4th MAR HQ old, FRF demo line). Phase 6 (FY31, all COAs): Bldg 3410 + Bldg 3413 (HN-funded FRF DEMO c.2031). Reset returns every building to active.</p>
+        <p style="margin-top:10px;"><strong>Timeline (Building Lifecycle):</strong> One row per building, eight columns (Phase 0 through Phase 7) covering the full FY26 - FY33 work envelope. Each cell shows that building's state (Active / Final / Swing / Vacated / Demolished / Pending) plus the unit chips occupying it during that phase. Click any cell or row label to open the building detail drawer.</p>
+        <p style="margin-top:10px;"><strong>COA toggle:</strong> 1 / 2 / 2A in the toolbar. COA 1 (Primary) keeps SCH-3237 in scope; COA 2 (Alternate-A) removes 3237, re-routes CLB-4 Supply to 3213, adds SCH-3235 HVAC + SCH-1024 admin (20 barracks &rarr; Admin); COA 2A (Alternate-B) is identical to COA 2 except the SCH-1024 DD1391 (16 barracks + Weapons-Cleaning area &rarr; Admin). Switch via toolbar, command palette, or settings; persists across reloads.</p>
         <p style="margin-top:10px;"><strong>Interactive Map:</strong> Open the Map tab, press <kbd>Space</kbd> or <kbd>&rarr;</kbd> to advance through relocation phases, <kbd>R</kbd> to reset. The phase grid at the top highlights the active phase and pulses the matching card when a tile lands. FY tags pop up on moving tiles when they arrive. The Consolidated Armory tile does not exist before Phase 3 - it materializes at Bldg 1024 when consolidation happens. Bldg 3446 slides into the FRF demo zone when Phase 2 demolishes it.</p>
         <p style="margin-top:10px;"><strong>Search / Filter:</strong> Toolbar search + Type / Phase / Status selects filter across Roster, Buildings, Timeline, and Editor tables. Reset clears all filters.</p>
         <p style="margin-top:10px;"><strong>Command Palette:</strong> <kbd>Ctrl+K</kbd> / <kbd>Cmd+K</kbd>. Type to filter, <kbd>&uarr;</kbd>/<kbd>&darr;</kbd> to navigate, <kbd>Enter</kbd> to run.</p>
@@ -3275,6 +3278,23 @@ body[data-coa="coa2"] .coa-context-tag {
     var sb = $('#sidebar'); if (!sb) return;
     sb.classList.toggle('collapsed', !!collapsed);
     try { localStorage.setItem(SIDEBAR_KEY, collapsed ? '1' : '0'); } catch(e){}
+    // Update the toggle button's label / aria / title to match its next action
+    var btn = document.getElementById('act-collapse');
+    if (btn) {
+      var span = btn.querySelector('.nav-label');
+      var icon = btn.querySelector('.nav-icon');
+      if (collapsed) {
+        if (span) span.textContent = 'Expand';
+        if (icon) icon.innerHTML = '&#8677;'; // rightwards arrow with hook
+        btn.setAttribute('aria-label', 'Expand sidebar');
+        btn.setAttribute('title', 'Expand Sidebar (K)');
+      } else {
+        if (span) span.textContent = 'Collapse';
+        if (icon) icon.innerHTML = '&#8676;'; // leftwards arrow with hook
+        btn.setAttribute('aria-label', 'Collapse sidebar');
+        btn.setAttribute('title', 'Collapse Sidebar (K)');
+      }
+    }
   }
   function toggleSidebar() {
     var sb = $('#sidebar'); if (!sb) return;
@@ -4400,7 +4420,7 @@ body[data-coa="coa2"] .coa-context-tag {
         '<div class="ep-hint">Update coordinates for each phase this tile moves in</div></div>' + seqHTML : '') +
       '<div class="ep-field"><label>FY Tag Text</label>' +
       '<input id="ep-tile-fytag" type="text" value="' + (fyEl ? fyEl.textContent : '') + '">' +
-      '<div class="ep-hint">Date shown (e.g. Q3 FY26, RES, PEND GOJ). Blank removes tag.</div></div>' +
+      '<div class="ep-hint">Date shown (e.g. Q3 FY26, Resident, Pending GOJ). Blank removes tag.</div></div>' +
       '<div class="ep-field"><label>FY Tag Style</label>' +
       '<select id="ep-tile-fyvariant">' + varOpts + '</select>' +
       '<div class="ep-hint">Color variant for the FY tag</div></div>';
@@ -5352,7 +5372,7 @@ body[data-coa="coa2"] .coa-context-tag {
   }
 
   /* BUILDING LIFECYCLE SWIM-LANE
-     One row per building, five columns (Phases 0..4). Each cell computes
+     One row per building, eight columns (Phases 0..7). Each cell computes
      that building's state at that phase from BUILDINGS (phaseIn / phaseOut /
      status / zone) and cross-references UNITS to show occupants in that
      phase. Click any cell to open the building detail drawer. */

@@ -1717,12 +1717,14 @@ body[data-coa="coa2"] .coa-context-tag {
 }
 .cmp-summary .cs-card.cs-coa1 { border-left: 4px solid var(--accent); }
 .cmp-summary .cs-card.cs-coa2 { border-left: 4px solid var(--swing-amber); }
+.cmp-summary .cs-card.cs-coa2a { border-left: 4px solid #C45E12; }
 .cmp-summary .cs-card.cs-delta { border-left: 4px solid var(--text-light); }
 .cs-lbl  { font-size: 10px; color: var(--text-muted); text-transform: uppercase;
   letter-spacing: 0.1em; font-weight: 800; }
 .cs-num  { font-size: 22px; font-weight: 800; color: var(--text); margin-top: 4px; line-height: 1; }
-.cs-coa1 .cs-num { color: var(--accent-bright); }
-.cs-coa2 .cs-num { color: var(--swing-amber); }
+.cs-coa1 .cs-num  { color: var(--accent-bright); }
+.cs-coa2 .cs-num  { color: var(--swing-amber); }
+.cs-coa2a .cs-num { color: #E08846; }
 .cs-coa1 .cs-num.savings { color: #4CAF50; }
 .cs-coa2 .cs-num.addition { color: var(--swing-amber); }
 .cs-sub  { font-size: 10.5px; color: var(--text-muted); margin-top: 4px; }
@@ -2776,9 +2778,9 @@ body[data-coa="coa2"] .coa-context-tag {
   <section class="tab-panel" id="tab-compare" role="tabpanel" aria-labelledby="nav-compare">
     <div class="panel-card">
       <h3 style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        COA Comparison: Primary vs Alternate
+        COA Comparison: Primary (COA 1) vs Alternate (COA 2 / 2A)
         <span style="font-size:11px;font-weight:500;color:var(--text-muted);text-transform:none;letter-spacing:normal;">
-          Click the per-section toggle to flip between side-by-side and single-COA views.
+          COA 2 (Alt-A) and COA 2A (Alt-B) share scope EXCEPT for SCH-1024 DD1391. Per-section toggle flips between side-by-side and single-COA views.
         </span>
         <span class="cmp-global-mode" style="margin-left:auto;display:flex;align-items:center;gap:8px;">
           <span style="font-size:9.5px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;">All Sections:</span>
@@ -5856,17 +5858,19 @@ body[data-coa="coa2"] .coa-context-tag {
 
   function renderCompare() {
     // ----- Summary cards -----
-    var t1 = A.totalForCoa ? A.totalForCoa('coa1') : 0;
-    var t2 = A.totalForCoa ? A.totalForCoa('coa2') : 0;
+    var t1  = A.totalForCoa ? A.totalForCoa('coa1') : 0;
+    var t2  = A.totalForCoa ? A.totalForCoa('coa2') : 0;
+    var t2a = A.totalForCoa ? A.totalForCoa('coa2a') : 0;
     var delta = t2 - t1;
     var sumEl = document.getElementById('cmp-summary');
     if (sumEl) {
       var deltaCls = delta < 0 ? 'savings' : (delta > 0 ? 'addition' : '');
       var deltaPrefix = delta > 0 ? '+' : (delta < 0 ? '-' : '');
       sumEl.innerHTML =
-        '<div class="cs-card cs-coa1"><div class="cs-lbl">COA 1 (Primary) Total</div><div class="cs-num">' + fmtUSD(t1) + '</div><div class="cs-sub">Current scope baseline</div></div>' +
-        '<div class="cs-card cs-coa2"><div class="cs-lbl">COA 2 (Alternate) Total</div><div class="cs-num">' + fmtUSD(t2) + '</div><div class="cs-sub">Proposed scope amendment</div></div>' +
-        '<div class="cs-card cs-delta"><div class="cs-lbl">Delta (COA 2 - COA 1)</div><div class="cs-num ' + deltaCls + '">' + deltaPrefix + fmtUSD(Math.abs(delta)) + '</div><div class="cs-sub">' + (delta < 0 ? 'Net savings under Alternate' : (delta > 0 ? 'Net cost increase under Alternate' : 'No net change')) + '</div></div>';
+        '<div class="cs-card cs-coa1"><div class="cs-lbl">COA 1 (Primary) Total</div><div class="cs-num">' + fmtUSD(t1) + '</div><div class="cs-sub">Current scope baseline (3237 in scope)</div></div>' +
+        '<div class="cs-card cs-coa2"><div class="cs-lbl">COA 2 (Alt-A) Total</div><div class="cs-num">' + fmtUSD(t2) + '</div><div class="cs-sub">Remove 3237; SCH-1024 = 20 barracks &rarr; Admin</div></div>' +
+        '<div class="cs-card cs-coa2a"><div class="cs-lbl">COA 2A (Alt-B) Total</div><div class="cs-num">' + fmtUSD(t2a) + '</div><div class="cs-sub">Same as COA 2 except SCH-1024 = 16 barracks + Wpns Cleaning &rarr; Admin</div></div>' +
+        '<div class="cs-card cs-delta"><div class="cs-lbl">Delta (Alt - Primary)</div><div class="cs-num ' + deltaCls + '">' + deltaPrefix + fmtUSD(Math.abs(delta)) + '</div><div class="cs-sub">' + (delta < 0 ? 'Net savings under either Alternate' : (delta > 0 ? 'Net cost increase under either Alternate' : 'No net change')) + '. Client picks 2 vs 2A in DD1391.</div></div>';
     }
 
     // ----- Project cost delta -----

@@ -2725,16 +2725,29 @@ body[data-coa="coa2"] .coa-context-tag {
   <section class="tab-panel" id="tab-editor" role="tabpanel" aria-labelledby="nav-editor">
     <div class="panel-card">
       <h3 style="display:flex;align-items:center;gap:10px;">Unit Roster (Editable)
+        <span style="font-size:10px;font-weight:500;color:var(--text-muted);text-transform:none;letter-spacing:normal;">
+          Scroll the table horizontally to access COA 2 / 2A alt fields. Drawer Edit gives a vertical form for one unit.
+        </span>
         <span style="margin-left:auto;display:flex;gap:6px;">
           <button class="hdr-btn primary" id="ed-add-unit" type="button">Add Unit</button>
           <button class="hdr-btn" id="ed-save-units" type="button">Save Units</button>
           <button class="hdr-btn" id="ed-reset-units" type="button">Reset</button>
         </span>
       </h3>
-      <div class="tbl-scroll" style="max-height:360px;">
+      <div class="tbl-scroll" style="max-height:360px;overflow:auto;">
         <table class="ed-table" id="ed-units" aria-label="Unit editor">
           <thead>
-            <tr><th>ID</th><th>Name</th><th>Type</th><th>Start</th><th>End</th><th>Phase</th><th>Date</th><th>Status</th><th>Actions</th></tr>
+            <tr>
+              <th>ID</th><th>Name</th><th>Type</th><th>Start</th><th>End</th>
+              <th>Phase</th><th>Date</th><th>Status</th><th>Note</th>
+              <th title="COA 2 / 2A alternate end-building">Alt End</th>
+              <th title="COA 2 / 2A alternate phase">Alt&nbsp;Ph</th>
+              <th title="COA 2 / 2A alternate date">Alt Date</th>
+              <th title="COA 2 / 2A alternate status">Alt Status</th>
+              <th title="COA 2 / 2A alternate note (drawer body)">Alt Note</th>
+              <th title="COA 2 / 2A unresolved flag (TBD swing space, etc.)">Unres.</th>
+              <th>Actions</th>
+            </tr>
           </thead>
           <tbody id="tbody-ed-units"></tbody>
         </table>
@@ -2743,16 +2756,27 @@ body[data-coa="coa2"] .coa-context-tag {
 
     <div class="panel-card" style="margin-top:14px;">
       <h3 style="display:flex;align-items:center;gap:10px;">Buildings (Editable)
+        <span style="font-size:10px;font-weight:500;color:var(--text-muted);text-transform:none;letter-spacing:normal;">
+          Occupants / COA-2 / COA-2A note columns at the right. Comma-separate occupant ids.
+        </span>
         <span style="margin-left:auto;display:flex;gap:6px;">
           <button class="hdr-btn primary" id="ed-add-bldg" type="button">Add Building</button>
           <button class="hdr-btn" id="ed-save-bldgs" type="button">Save Buildings</button>
           <button class="hdr-btn" id="ed-reset-bldgs" type="button">Reset</button>
         </span>
       </h3>
-      <div class="tbl-scroll" style="max-height:360px;">
+      <div class="tbl-scroll" style="max-height:360px;overflow:auto;">
         <table class="ed-table" id="ed-buildings" aria-label="Building editor">
           <thead>
-            <tr><th>ID</th><th>Number</th><th>Label</th><th>Zone</th><th>Status</th><th>Phase In</th><th>Phase Out</th><th>Actions</th></tr>
+            <tr>
+              <th>ID</th><th>Number</th><th>Label</th><th>Zone</th><th>Status</th>
+              <th>Phase In</th><th>Phase Out</th>
+              <th title="Comma-separated unit ids (e.g. t-saf,t-clb-com)">Occupants</th>
+              <th title="COA 2 / 2A alternate occupants list">Alt Occupants</th>
+              <th title="COA 2 (Alt-A) note - shown on drawer when active">COA 2 Note</th>
+              <th title="COA 2A (Alt-B) note override - shown on drawer when 2A is active">COA 2A Note</th>
+              <th>Actions</th>
+            </tr>
           </thead>
           <tbody id="tbody-ed-bldgs"></tbody>
         </table>
@@ -4878,11 +4902,12 @@ body[data-coa="coa2"] .coa-context-tag {
         fld('Phase In', num('phaseIn', r.phaseIn)) +
         fld('Phase Out', num('phaseOut', r.phaseOut)) +
         fld('Occupants', inp('occupants', (r.occupants||[]).join(', '), 'placeholder="Comma-separated tile IDs"')) +
-        // ----- COA 2 Alternate fields for buildings -----
-        '<div class="dp-coa-banner dp-coa2"><strong>Edit COA 2 (Alternate)</strong></div>' +
-        '<div style="font-size:11px;color:var(--text-muted);padding:4px 0 8px;line-height:1.5;">Leave blank to inherit from Primary. altOccupants overrides the occupant list when COA 2 is active.</div>' +
+        // ----- COA 2 / 2A Alternate fields for buildings -----
+        '<div class="dp-coa-banner dp-coa2"><strong>Edit COA 2 / 2A (Alternate)</strong></div>' +
+        '<div style="font-size:11px;color:var(--text-muted);padding:4px 0 8px;line-height:1.5;">Leave blank to inherit from Primary. altOccupants overrides the occupant list when either Alternate is active. COA 2A Note overrides COA 2 Note when 2A is active; leave blank to inherit COA 2 Note.</div>' +
         fld('Alt Occupants', inp('altOccupants', (r.altOccupants || []).join(', '), 'placeholder="(inherit) or comma-separated tile IDs"')) +
-        '<div class="dp-section">COA 2 Notes</div>' + ta('coa2Note', r.coa2Note);
+        '<div class="dp-section">COA 2 (Alt-A) Note</div>' + ta('coa2Note', r.coa2Note) +
+        '<div class="dp-section">COA 2A (Alt-B) Note Override</div>' + ta('coa2aNote', r.coa2aNote);
     }
 
     document.getElementById('dp-body').innerHTML = body;
@@ -6049,15 +6074,23 @@ body[data-coa="coa2"] .coa-context-tag {
   function renderEditor() {
     var body = document.getElementById('tbody-ed-units'); if (body) {
       var html = A.UNITS.map(function(u, idx){
+        var altPhVal = (u.altPhase === undefined || u.altPhase === null) ? '' : u.altPhase;
         return '<tr data-idx="' + idx + '">' +
           '<td><input data-k="id" value="' + A.esc(u.id) + '" style="font-family:var(--font-mono);"></td>' +
           '<td><input data-k="name" value="' + A.esc(u.name) + '"></td>' +
           '<td>' + typeSelect('type', u.type) + '</td>' +
           '<td><input data-k="startBldg" value="' + A.esc(u.startBldg) + '" style="font-family:var(--font-mono);"></td>' +
           '<td><input data-k="endBldg" value="' + A.esc(u.endBldg) + '" style="font-family:var(--font-mono);"></td>' +
-          '<td><input data-k="phase" type="number" min="0" max="5" value="' + u.phase + '" style="width:50px;text-align:center;"></td>' +
+          '<td><input data-k="phase" type="number" min="0" max="7" value="' + u.phase + '" style="width:50px;text-align:center;"></td>' +
           '<td><input data-k="date" value="' + A.esc(u.date) + '"></td>' +
           '<td>' + statusSelect('status', u.status, STATUSES_U) + '</td>' +
+          '<td><input data-k="note" value="' + A.esc(u.note || '') + '" style="min-width:220px;"></td>' +
+          '<td><input data-k="altEndBldg" value="' + A.esc(u.altEndBldg || '') + '" style="font-family:var(--font-mono);width:80px;" placeholder="(none)"></td>' +
+          '<td><input data-k="altPhase" type="number" min="0" max="7" value="' + altPhVal + '" style="width:50px;text-align:center;" placeholder="-"></td>' +
+          '<td><input data-k="altDate" value="' + A.esc(u.altDate || '') + '" style="width:90px;" placeholder="(none)"></td>' +
+          '<td>' + statusSelect('altStatus', u.altStatus || '', [''].concat(STATUSES_U)) + '</td>' +
+          '<td><input data-k="altNote" value="' + A.esc(u.altNote || '') + '" style="min-width:260px;"></td>' +
+          '<td style="text-align:center;"><input data-k="altUnresolved" type="checkbox"' + (u.altUnresolved ? ' checked' : '') + '></td>' +
           '<td><span class="row-act"><button class="row-act-btn del" data-act="del-u" data-idx="' + idx + '" type="button">Del</button></span></td>' +
           '</tr>';
       }).join('');
@@ -6065,14 +6098,20 @@ body[data-coa="coa2"] .coa-context-tag {
     }
     var bbody = document.getElementById('tbody-ed-bldgs'); if (bbody) {
       var bh = A.BUILDINGS.map(function(b, idx){
+        var occ    = (b.occupants    || []).join(',');
+        var altOcc = (b.altOccupants || []).join(',');
         return '<tr data-idx="' + idx + '">' +
           '<td><input data-k="id" value="' + A.esc(b.id) + '" style="font-family:var(--font-mono);"></td>' +
           '<td><input data-k="num" value="' + A.esc(b.num) + '"></td>' +
           '<td><input data-k="label" value="' + A.esc(b.label) + '"></td>' +
           '<td>' + zoneSelect('zone', b.zone) + '</td>' +
           '<td>' + statusSelect('status', b.status, STATUSES_B) + '</td>' +
-          '<td><input data-k="phaseIn" type="number" min="0" max="5" value="' + b.phaseIn + '" style="width:50px;text-align:center;"></td>' +
-          '<td><input data-k="phaseOut" type="number" min="0" max="5" value="' + b.phaseOut + '" style="width:50px;text-align:center;"></td>' +
+          '<td><input data-k="phaseIn" type="number" min="0" max="7" value="' + b.phaseIn + '" style="width:50px;text-align:center;"></td>' +
+          '<td><input data-k="phaseOut" type="number" min="0" max="7" value="' + b.phaseOut + '" style="width:50px;text-align:center;"></td>' +
+          '<td><input data-k="occupants" value="' + A.esc(occ) + '" style="min-width:160px;font-family:var(--font-mono);font-size:10.5px;" placeholder="t-id,t-id"></td>' +
+          '<td><input data-k="altOccupants" value="' + A.esc(altOcc) + '" style="min-width:160px;font-family:var(--font-mono);font-size:10.5px;" placeholder="(blank = same)"></td>' +
+          '<td><input data-k="coa2Note" value="' + A.esc(b.coa2Note || '') + '" style="min-width:280px;"></td>' +
+          '<td><input data-k="coa2aNote" value="' + A.esc(b.coa2aNote || '') + '" style="min-width:280px;" placeholder="(blank = uses COA 2 Note)"></td>' +
           '<td><span class="row-act"><button class="row-act-btn del" data-act="del-b" data-idx="' + idx + '" type="button">Del</button></span></td>' +
           '</tr>';
       }).join('');
@@ -6103,8 +6142,33 @@ body[data-coa="coa2"] .coa-context-tag {
       if (isNaN(idx) || !src[idx]) return;
       Array.prototype.forEach.call(tr.querySelectorAll('[data-k]'), function(inp){
         var k = inp.getAttribute('data-k');
-        var val = inp.value;
-        if (k === 'phase' || k === 'phaseIn' || k === 'phaseOut') val = parseInt(val, 10) || 0;
+        var val;
+        if (inp.type === 'checkbox') {
+          val = !!inp.checked;
+        } else {
+          val = inp.value;
+        }
+        // Integer fields. altPhase may legitimately be empty (no override) -> store null.
+        if (k === 'phase' || k === 'phaseIn' || k === 'phaseOut') {
+          val = parseInt(val, 10) || 0;
+        } else if (k === 'altPhase') {
+          val = (val === '' || val === null) ? null : (parseInt(val, 10) || 0);
+        }
+        // Comma-separated id arrays
+        if (k === 'occupants' || k === 'altOccupants') {
+          var s = String(val || '').trim();
+          val = s ? s.split(/\s*,\s*/) : [];
+        }
+        // Empty alt-text fields: prune the property so the alt fallback to primary still works
+        if ((k === 'altEndBldg' || k === 'altDate' || k === 'altStatus' || k === 'altNote'
+             || k === 'coa2Note' || k === 'coa2aNote' || k === 'note') && val === '') {
+          delete src[idx][k];
+          return;
+        }
+        if (k === 'altOccupants' && Array.isArray(val) && val.length === 0) {
+          delete src[idx][k];
+          return;
+        }
         src[idx][k] = val;
       });
     });

@@ -2746,10 +2746,12 @@ body[data-coa="coa2"] .coa-context-tag {
     <div class="panel-card">
       <h3 style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
         4th Marines Consolidation on Camp Schwab Projects
-        <span style="margin-left:auto;display:flex;gap:6px;">
-          <button class="hdr-btn primary" id="pj-add" type="button">Add Project</button>
-          <button class="hdr-btn" id="pj-export-csv" type="button">Export CSV</button>
-          <button class="hdr-btn" id="pj-export-json" type="button">Export JSON</button>
+        <span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="hdr-btn primary" id="pj-add"  type="button" title="Append a blank project row">Add Project</button>
+          <button class="hdr-btn" id="pj-reset"        type="button" title="Reload from the last persisted localStorage snapshot">Reset</button>
+          <button class="hdr-btn" id="pj-import"       type="button" title="Replace the table with a pasted JSON array">Import JSON</button>
+          <button class="hdr-btn" id="pj-export-csv"   type="button">Export CSV</button>
+          <button class="hdr-btn" id="pj-export-json"  type="button">Export JSON</button>
         </span>
       </h3>
 
@@ -3154,7 +3156,7 @@ body[data-coa="coa2"] .coa-context-tag {
   var UNITS = [
     { id:'t-saf',    name:'Safety/Fire/Env',       type:'div', startBldg:'3413', endBldg:'3335', phase:1, date:'Q3 FY26', status:'Permanent Move', note:'Moves to converted Base Theater offices. Bldg 3413 vacated for CLB-4 A&B backfill.' },
     { id:'t-udp-sup',name:'UDP-W Supply',          type:'div', startBldg:'3446', endBldg:'3237', phase:2, date:'Q3 FY27', status:'Consolidation', note:'Consolidates into Bldg 3237 with 4th MAR Regt Supply already resident.',
-      altEndBldg:'3237', altPhase:2, altDate:'Q3 FY27', altStatus:'Consolidation', altNote:'COA 2: UDP-W Supply still moves SCH-3446 -> SCH-3237. 3446 still demolished. CLB-4 Supply goes to SCH-3213 instead, so no re-partition of 3237 is required.' },
+      altNote:'COA 2 / 2A: UDP-W Supply still moves SCH-3446 -> SCH-3237 (3446 still demolished). CLB-4 Supply goes to SCH-3213 instead, so no re-partition of 3237 is required. UNRESOLVED in Phase 7: SCH-3237 DPRI Renovation (FY32-33) displaces this unit again - no swing space plan.' },
     { id:'t-lar',    name:'LAR CO',                type:'div', startBldg:'3213', endBldg:'3210', phase:2, date:'Q2 FY27', status:'Permanent Move', note:'Co-locates with ACV CO at Bldg 3210.' },
     { id:'t-clb-com',name:'CLB-4 COMM',            type:'mlg', startBldg:'3213', endBldg:'3235', phase:1, date:'Q3 FY26', status:'Swing', note:'Swings to Bldg 1024 Q3 FY26 (NIPR/phones on gym; servers on court). Returns to Bldg 3235 final Q3 FY28.' },
     { id:'t-hq-co',  name:'HQ CO, 4th MAR',        type:'div', startBldg:'3509', endBldg:'3410', phase:2, date:'Q4 FY27', status:'FRF Action', note:'Vacates FRF demolition line (3509). Relocates to renovated Bldg 3410.' },
@@ -3737,6 +3739,15 @@ body[data-coa="coa2"] .coa-context-tag {
         if (tag) tag.classList.remove('visible');
       }
     });
+    // t-clb-sup gets a fy-tag dynamically appended in Phase 2 (COA 2 / 2A);
+    // also remove that node so reset state is byte-identical to fresh load.
+    var clbSupEl = document.getElementById('t-clb-sup');
+    if (clbSupEl) {
+      var dynTag = clbSupEl.querySelector('.fy-tag');
+      // The HTML never authored a .fy-tag on t-clb-sup, so any present node
+      // is the dynamically-created one and is safe to remove.
+      if (dynTag) dynTag.parentNode.removeChild(dynTag);
+    }
 
     // Reset CLB-4 COMM tag text
     var comTag = document.getElementById('tag-clb-com');
@@ -5184,7 +5195,7 @@ body[data-coa="coa2"] .coa-context-tag {
         v = trimmed === '' ? undefined : trimmed.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
       }
       // Empty alt-string fields collapse to undefined so the renderer falls back
-      if ((k === 'altEndBldg' || k === 'altDate' || k === 'altStatus' || k === 'altNote' || k === 'coa2Note') && v === '') {
+      if ((k === 'altEndBldg' || k === 'altDate' || k === 'altStatus' || k === 'altNote' || k === 'coa2Note' || k === 'coa2aNote') && v === '') {
         v = undefined;
       }
       changes[k] = v;
@@ -6007,12 +6018,16 @@ body[data-coa="coa2"] .coa-context-tag {
       });
     });
 
-    // Wire delete
+    // Wire delete - confirm message uses the cost the user is currently
+    // looking at (via costFor + active COA), not always the COA-1 cost.
     Array.prototype.forEach.call(body.querySelectorAll('[data-pj-del]'), function(btn){
       btn.addEventListener('click', function(){
         var i = parseInt(btn.getAttribute('data-pj-del'), 10);
         if (isNaN(i) || !PROJECTS[i]) return;
-        if (confirm('Delete project ' + PROJECTS[i].bldg + ' (' + fmtUSD(PROJECTS[i].cost) + ')?')) {
+        var p = PROJECTS[i];
+        var activeCoa = getActiveCoa();
+        var costShown = (typeof costFor === 'function') ? costFor(p, activeCoa) : (p.cost || 0);
+        if (confirm('Delete project ' + p.bldg + ' (' + coaLabel(activeCoa) + ' cost: ' + fmtUSD(costShown) + ')?')) {
           PROJECTS.splice(i, 1);
           renderProjects(); refreshTotal(); persistProjects();
           A.toast('Project deleted', 'warning');
@@ -6102,9 +6117,42 @@ body[data-coa="coa2"] .coa-context-tag {
 
     var add = document.getElementById('pj-add');
     if (add) add.addEventListener('click', function(){
-      PROJECTS.push({ paxId:'N/A', fiweb:'', bldg:'SCH-XXXX', cost:0, scope:'New project',
-        supported:'', completion:'', delivery:'', note:'' });
+      // Seed every field a renderer / costFor / scope-filter touches so the
+      // row is well-formed across all three COAs from the moment it's added.
+      PROJECTS.push({ paxId:'N/A', fiweb:'', bldg:'SCH-XXXX', cost:0, altCost:null,
+        scope:'New project', supported:'', completion:'', delivery:'', note:'',
+        coa:'both' });
       renderProjects(); persistProjects(); A.toast('Project row added', 'success');
+    });
+    var rst = document.getElementById('pj-reset');
+    if (rst) rst.addEventListener('click', function(){
+      if (!confirm('Reload Projects from the last persisted snapshot? Discards unsaved-but-unpersisted changes (none unless localStorage is cleared).')) return;
+      try { var raw = localStorage.getItem('4thMAR_projects_v4');
+        if (raw) {
+          var arr = JSON.parse(raw);
+          if (Array.isArray(arr)) {
+            PROJECTS.splice(0, PROJECTS.length);
+            arr.forEach(function(p){ PROJECTS.push(p); });
+          }
+        }
+        renderProjects(); refreshTotal();
+        if (A.renderCompare) A.renderCompare();
+        A.toast('Projects reloaded from saved snapshot', 'success');
+      } catch(e) { A.toast('Reset failed: ' + e.message, 'error'); }
+    });
+    var imp = document.getElementById('pj-import');
+    if (imp) imp.addEventListener('click', function(){
+      var txt = prompt('Paste Projects JSON (array of project rows). Replaces the current 12-row table.');
+      if (!txt) return;
+      try {
+        var arr = JSON.parse(txt);
+        if (!Array.isArray(arr)) throw new Error('Expected JSON array');
+        PROJECTS.splice(0, PROJECTS.length);
+        arr.forEach(function(p){ PROJECTS.push(p); });
+        renderProjects(); refreshTotal(); persistProjects();
+        if (A.renderCompare) A.renderCompare();
+        A.toast('Projects imported (' + arr.length + ' rows)', 'success');
+      } catch(e) { A.toast('Import failed: ' + e.message, 'error'); }
     });
     var csv = document.getElementById('pj-export-csv');
     if (csv) csv.addEventListener('click', function(){

@@ -5926,9 +5926,16 @@ body[data-coa="coa2"] .coa-context-tag {
     return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
   function parseCost(s) {
-    if (typeof s === 'number') return s;
+    if (typeof s === 'number') return isFinite(s) ? s : 0;
     if (!s) return 0;
-    var cleaned = String(s).replace(/[^0-9.\-]/g, '');
+    // First pass: strip currency / whitespace / commas only, then let Number()
+    // handle scientific notation, decimals, signs. This catches "1.2e6" -> 1200000
+    // which the legacy regex strip would silently corrupt to 12.
+    var raw = String(s).replace(/[$,\s_]/g, '');
+    var direct = Number(raw);
+    if (!isNaN(direct) && isFinite(direct)) return direct;
+    // Fall back to lenient strip for input like "5-3" or "1.2.3" -> truncated
+    var cleaned = raw.replace(/[^0-9.\-eE]/g, '');
     var n = parseFloat(cleaned);
     return isNaN(n) ? 0 : n;
   }
@@ -6222,10 +6229,14 @@ body[data-coa="coa2"] .coa-context-tag {
 
   function renderCompare() {
     // ----- Summary cards -----
+    var coaActive = A.getActiveCoa ? A.getActiveCoa() : 'coa1';
     var t1  = A.totalForCoa ? A.totalForCoa('coa1') : 0;
     var t2  = A.totalForCoa ? A.totalForCoa('coa2') : 0;
     var t2a = A.totalForCoa ? A.totalForCoa('coa2a') : 0;
-    var delta = t2 - t1;
+    // Δ tracks the active alternate when COA 2/2A is active; under COA 1 the
+    // delta is COA 2 vs COA 1 (the canonical "savings of switching" view).
+    var altActive = (coaActive === 'coa2a') ? t2a : t2;
+    var delta = altActive - t1;
     var sumEl = document.getElementById('cmp-summary');
     if (sumEl) {
       var deltaCls = delta < 0 ? 'savings' : (delta > 0 ? 'addition' : '');

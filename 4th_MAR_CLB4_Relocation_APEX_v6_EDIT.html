@@ -380,9 +380,37 @@ body { min-width: 0; }
    ============================================================ */
 .phase-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(8, minmax(220px, 1fr));
   gap: 12px;
   margin-bottom: 16px;
+  overflow-x: auto;
+}
+@media (max-width: 1700px) {
+  .phase-grid { grid-template-columns: repeat(4, minmax(220px, 1fr)); }
+}
+/* Phase Grid badge that has been rewritten because of an active COA-alt
+   re-route. Outline-only so the user notices the divergence. */
+.phase-col .badge.coa-alt {
+  outline: 2px dashed #C45E12;
+  outline-offset: -2px;
+}
+/* Phase columns scoped to COA 2 / 2A (post-FRF DPRI work that doesn't
+   exist under COA 1). When body[data-coa=coa1] is active these dim. */
+body[data-coa="coa1"] .phase-col.coa2-only {
+  opacity: 0.45;
+  filter: grayscale(0.4);
+}
+body[data-coa="coa1"] .phase-col.coa2-only::before {
+  content: 'COA 1: scope not in plan';
+  display: block;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: var(--text-muted);
+  background: var(--bg-section);
+  padding: 4px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--border);
 }
 .phase-col {
   border: 1px solid var(--border);
@@ -2148,8 +2176,8 @@ body[data-coa="coa2"] .coa-context-tag {
     <div class="leg-item"><div class="leg-dot" style="background:var(--tile-mtr)"></div>In Place / No Move</div>
   </div>
 
-  <!-- PHASE GRID - 5 columns -->
-  <div class="phase-grid" role="region" aria-label="Five-phase relocation timeline">
+  <!-- PHASE GRID - 7 working phases + 1 Post-FRF Final Configuration summary -->
+  <div class="phase-grid" role="region" aria-label="Eight-phase relocation timeline (Phase 1-7 + Post-FRF Final)">
 
     <!-- Phase 1: FY26 Start -->
     <div class="phase-col" data-phase="1" id="pc-1">
@@ -2293,8 +2321,100 @@ body[data-coa="coa2"] .coa-context-tag {
       </div>
     </div>
 
-    <!-- Phase 5: Final Configuration -->
-    <div class="phase-col" data-phase="5" id="pc-5">
+    <!-- Phase 5: FY29-30 SCH-3235 HVAC + Swing (COA 2 / 2A only) -->
+    <div class="phase-col coa2-only" data-phase="5" id="pc-5">
+      <div class="p-head" style="background:var(--ph2);border-left:3px solid var(--swing-amber);">
+        FY29-30 (HVAC)<small>SCH-3235 Upgrade &middot; COA 2 / 2A only</small>
+      </div>
+      <div class="p-body">
+        <div class="card s-swing">
+          <span class="badge" style="background:var(--swing-amber);color:#000;" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3235 SWING</span>
+          <div class="u-row">
+            <span>SCH-3235 HVAC UPGRADE</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">FY29-30</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">DPRI-driven HVAC + IT/Comms refurbish (PAX TBD, est. $388K + adds). Same status / life cycle as SCH-3270.</div>
+        </div>
+        <div class="card s-swing">
+          <span class="badge" style="background:var(--swing-amber);color:#000;" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3413 SWING</span>
+          <div class="u-row">
+            <span>CLB-4 (HQ / A / B / GS) DISPLACED</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">FY29-30</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">CLB-4 tenants from SCH-3235 swing into SCH-3413 (DOW project that doubles as swing space).</div>
+        </div>
+        <div class="card s-swing">
+          <span class="badge" style="background:var(--swing-amber);color:#000;" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3410 SWING</span>
+          <div class="u-row">
+            <span>4TH MAR REGT (HQ / ACV / LAR) DISPLACED</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">FY29-30</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">4th MAR Regt tenants from SCH-3235 swing into SCH-3410 (DOW project that doubles as swing space).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 6: FY31 SCH-3410 / 3413 HN-funded FRF DEMO (all COAs) -->
+    <div class="phase-col" data-phase="6" id="pc-6">
+      <div class="p-head" style="background:var(--ph4);border-left:3px solid var(--status-red);">
+        FY31 (DEMO)<small>SCH-3410 + 3413 HN-funded FRF DEMO</small>
+      </div>
+      <div class="p-body">
+        <div class="card s-frf">
+          <span class="badge" style="background:var(--status-red);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3410 DEMO</span>
+          <div class="u-row">
+            <span>SCH-3410 DEMOLISHED</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">FY31</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">HN-funded FRF DEMO (c.2031). HQ CO 4th MAR Regt tenants previously in this DOW renovation now permanent at SCH-3410's successor / consolidated final configuration.</div>
+        </div>
+        <div class="card s-frf">
+          <span class="badge" style="background:var(--status-red);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3413 DEMO</span>
+          <div class="u-row">
+            <span>SCH-3413 DEMOLISHED</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">FY31</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">HN-funded FRF DEMO (c.2031). CLB-4 A&amp;B Co occupants previously here re-host to consolidated final configuration.</div>
+        </div>
+        <div class="card s-move">
+          <span class="badge" style="background:var(--status-green);" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3235 RETURN</span>
+          <div class="u-row">
+            <span>SCH-3235 BACK TO FINAL</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">FY31</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">HVAC project complete; tenants return from 3410 / 3413 swing.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 7: FY32-33 SCH-3237 DPRI Renovation (COA 2 / 2A only) -->
+    <div class="phase-col coa2-only" data-phase="7" id="pc-7">
+      <div class="p-head" style="background:var(--ph3);border-left:3px solid var(--swing-amber);">
+        FY32-33 (DPRI)<small>SCH-3237 Renovation &middot; COA 2 / 2A only</small>
+      </div>
+      <div class="p-body">
+        <div class="card s-swing">
+          <span class="badge" style="background:var(--swing-amber);color:#000;" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">3237 DPRI</span>
+          <div class="u-row">
+            <span>SCH-3237 DPRI RENOVATION</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">FY32-33 (2033)</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">HN-funded DPRI Renovation per POR (31st MEU CE + CLB WAREHOUSE + EOD FACILITY). Building activated by July 2033.</div>
+        </div>
+        <div class="card s-frf">
+          <span class="badge" style="background:var(--status-red);color:#fff;" data-editable="text" data-label="Badge" title="Click to edit in Edit Mode">UNRESOLVED</span>
+          <div class="u-row">
+            <span>4TH MAR REGT SUPPLY SWING</span>
+            <span class="date-badge" data-editable="text" data-label="Date/FY" title="Click to edit in Edit Mode">FY32-33</span>
+          </div>
+          <div class="detail" data-editable="text" data-label="Detail Text" title="Click to edit in Edit Mode">No swing space plan during the 2-year SCH-3237 DPRI window. Per slide 8.03.21: gap to be resolved by planners.</div>
+          <div class="impact" data-editable="text" data-label="Impact Note" title="Click to edit in Edit Mode">Risk: 4th MAR Regt Supply has no relocation site for the renovation duration. UDP-W Supply (occupying 3237 since FY27) also displaced.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post-FRF Final Configuration (summary; not a numbered phase) -->
+    <div class="phase-col" data-phase="post" id="pc-final">
       <div class="p-head" style="background:var(--ph5);border-left:3px solid var(--accent);">
         Post-FRF<small>Final Configuration</small>
       </div>
@@ -5662,6 +5782,7 @@ body[data-coa="coa2"] .coa-context-tag {
     if (A.renderCharts)    A.renderCharts();
     if (A.renderOverview)  A.renderOverview();
     if (A.renderCompare)   A.renderCompare();
+    if (A.syncPhaseGridToCoa) A.syncPhaseGridToCoa();
     // Reset the map animation so it replays in the new COA's destinations
     if (typeof window.__APEX_resetMapForCoa === 'function') window.__APEX_resetMapForCoa();
     // Update the map status banner to show which COA is active
@@ -5686,6 +5807,68 @@ body[data-coa="coa2"] .coa-context-tag {
   }
   A.getActiveCoa = getActiveCoa;
   A.setActiveCoa = setActiveCoa;
+
+  /* Sync Phase Grid (tab 3) cards to active COA. The static cards are
+     authored for COA 1; for COA 2 / 2A we walk every [data-unit] card and
+     rewrite its badge / u-row to reflect altEndBldg / altDate when present.
+     Originals are stashed in data-c1-* attributes the first time we touch
+     a card so switching back to COA 1 restores them faithfully. */
+  function syncPhaseGridToCoa() {
+    var coa = getActiveCoa();
+    var inCoa2 = (coa === 'coa2' || coa === 'coa2a');
+    var cards = document.querySelectorAll('.phase-col [data-unit]');
+    Array.prototype.forEach.call(cards, function(card){
+      var uid = card.getAttribute('data-unit');
+      var u = (A.UNITS || []).filter(function(x){ return x.id === uid; })[0];
+      if (!u) return;
+      var badge   = card.querySelector('.badge');
+      var dateEl  = card.querySelector('.date-badge');
+      var arrow   = card.querySelector('.u-row .arr');
+      // First-touch: stash COA 1 originals
+      if (badge && !badge.hasAttribute('data-c1')) badge.setAttribute('data-c1', badge.textContent);
+      if (dateEl && !dateEl.hasAttribute('data-c1')) dateEl.setAttribute('data-c1', dateEl.textContent);
+      if (arrow && arrow.parentElement && !arrow.parentElement.hasAttribute('data-c1')) {
+        arrow.parentElement.setAttribute('data-c1', arrow.parentElement.innerHTML);
+      }
+      var endB = (inCoa2 && u.altEndBldg) ? u.altEndBldg : u.endBldg;
+      var dt   = (inCoa2 && u.altDate)    ? u.altDate    : u.date;
+      var diffEnd = inCoa2 && u.altEndBldg && u.altEndBldg !== u.endBldg;
+      // Rewrite badge text to "<startBldg> -> <endB>" only when the badge
+      // ALREADY uses that arrow form (so we don't clobber styled labels like
+      // "1024 SWING" or "ARMORY -> 1024" that aren't a simple start->end).
+      if (badge) {
+        var c1 = badge.getAttribute('data-c1') || '';
+        if (/^\s*\d{4}\s*[-→>]+\s*\d{4}\s*$/.test(c1)) {
+          badge.textContent = u.startBldg + ' → ' + endB;
+          badge.classList.toggle('coa-alt', !!diffEnd);
+        } else if (inCoa2 && diffEnd) {
+          // Append a small alt-tag suffix so the user sees the reroute
+          badge.textContent = c1 + ' → ' + endB;
+          badge.classList.add('coa-alt');
+        } else {
+          badge.textContent = c1;
+          badge.classList.remove('coa-alt');
+        }
+      }
+      if (dateEl) dateEl.textContent = dt;
+      // Update the first u-row span (the "X -> Y" caption)
+      var uRow = card.querySelector('.u-row');
+      if (uRow && uRow.hasAttribute('data-c1')) {
+        if (diffEnd) {
+          // Re-render with alt end-bldg, preserving the unit name + arrow
+          var raw = uRow.getAttribute('data-c1');
+          // Replace the trailing ">  <num>" pattern with the alt end-bldg.
+          var rewritten = raw.replace(/(\s*→\s*|&rarr;|\s+&gt;\s+)\s*\d{4}\s*$/, function(m, sep){
+            return ' &rarr; ' + endB;
+          });
+          uRow.innerHTML = rewritten;
+        } else {
+          uRow.innerHTML = uRow.getAttribute('data-c1');
+        }
+      }
+    });
+  }
+  A.syncPhaseGridToCoa = syncPhaseGridToCoa;
 
   // Cost a row contributes for a given COA. Rows scoped to the other COA
   // contribute 0. coa2 / coa2a prefer altCost and fall back to cost.
@@ -5894,6 +6077,8 @@ body[data-coa="coa2"] .coa-context-tag {
     Array.prototype.forEach.call(document.querySelectorAll('[data-coa-btn]'), function(b){
       b.classList.toggle('active', b.getAttribute('data-coa-btn') === savedCoa);
     });
+    // Sync the static Phase Grid (tab 3) to the saved COA
+    if (A.syncPhaseGridToCoa) A.syncPhaseGridToCoa();
 
     var add = document.getElementById('pj-add');
     if (add) add.addEventListener('click', function(){

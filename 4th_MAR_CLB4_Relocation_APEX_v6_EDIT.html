@@ -579,6 +579,9 @@ kbd {
 .phase-pip.p2 { width: 70px; }
 .phase-pip.p3 { width: 70px; }
 .phase-pip.p4 { width: 80px; }
+.phase-pip.p5 { width: 70px; }
+.phase-pip.p6 { width: 60px; }
+.phase-pip.p7 { width: 80px; }
 .phase-pip.active { background: var(--accent-bright); }
 .phase-pip.done   { background: var(--status-green); }
 .phase-label-bar {
@@ -2007,6 +2010,9 @@ body[data-coa="coa2"] .coa-context-tag {
         <option value="2">Phase 2 (FY27)</option>
         <option value="3">Phase 3 (FY28)</option>
         <option value="4">Phase 4 (FRF)</option>
+        <option value="5">Phase 5 (FY29-30 HVAC)</option>
+        <option value="6">Phase 6 (FY31 Demo)</option>
+        <option value="7">Phase 7 (FY32-33 DPRI)</option>
         <option value="0">Resident / No Move</option>
       </select>
     </div>
@@ -2360,6 +2366,9 @@ body[data-coa="coa2"] .coa-context-tag {
     <div class="phase-pip p2" id="pip-2" title="Phase 2: FY27 - UDP-W Supply, LAR, HQ CO, CLB-4 A&amp;B"></div>
     <div class="phase-pip p3" id="pip-3" title="Phase 3: Q3 FY28 - Comms Final, Armory, CLB-4 HQ"></div>
     <div class="phase-pip p4" id="pip-4" title="Phase 4: Q3 FY28 - 4th MAR HQ to 3314, FRF Vacated"></div>
+    <div class="phase-pip p5" id="pip-5" title="Phase 5: FY29-30 - SCH-3235 HVAC + Swing (COA 2 / 2A only)"></div>
+    <div class="phase-pip p6" id="pip-6" title="Phase 6: FY31 - SCH-3410 / 3413 HN-funded FRF DEMO"></div>
+    <div class="phase-pip p7" id="pip-7" title="Phase 7: FY32-33 - SCH-3237 DPRI Renovation (UNRESOLVED 4th MAR Regt Supply swing space)"></div>
     <div class="phase-label-bar" id="phase-label">INITIAL POSTURE</div>
   </div>
 
@@ -2385,7 +2394,7 @@ body[data-coa="coa2"] .coa-context-tag {
          title="Bldg 3446 - UDP-W Supply (starts on FRF demo line, vacated and demolished after UDP-W Supply moves to 3237 Q3 FY27)">
       3446<span>UDP-W SUPPLY</span>
     </div>
-    <div id="b-3413" class="m-bldg" data-editable-bldg="true" style="top:50px;left:28px;width:100px;height:100px;"
+    <div id="b-3413" class="m-bldg" data-editable-bldg="true" style="top:50px;left:28px;width:120px;height:100px;"
          title="Bldg 3413 - Safety/Fire/Env (source in Phase 0), vacated Phase 1 when SAF moves to 3335, backfilled Phase 2 by CLB-4 A&amp;B">
       3413<span>Safety/Fire/Env</span>
     </div>
@@ -2395,7 +2404,7 @@ body[data-coa="coa2"] .coa-context-tag {
     </div>
 
     <!-- SWING/TRANSIT ZONE buildings -->
-    <div id="b-3335" class="m-bldg" data-editable-bldg="true" style="top:50px;left:330px;width:100px;height:80px;"
+    <div id="b-3335" class="m-bldg" data-editable-bldg="true" style="top:50px;left:330px;width:120px;height:80px;"
          title="Bldg 3335 - Base Theater, Safety/Env destination">
       3335<span>Theater &rarr; Safety/Fire/Env</span>
     </div>
@@ -2516,7 +2525,7 @@ body[data-coa="coa2"] .coa-context-tag {
     </div>
 
     <!-- 4th MAR HQ (Regt) - starts at 3509 FRF -->
-    <div id="t-reg" class="tile t-reg" data-editable-tile="true" style="top:370px;left:1074px;"
+    <div id="t-reg" class="tile t-reg" data-editable-tile="true" style="top:360px;left:1074px;"
          title="4th MAR Regimental HQ - starts at Bldg 3509 FRF zone, moves to 3314 Q3 FY28">
       <div class="logo-div"></div>4TH MAR HQ<div class="fy-tag">Q3 FY28</div>
     </div>
@@ -3342,7 +3351,10 @@ body[data-coa="coa2"] .coa-context-tag {
     'Phase 1 (Q3 FY26) - Safety/Env and CLB-4 Comms Swing',
     'Phase 2 (FY27) - UDP-W Supply, LAR CO, HQ CO, CLB-4 A&B',
     'Phase 3 (Q3 FY28) - Comms Final, Armory, CLB-4 HQ',
-    'Phase 4 (Q3 FY28) - 4th MAR HQ to 3314. FRF Vacated.'
+    'Phase 4 (Q3 FY28) - 4th MAR HQ to 3314. FRF Vacated.',
+    'Phase 5 (FY29-30) - SCH-3235 HVAC Upgrade. Tenants swing to 3410 / 3413. (COA 2 / 2A only)',
+    'Phase 6 (FY31) - SCH-3410 + SCH-3413 HN-funded FRF DEMO. SCH-3235 returns to final.',
+    'Phase 7 (FY32-33) - SCH-3237 DPRI Renovation begins. 4th MAR Regt Supply swing space UNRESOLVED.'
   ];
 
   function announce(msg) {
@@ -3386,7 +3398,7 @@ body[data-coa="coa2"] .coa-context-tag {
   }
 
   function updatePips() {
-    for (var i = 1; i <= 4; i++) {
+    for (var i = 1; i <= 7; i++) {
       var pip = document.getElementById('pip-' + i);
       if (!pip) continue;
       pip.classList.remove('active', 'done');
@@ -3396,7 +3408,7 @@ body[data-coa="coa2"] .coa-context-tag {
     var bar = document.getElementById('phase-bar');
     if (bar) bar.setAttribute('aria-valuenow', String(phase));
     var lbl = document.getElementById('phase-label');
-    if (lbl) lbl.textContent = phase === 0 ? 'INITIAL POSTURE' : 'PHASE ' + phase + ' OF 4';
+    if (lbl) lbl.textContent = phase === 0 ? 'INITIAL POSTURE' : 'PHASE ' + phase + ' OF 7';
     // Phase grid sync: highlight active column, dim others
     var cols = document.querySelectorAll('.phase-col[data-phase]');
     Array.prototype.forEach.call(cols, function(col){
@@ -3466,10 +3478,12 @@ body[data-coa="coa2"] .coa-context-tag {
     phase = 0;
     updatePips();
 
-    // Reset demolished buildings (also clear frf-relocated class)
-    ['b-3509', 'b-3446'].forEach(function(bid) {
+    // Reset demolished / swing / vacated buildings (also clear frf-relocated class).
+    // Phase 5-7 add swing/demolished states to 3235, 3237, 3410, 3413 that
+    // must be cleared on reset so re-running phases is idempotent.
+    ['b-3509', 'b-3446', 'b-3235', 'b-3237', 'b-3410', 'b-3413'].forEach(function(bid) {
       var b = document.getElementById(bid);
-      if (b) { b.classList.remove('demolished'); b.classList.remove('vacated'); b.classList.remove('frf-relocated'); }
+      if (b) { b.classList.remove('demolished'); b.classList.remove('vacated'); b.classList.remove('swing'); b.classList.remove('frf-relocated'); }
     });
     var lbl3509 = document.getElementById('lbl-3509');
     if (lbl3509) lbl3509.textContent = '4TH MAR HQ';
@@ -3518,7 +3532,7 @@ body[data-coa="coa2"] .coa-context-tag {
     // Armory is hidden at reset - it doesn't exist until Phase 3 consolidation.
     // Position it at its destination (1024) so reveal is in-place, no travel.
     move('t-arm', 225, 344);
-    move('t-reg', 370, 1074);
+    move('t-reg', 360, 1074);
     // CLB-4 Supply: in COA 1 it stays resident at 3237 the whole time; in
     // COA 2 it moves to 3213 in Phase 2. Reset must always return it to
     // its 3237 home position so re-running phases works correctly.
@@ -3536,7 +3550,7 @@ body[data-coa="coa2"] .coa-context-tag {
      ============================================================ */
   var phaseAnimating = false;
   function nextPhase() {
-    if (phase >= 4) return;
+    if (phase >= 7) return;
     if (phaseAnimating) return;          // Re-entry guard - don't kick a new phase while transitions are still flying
     phaseAnimating = true;
     safeTimeout(function(){ phaseAnimating = false; }, 1700);  // ~1.5s transition + small buffer
@@ -3659,6 +3673,41 @@ body[data-coa="coa2"] .coa-context-tag {
         if (b) { b.classList.remove('vacated'); b.classList.add('demolished'); }
       }, 6200);
     }
+    else if (phase === 5) {
+      // FY29-30: SCH-3235 HVAC upgrade window (COA 2 / 2A only).
+      // Tenants swing to 3410 / 3413. No tile movements modeled here;
+      // the building tints communicate the activity at this scale.
+      if (isCoa2Variant()) {
+        ['b-3235', 'b-3410', 'b-3413'].forEach(function(bid){
+          var b = document.getElementById(bid);
+          if (b) b.classList.add('swing');
+        });
+      }
+    }
+    else if (phase === 6) {
+      // FY31: 3410 + 3413 demolished (HN-funded FRF DEMO regardless of COA).
+      // Clear their swing tint, then progress through vacated -> demolished.
+      ['b-3235','b-3410','b-3413'].forEach(function(bid){
+        var b = document.getElementById(bid);
+        if (b) b.classList.remove('swing');
+      });
+      ['b-3410','b-3413'].forEach(function(bid){
+        var b = document.getElementById(bid);
+        if (!b) return;
+        b.classList.add('vacated');
+        safeTimeout(function(){
+          if (b.classList) { b.classList.remove('vacated'); b.classList.add('demolished'); }
+        }, 3000);
+      });
+    }
+    else if (phase === 7) {
+      // FY32-33: SCH-3237 DPRI Renovation begins (COA 2 / 2A only).
+      // 4th MAR Regt Supply UNRESOLVED swing space gap per slide 8.03.21.
+      if (isCoa2Variant()) {
+        var b3237 = document.getElementById('b-3237');
+        if (b3237) b3237.classList.add('swing');
+      }
+    }
   }
 
   /* ============================================================
@@ -3741,7 +3790,7 @@ body[data-coa="coa2"] .coa-context-tag {
       't-clb-hq':  { top: 104, left: 834 },
       't-clb-ab':  { top: 136, left: 834 },
       't-arm':     { top: 225, left: 344 },
-      't-reg':     { top: 370, left: 1074}
+      't-reg':     { top: 360, left: 1074}
     },
     phase1: {
       't-saf':    { top: 100, left: 332 },

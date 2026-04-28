@@ -1708,9 +1708,10 @@ body[data-coa="coa2"] .coa-context-tag {
    COA COMPARISON tab styling
    ============================================================ */
 .cmp-summary {
-  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+  display: grid; grid-template-columns: repeat(4, minmax(180px, 1fr)); gap: 10px;
   margin: 6px 0 16px; font-family: var(--font-mono);
 }
+@media (max-width: 1100px) { .cmp-summary { grid-template-columns: repeat(2, 1fr); } }
 .cmp-summary .cs-card {
   background: var(--bg-section); border: 1px solid var(--border);
   border-radius: 6px; padding: 12px 14px;
@@ -2366,7 +2367,7 @@ body[data-coa="coa2"] .coa-context-tag {
     </div>
   </div>
 
-  <div class="phase-indicator" role="progressbar" aria-label="Phase progress" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" id="phase-bar">
+  <div class="phase-indicator" role="progressbar" aria-label="Phase progress" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" id="phase-bar">
     <div class="phase-pip p1" id="pip-1" title="Phase 1: Q3 FY26 - Safety/Env and CLB-4 Comms Swing"></div>
     <div class="phase-pip p2" id="pip-2" title="Phase 2: FY27 - UDP-W Supply, LAR, HQ CO, CLB-4 A&amp;B"></div>
     <div class="phase-pip p3" id="pip-3" title="Phase 3: Q3 FY28 - Comms Final, Armory, CLB-4 HQ"></div>
@@ -3474,12 +3475,17 @@ body[data-coa="coa2"] .coa-context-tag {
   }
 
   function updatePips() {
+    var labels = (window.__APEX && window.__APEX.PHASE_LABELS) || [];
     for (var i = 1; i <= 7; i++) {
       var pip = document.getElementById('pip-' + i);
       if (!pip) continue;
       pip.classList.remove('active', 'done');
       if (i < phase) pip.classList.add('done');
       else if (i === phase) pip.classList.add('active');
+      // Sync the hover tooltip with the editable PHASE_LABELS row so user
+      // edits in the Data Editor propagate to the pip tooltip without reload.
+      var lblRow = labels[i];
+      if (lblRow && lblRow.status) pip.setAttribute('title', lblRow.status);
     }
     var bar = document.getElementById('phase-bar');
     if (bar) bar.setAttribute('aria-valuenow', String(phase));
@@ -4772,13 +4778,23 @@ body[data-coa="coa2"] .coa-context-tag {
       var deltaPh  = (u.altPhase !== undefined && u.altPhase !== null && u.altPhase !== u.phase) ? '<span class="dp-delta">&Delta;</span>' : '';
       var deltaDt  = (u.altDate && u.altDate !== u.date) ? '<span class="dp-delta">&Delta;</span>' : '';
       var deltaSt  = (u.altStatus && u.altStatus !== u.status) ? '<span class="dp-delta">&Delta;</span>' : '';
-      body += '<div class="dp-coa-banner dp-coa2"><strong>COA 2 (Alternate Plan)</strong>' +
+      // Banner label tracks the active COA so the planner sees which
+      // alternate they're viewing. UNITS share alt fields between COA 2 and
+      // COA 2A today (the only narrative split is in BUILDINGS[b-1024].coa2aNote).
+      var _uCoa = (A.getActiveCoa && A.getActiveCoa()) || 'coa1';
+      var _uBanner = (_uCoa === 'coa2a') ? 'COA 2A (Alternate Plan B)'
+                  : (_uCoa === 'coa2'  ? 'COA 2 (Alternate Plan A)'
+                                       : 'COA 2 / 2A (Alternate Plans)');
+      var _uNoteLbl = (_uCoa === 'coa2a') ? 'COA 2A Notes'
+                   : (_uCoa === 'coa2'  ? 'COA 2 Notes'
+                                        : 'COA 2 / 2A Notes');
+      body += '<div class="dp-coa-banner dp-coa2"><strong>' + A.esc(_uBanner) + '</strong>' +
         (u.altUnresolved ? '<span class="dp-unresolved">UNRESOLVED</span>' : '') + '</div>' +
         '<div class="dp-row"><div class="dp-k">End Building</div><div class="dp-v">' + A.esc(altEnd) + ' ' + deltaEnd + '</div></div>' +
         '<div class="dp-row"><div class="dp-k">Phase</div><div class="dp-v">' + (altPh === 0 ? 'No Move' : 'Phase ' + altPh) + ' ' + deltaPh + '</div></div>' +
         '<div class="dp-row"><div class="dp-k">Date</div><div class="dp-v">' + A.esc(altDt) + ' ' + deltaDt + '</div></div>' +
         '<div class="dp-row"><div class="dp-k">Status</div><div class="dp-v">' + statusPill(altSt) + ' ' + deltaSt + '</div></div>' +
-        (u.altNote ? '<div class="dp-section">COA 2 Notes</div><div style="font-size:12px;color:var(--text);line-height:1.55;">' + A.esc(u.altNote) + '</div>' : '');
+        (u.altNote ? '<div class="dp-section">' + A.esc(_uNoteLbl) + '</div><div style="font-size:12px;color:var(--text);line-height:1.55;">' + A.esc(u.altNote) + '</div>' : '');
     }
 
     document.getElementById('dp-title').textContent = u.name;
@@ -4811,16 +4827,38 @@ body[data-coa="coa2"] .coa-context-tag {
       (occ.length ? occ.map(function(n){ return '<div style="padding:3px 0;">&bull; ' + A.esc(n) + '</div>'; }).join('') : '<em style="color:var(--text-muted);">None listed</em>') +
       '</div>';
 
-    // COA 2 section - only when this building has notes or different occupants
-    if (b.coa2Note || altOcc) {
-      body += '<div class="dp-coa-banner dp-coa2"><strong>COA 2 (Alternate Plan)</strong></div>';
-      if (b.coa2Note) {
-        body += '<div style="font-size:12px;color:var(--text);line-height:1.55;padding:6px 0;">' + A.esc(b.coa2Note) + '</div>';
+    // COA 2 / 2A section - only when this building has notes or different occupants.
+    // When 2A is active and a coa2aNote override exists, prefer that. Otherwise
+    // fall back to coa2Note. Banner label tracks the active COA.
+    if (b.coa2Note || b.coa2aNote || altOcc) {
+      var _coa = (A.getActiveCoa && A.getActiveCoa()) || 'coa1';
+      var _bannerLbl, _altNote;
+      if (_coa === 'coa2a') {
+        _bannerLbl = 'COA 2A (Alternate Plan B)';
+        _altNote   = b.coa2aNote || b.coa2Note;
+      } else if (_coa === 'coa2') {
+        _bannerLbl = 'COA 2 (Alternate Plan A)';
+        _altNote   = b.coa2Note || b.coa2aNote;
+      } else {
+        _bannerLbl = 'COA 2 / 2A (Alternate Plans)';
+        _altNote   = b.coa2Note || b.coa2aNote;
+      }
+      body += '<div class="dp-coa-banner dp-coa2"><strong>' + A.esc(_bannerLbl) + '</strong></div>';
+      if (_altNote) {
+        body += '<div style="font-size:12px;color:var(--text);line-height:1.55;padding:6px 0;">' + A.esc(_altNote) + '</div>';
+      }
+      // If both COA 2 and COA 2A notes exist and they differ, show the OTHER
+      // narrative as a sub-section so the planner can compare without flipping.
+      if (b.coa2Note && b.coa2aNote && b.coa2Note !== b.coa2aNote) {
+        var _otherLbl = (_coa === 'coa2a') ? 'COA 2 (Alt-A) variant' : 'COA 2A (Alt-B) variant';
+        var _other    = (_coa === 'coa2a') ? b.coa2Note : b.coa2aNote;
+        body += '<div class="dp-section">' + A.esc(_otherLbl) + '</div>' +
+          '<div style="font-size:11.5px;color:var(--text-muted);line-height:1.55;padding:4px 0 8px;">' + A.esc(_other) + '</div>';
       }
       if (altOcc) {
-        body += '<div class="dp-section">Occupants (COA 2)</div>' +
+        body += '<div class="dp-section">Occupants (COA 2 / 2A)</div>' +
           '<div style="font-size:12px;color:var(--text);line-height:1.6;">' +
-          (altOcc.length ? altOcc.map(function(n){ return '<div style="padding:3px 0;">&bull; ' + A.esc(n) + '</div>'; }).join('') : '<em style="color:var(--text-muted);">None - building empty in COA 2</em>') +
+          (altOcc.length ? altOcc.map(function(n){ return '<div style="padding:3px 0;">&bull; ' + A.esc(n) + '</div>'; }).join('') : '<em style="color:var(--text-muted);">None - building empty in COA 2 / 2A</em>') +
           '</div>';
       }
     }
@@ -5428,13 +5466,21 @@ body[data-coa="coa2"] .coa-context-tag {
   }
 
   function renderCharts() {
+    // Active-COA-aware phase resolver: COA 2 / 2A may reroute units to a
+    // different phase via altPhase, so charts must apply the same alt
+    // fallback the roster / swim-lane already use.
+    var _coa = (A.getActiveCoa && A.getActiveCoa()) || 'coa1';
+    var _inCoa2 = (_coa === 'coa2' || _coa === 'coa2a');
+    function _phOf(u){ return (_inCoa2 && u.altPhase != null) ? u.altPhase : u.phase; }
+    function _cnt(p){ return A.UNITS.filter(function(u){ return _phOf(u) === p; }).length; }
+
     // Moves per phase
     var moves = [
-      { label:'P1 FY26', v: A.UNITS.filter(function(u){return u.phase===1;}).length, color: readCss('--ph1','#1E5080') },
-      { label:'P2 FY27', v: A.UNITS.filter(function(u){return u.phase===2;}).length, color: readCss('--ph2','#1A3A6C') },
-      { label:'P3 FY28', v: A.UNITS.filter(function(u){return u.phase===3;}).length, color: readCss('--ph3','#0E5530') },
-      { label:'P4 FRF',  v: A.UNITS.filter(function(u){return u.phase===4;}).length, color: readCss('--ph4','#7A0E12') },
-      { label:'Res',     v: A.UNITS.filter(function(u){return u.phase===0;}).length, color: readCss('--tile-mtr','#0E3A5C') }
+      { label:'P1 FY26', v:_cnt(1), color: readCss('--ph1','#1E5080') },
+      { label:'P2 FY27', v:_cnt(2), color: readCss('--ph2','#1A3A6C') },
+      { label:'P3 FY28', v:_cnt(3), color: readCss('--ph3','#0E5530') },
+      { label:'P4 FRF',  v:_cnt(4), color: readCss('--ph4','#7A0E12') },
+      { label:'Res',     v:_cnt(0), color: readCss('--tile-mtr','#0E3A5C') }
     ];
     barChart(document.getElementById('chart-moves'), moves);
 
@@ -5501,7 +5547,10 @@ body[data-coa="coa2"] .coa-context-tag {
     });
     barChart(document.getElementById('chart-zones'), zones);
 
-    // Phase list
+    // Phase list - active-COA-aware (uses altPhase when COA 2 / 2A is active)
+    var _ovCoa = (A.getActiveCoa && A.getActiveCoa()) || 'coa1';
+    var _ovIn2 = (_ovCoa === 'coa2' || _ovCoa === 'coa2a');
+    function _ovPh(u){ return (_ovIn2 && u.altPhase != null) ? u.altPhase : u.phase; }
     var plist = document.getElementById('ov-phase-list'); if (plist) {
       var html = '';
       var phaseMeta = [
@@ -5511,7 +5560,7 @@ body[data-coa="coa2"] .coa-context-tag {
         { p:4, name:'FRF Vacation',color:'--ph4' }
       ];
       phaseMeta.forEach(function(pm){
-        var count = A.UNITS.filter(function(u){return u.phase === pm.p;}).length;
+        var count = A.UNITS.filter(function(u){return _ovPh(u) === pm.p;}).length;
         html += '<div style="display:flex;align-items:center;gap:8px;font-size:11px;">' +
           '<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(' + pm.color + ');"></span>' +
           '<span style="flex:1;color:var(--text);">Phase ' + pm.p + ': ' + pm.name + '</span>' +
@@ -6502,7 +6551,7 @@ body[data-coa="coa2"] .coa-context-tag {
      side effects (demolished class, label swaps, armory reveal, 3446 slide,
      fy-tag pop-up, phase-grid sync) are all honored. */
   function printAtPhase(n) {
-    n = Math.max(0, Math.min(4, n|0));
+    n = Math.max(0, Math.min(7, n|0));
     // Ensure the Map tab is active so the map section is visible for print
     if (A.switchTab) A.switchTab('map');
     var reset = document.getElementById('btn-reset');

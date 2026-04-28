@@ -2030,11 +2030,14 @@ body[data-coa="coa2"] .coa-context-tag {
     </div>
     <button class="hdr-btn" id="f-reset" type="button" aria-label="Reset all filters">Reset</button>
     <div style="margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-      <div class="coa-toggle" role="group" aria-label="Course of Action selector" title="Switch between COA 1 (Primary) and COA 2 (Alternate)">
+      <div class="coa-toggle" role="group" aria-label="Course of Action selector" title="COA 1 = Primary scope. COA 2 / 2A = Alternate scope. Both alternates remove SCH-3237 from scope (DPRI renovation in 2033, HN-funded), reroute CLB-4 Supply to SCH-3213, and add SCH-3235 HVAC + SCH-1024 admin conversion. They differ ONLY in how SCH-1024 admin space is created.">
         <span class="coa-toggle-lbl">COA</span>
-        <button class="coa-btn active" data-coa-btn="coa1" type="button" aria-label="COA 1 Primary" title="COA 1 - Primary scope (3237 in scope)">1</button>
-        <button class="coa-btn" data-coa-btn="coa2" type="button" aria-label="COA 2 Alternate A" title="COA 2 - Remove 3237; convert 20 barracks rooms above the Armory to Admin spaces">2</button>
-        <button class="coa-btn" data-coa-btn="coa2a" type="button" aria-label="COA 2A Alternate B" title="COA 2A - Same scope as COA 2; convert 16 barracks rooms + Weapons-Cleaning area to Admin (Bldg 144 untouched)">2A</button>
+        <button class="coa-btn active" data-coa-btn="coa1" type="button" aria-label="COA 1 Primary"
+          title="COA 1 - Primary scope. SCH-3237 IN scope (re-partition warehouse for 4th MAR Regt + CLB-4 + UDP-W Supply). 4th MAR Regt HQ -> SCH-3314 2nd Deck. Total: $23,565,519.68.">1</button>
+        <button class="coa-btn" data-coa-btn="coa2" type="button" aria-label="COA 2 Alternate A"
+          title="COA 2 (Alt-A) - REMOVE SCH-3237 from scope (DPRI renovation 2033, HN-funded; saves ~$1.45M). REROUTE CLB-4 Supply to SCH-3213 (DOD/EOD WHSE). ADD SCH-3235 HVAC upgrade. ADD SCH-1024 2nd-floor: convert 20x barracks rooms above the Armory to Admin (A&B Co + HQ Co) + new MCEN Telecomm Room. 4th MAR Regt HQ -> SCH-1024 (3314 won't be ready in time).">2</button>
+        <button class="coa-btn" data-coa-btn="coa2a" type="button" aria-label="COA 2A Alternate B"
+          title="COA 2A (Alt-B) - Same scope as COA 2 EXCEPT SCH-1024 Admin: convert 16x barracks rooms (8 Admin spaces, A&B Co) + the existing Weapons-Cleaning area to Admin (4th MAR Regt). Retains MORE barracks rooms intact. Bldg 144 (Ammo Co) untouched. Choice between COA 2 and 2A is the SCH-1024 DD1391 decision; client picks in RFP package.">2A</button>
       </div>
       <button class="hdr-btn" id="btn-theme" type="button" aria-label="Toggle theme" title="Toggle theme (T)">&#9681; Theme</button>
       <button class="hdr-btn" id="btn-cmd" type="button" aria-label="Open command palette" title="Command palette (Ctrl+K)">&#8984; Commands</button>
@@ -2395,11 +2398,11 @@ body[data-coa="coa2"] .coa-context-tag {
       3446<span>UDP-W SUPPLY</span>
     </div>
     <div id="b-3413" class="m-bldg" data-editable-bldg="true" style="top:50px;left:28px;width:120px;height:100px;"
-         title="Bldg 3413 - Safety/Fire/Env (source in Phase 0), vacated Phase 1 when SAF moves to 3335, backfilled Phase 2 by CLB-4 A&amp;B">
+         title="Bldg 3413 - Safety/Fire/Env (source Phase 0). Vacated Phase 1, backfilled Phase 2 by CLB-4 A&amp;B Co. COA 2 / 2A: continues as DOW project, then becomes SWING SPACE for CLB-4 (HQ, A, B, GS Cos) during SCH-3235 HVAC (Phase 5). DEMO Phase 6 (FY31, HN-funded FRF).">
       3413<span>Safety/Fire/Env</span>
     </div>
     <div id="b-3213" class="m-bldg final-dest" data-editable-bldg="true" style="top:315px;left:28px;width:200px;height:150px;"
-         title="Bldg 3213 - CLB-4 HQ destination after renovation">
+         title="Bldg 3213 - CLB-4 HQ destination after renovation. COA 2 / 2A: ALSO houses CLB-4 Supply (re-routed from SCH-3237) using EOD/DOD WHSE space, CCN 21730; 2,045 sq ft. CCN reassigned from 21730 FLD MAINT SHOP to STG A/RUGD ORG UTS WARGOR.">
       3213<span>CLB-4 HQ (Dest)</span>
     </div>
 
@@ -2409,21 +2412,21 @@ body[data-coa="coa2"] .coa-context-tag {
       3335<span>Theater &rarr; Safety/Fire/Env</span>
     </div>
     <div id="b-1024" class="m-bldg swing" data-editable-bldg="true" style="top:175px;left:330px;width:155px;height:140px;"
-         title="Bldg 1024 - BEQ/CLB-4 Swing Space, later Consolidated Armory">
+         title="Bldg 1024 - BEQ -> SWING -> Armory (1st floor). COA 2 (Alt-A): 2nd-floor scope adds 20 barracks rooms -> Admin (A&B Co + HQ Co) + new MCEN Telecomm Room. COA 2A (Alt-B): 16 barracks rooms -> 8 Admin (A&B Co) + Weapons-Cleaning area -> Admin (4th MAR Regt) - retains more barracks intact. PAX 387356, $10,413,140.40 (Add'l Admin Space TBD).">
       1024<span id="lbl-1024">BEQ / SWING &rarr; ARMORY</span>
     </div>
     <div id="b-3410" class="m-bldg" data-editable-bldg="true" style="top:355px;left:330px;width:120px;height:80px;"
-         title="Bldg 3410 - HQ CO 4th destination">
+         title="Bldg 3410 - HQ CO, 4th MAR Regt destination (DOW project). COA 2 / 2A: continues as planned, then becomes SWING SPACE for 4th MAR Regt (HQ, ACV, LAR Cos) during SCH-3235 HVAC (Phase 5). DEMO Phase 6 (FY31, HN-funded FRF).">
       3410<span>HQ CO, 4th MAR Regt</span>
     </div>
 
     <!-- FINAL CONFIGURATION ZONE buildings -->
     <div id="b-3237" class="m-bldg final-dest" data-editable-bldg="true" style="top:50px;left:620px;width:150px;height:160px;"
-         title="Bldg 3237 - Consolidated Supply (4th MAR, CLB-4, UDP-W)">
+         title="Bldg 3237 - Consol Supply. COA 1: re-partition WHSE for 4th MAR Regt + CLB-4 + UDP-W Supply (PAX 387622, $1,486,818). COA 2 / 2A: REMOVED from scope (no re-partition; CLB-4 Supply re-routes to SCH-3213). Houses 4th MAR Regt + UDP-W Supply only. UNRESOLVED: SCH-3237 DPRI Renovation 2033 (Phase 7) - no swing space plan for 4th MAR Regt Supply during 2-yr window.">
       3237<span>Consol Supply (4th/CLB-4/UDP-W)</span>
     </div>
     <div id="b-3235" class="m-bldg final-dest" data-editable-bldg="true" style="top:240px;left:620px;width:150px;height:160px;"
-         title="Bldg 3235 - Consolidated Comms (4th MAR + CLB-4)">
+         title="Bldg 3235 - Consol Comms (4th MAR + CLB-4). COA 1: out of scope. COA 2 / 2A: ADD SCOPE - HVAC upgrade / refurbish (same status / life cycle as SCH-3270). Best to address now; can roll into existing project for approx the savings from removing SCH-3237. Renovation Phase 5 (FY29-30); tenants swing to 3410 / 3413.">
       3235<span>Consol Comms (4th MAR/CLB-4)</span>
     </div>
     <div id="b-3210" class="m-bldg" data-editable-bldg="true" style="top:430px;left:620px;width:150px;height:95px;"
@@ -2437,7 +2440,7 @@ body[data-coa="coa2"] .coa-context-tag {
     </div>
     <!-- 3314 - Regt HQ destination -->
     <div id="b-3314" class="m-bldg final-dest" data-editable-bldg="true" style="top:50px;left:820px;width:150px;height:250px;"
-         title="Bldg 3314 - 4th MAR Regimental HQ (final destination)">
+         title="Bldg 3314 - 4th MAR Regimental HQ destination (PAX 387433, $1,949,383.28). 1st Deck = 1st Bn 4th MAR (UDP). 2nd Deck = 4th MAR Regt HQ. COA 1: ready for occupancy Q3 FY28. COA 2 / 2A: NOT expected to be ready in time - 4th MAR Regt HQ + UDP re-route to SCH-1024 2nd floor.">
       3314<span>4TH MAR HQ (Dest)</span>
     </div>
 

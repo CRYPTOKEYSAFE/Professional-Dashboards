@@ -2784,6 +2784,31 @@ body[data-coa="coa2"] .coa-context-tag {
     </div>
 
     <div class="panel-card" style="margin-top:14px;">
+      <h3 style="display:flex;align-items:center;gap:10px;">Phase Labels (Editable)
+        <span style="font-size:10px;font-weight:500;color:var(--text-muted);text-transform:none;letter-spacing:normal;">
+          Edit the phase narrative used by the Map (Status), Swim-lane (Header / Sub), and the keyboard EXECUTE flow.
+        </span>
+        <span style="margin-left:auto;display:flex;gap:6px;">
+          <button class="hdr-btn primary" id="ed-save-phases" type="button">Save Phase Labels</button>
+          <button class="hdr-btn" id="ed-reset-phases" type="button">Reset to Defaults</button>
+        </span>
+      </h3>
+      <div class="tbl-scroll" style="max-height:360px;overflow:auto;">
+        <table class="ed-table" id="ed-phases" aria-label="Phase label editor">
+          <thead>
+            <tr>
+              <th style="width:48px;">#</th>
+              <th>Swim Header (label)</th>
+              <th>Swim Header (sub-label)</th>
+              <th>Map Status / Announce Text</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-ed-phases"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel-card" style="margin-top:14px;">
       <h3>Import / Export</h3>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="hdr-btn" id="ed-import" type="button">Import JSON</button>
@@ -3201,8 +3226,33 @@ body[data-coa="coa2"] .coa-context-tag {
     sortRows: sortRows, applyFilters: applyFilters,
     toggleTheme: toggleTheme, toggleSidebar: toggleSidebar,
     FRF_DATE: FRF_DATE, PROG_START: PROG_START,
-    esc: esc
+    esc: esc,
+    // Phase labels - editable via Data Editor. The map IIFE reads .status,
+    // the swim-lane IIFE reads .label / .sub. Persisted under
+    // 4thMAR_phase_labels_v1; default below is the canonical narrative.
+    PHASE_LABELS: [
+      { status:'Initial Posture - Current Configuration',                                                     label:'Phase 0', sub:'Initial Posture (Pre-FY26)' },
+      { status:'Phase 1 (Q3 FY26) - Safety/Env and CLB-4 Comms Swing',                                        label:'Phase 1', sub:'FY26 Swing' },
+      { status:'Phase 2 (FY27) - UDP-W Supply, LAR CO, HQ CO, CLB-4 A&B',                                     label:'Phase 2', sub:'FY27 Moves' },
+      { status:'Phase 3 (Q3 FY28) - Comms Final, Armory, CLB-4 HQ',                                           label:'Phase 3', sub:'FY28 Consolidation' },
+      { status:'Phase 4 (Q3 FY28) - 4th MAR HQ to 3314. FRF Vacated.',                                        label:'Phase 4', sub:'Post-FRF (1 Jun 2028)' },
+      { status:'Phase 5 (FY29-30) - SCH-3235 HVAC Upgrade. Tenants swing to 3410 / 3413. (COA 2 / 2A only)',  label:'Phase 5', sub:'FY29-30 SCH-3235 HVAC + Swing' },
+      { status:'Phase 6 (FY31) - SCH-3410 + SCH-3413 HN-funded FRF DEMO. SCH-3235 returns to final.',         label:'Phase 6', sub:'FY31 SCH-3410 / 3413 Demo' },
+      { status:'Phase 7 (FY32-33) - SCH-3237 DPRI Renovation begins. 4th MAR Regt Supply swing space UNRESOLVED.', label:'Phase 7', sub:'FY32-33 SCH-3237 DPRI Renovation' }
+    ]
   };
+  // Hydrate phase labels from localStorage if present (deep-merge with defaults).
+  try {
+    var _pl = JSON.parse(localStorage.getItem('4thMAR_phase_labels_v1') || 'null');
+    if (Array.isArray(_pl)) {
+      _pl.forEach(function(row, i){
+        if (!row || !window.__APEX.PHASE_LABELS[i]) return;
+        ['status','label','sub'].forEach(function(k){
+          if (typeof row[k] === 'string') window.__APEX.PHASE_LABELS[i][k] = row[k];
+        });
+      });
+    }
+  } catch(e) {}
 
   // Store functions referenced later
   window.__APEX.renderRoster = function(){};
@@ -3375,16 +3425,13 @@ body[data-coa="coa2"] .coa-context-tag {
   var phase = 0;
   var timeOuts = [];
 
-  var PHASE_NAMES = [
-    'Initial Posture - Current Configuration',
-    'Phase 1 (Q3 FY26) - Safety/Env and CLB-4 Comms Swing',
-    'Phase 2 (FY27) - UDP-W Supply, LAR CO, HQ CO, CLB-4 A&B',
-    'Phase 3 (Q3 FY28) - Comms Final, Armory, CLB-4 HQ',
-    'Phase 4 (Q3 FY28) - 4th MAR HQ to 3314. FRF Vacated.',
-    'Phase 5 (FY29-30) - SCH-3235 HVAC Upgrade. Tenants swing to 3410 / 3413. (COA 2 / 2A only)',
-    'Phase 6 (FY31) - SCH-3410 + SCH-3413 HN-funded FRF DEMO. SCH-3235 returns to final.',
-    'Phase 7 (FY32-33) - SCH-3237 DPRI Renovation begins. 4th MAR Regt Supply swing space UNRESOLVED.'
-  ];
+  // Live phase status text - reads from window.__APEX.PHASE_LABELS so edits
+  // in the Data Editor flow through without a page reload.
+  function phaseStatus(i) {
+    var arr = (window.__APEX && window.__APEX.PHASE_LABELS) || [];
+    var row = arr[i];
+    return (row && row.status) || ('Phase ' + i);
+  }
 
   function announce(msg) {
     document.getElementById('a11y-announce').textContent = msg;
@@ -3570,7 +3617,7 @@ body[data-coa="coa2"] .coa-context-tag {
     // Other resident tiles never move (4th-sup, 4th-com, 4th-mtr, clb-mtr,
     // med) - their inline style positions remain valid through animations.
 
-    updateStatus(PHASE_NAMES[0]);
+    updateStatus(phaseStatus(0));
     announce('Map reset to initial posture.');
   }
 
@@ -3585,8 +3632,8 @@ body[data-coa="coa2"] .coa-context-tag {
     safeTimeout(function(){ phaseAnimating = false; }, 1700);  // ~1.5s transition + small buffer
     phase++;
     updatePips();
-    updateStatus(PHASE_NAMES[phase]);
-    announce(PHASE_NAMES[phase]);
+    updateStatus(phaseStatus(phase));
+    announce(phaseStatus(phase));
 
     if (phase === 1) {
       // Safety/Fire/Env -> 3335 (top:76, left:332)
@@ -5161,20 +5208,10 @@ body[data-coa="coa2"] .coa-context-tag {
       return String(a.num).localeCompare(String(b.num));
     });
 
-    // Phase headers - extended through FY32 to cover post-FRF DPRI work
-    // (per Construction Timeline slide). Phases 5-7 are COA-2-family
-    // specific (in COA 1, post-FRF activity is minimal: HN-funded FRF
-    // demos still happen, but no SCH-3235 HVAC or SCH-3237 DPRI prep).
-    var phaseHdrs = [
-      { label:'Phase 0',  sub:'Initial Posture (Pre-FY26)' },
-      { label:'Phase 1',  sub:'FY26 Swing' },
-      { label:'Phase 2',  sub:'FY27 Moves' },
-      { label:'Phase 3',  sub:'FY28 Consolidation' },
-      { label:'Phase 4',  sub:'Post-FRF (1 Jun 2028)' },
-      { label:'Phase 5',  sub:'FY29-30 SCH-3235 HVAC + Swing' },
-      { label:'Phase 6',  sub:'FY31 SCH-3410 / 3413 Demo' },
-      { label:'Phase 7',  sub:'FY32-33 SCH-3237 DPRI Renovation' }
-    ];
+    // Phase headers - reads from A.PHASE_LABELS (editable via Data Editor).
+    var phaseHdrs = (A.PHASE_LABELS || []).map(function(r){
+      return { label:(r && r.label) || '', sub:(r && r.sub) || '' };
+    });
     var html = '<div class="swim-hdr bldg">Building</div>';
     phaseHdrs.forEach(function(h){
       html += '<div class="swim-hdr">' + h.label + '<span class="swim-hdr-sub">' + A.esc(h.sub) + '</span></div>';
@@ -6117,6 +6154,44 @@ body[data-coa="coa2"] .coa-context-tag {
       }).join('');
       bbody.innerHTML = bh;
     }
+    renderPhaseEditor();
+  }
+
+  /* --- PHASE LABELS EDITOR ---
+     Edits A.PHASE_LABELS in place; Save persists to localStorage and
+     re-renders the swim-lane / map / pip status text. */
+  var DEFAULT_PHASE_LABELS = [
+    { status:'Initial Posture - Current Configuration',                                                     label:'Phase 0', sub:'Initial Posture (Pre-FY26)' },
+    { status:'Phase 1 (Q3 FY26) - Safety/Env and CLB-4 Comms Swing',                                        label:'Phase 1', sub:'FY26 Swing' },
+    { status:'Phase 2 (FY27) - UDP-W Supply, LAR CO, HQ CO, CLB-4 A&B',                                     label:'Phase 2', sub:'FY27 Moves' },
+    { status:'Phase 3 (Q3 FY28) - Comms Final, Armory, CLB-4 HQ',                                           label:'Phase 3', sub:'FY28 Consolidation' },
+    { status:'Phase 4 (Q3 FY28) - 4th MAR HQ to 3314. FRF Vacated.',                                        label:'Phase 4', sub:'Post-FRF (1 Jun 2028)' },
+    { status:'Phase 5 (FY29-30) - SCH-3235 HVAC Upgrade. Tenants swing to 3410 / 3413. (COA 2 / 2A only)',  label:'Phase 5', sub:'FY29-30 SCH-3235 HVAC + Swing' },
+    { status:'Phase 6 (FY31) - SCH-3410 + SCH-3413 HN-funded FRF DEMO. SCH-3235 returns to final.',         label:'Phase 6', sub:'FY31 SCH-3410 / 3413 Demo' },
+    { status:'Phase 7 (FY32-33) - SCH-3237 DPRI Renovation begins. 4th MAR Regt Supply swing space UNRESOLVED.', label:'Phase 7', sub:'FY32-33 SCH-3237 DPRI Renovation' }
+  ];
+  function renderPhaseEditor() {
+    var body = document.getElementById('tbody-ed-phases'); if (!body) return;
+    var arr = A.PHASE_LABELS || [];
+    body.innerHTML = arr.map(function(r, idx){
+      return '<tr data-idx="' + idx + '">' +
+        '<td style="text-align:center;font-family:var(--font-mono);font-weight:700;">' + idx + '</td>' +
+        '<td><input data-pk="label"  value="' + A.esc(r.label  || '') + '" style="min-width:120px;"></td>' +
+        '<td><input data-pk="sub"    value="' + A.esc(r.sub    || '') + '" style="min-width:240px;"></td>' +
+        '<td><input data-pk="status" value="' + A.esc(r.status || '') + '" style="min-width:480px;"></td>' +
+        '</tr>';
+    }).join('');
+  }
+  function commitPhaseEditor() {
+    var rows = document.querySelectorAll('#tbody-ed-phases tr');
+    Array.prototype.forEach.call(rows, function(tr){
+      var idx = parseInt(tr.getAttribute('data-idx'), 10);
+      if (isNaN(idx) || !A.PHASE_LABELS[idx]) return;
+      Array.prototype.forEach.call(tr.querySelectorAll('[data-pk]'), function(inp){
+        A.PHASE_LABELS[idx][inp.getAttribute('data-pk')] = inp.value;
+      });
+    });
+    try { localStorage.setItem('4thMAR_phase_labels_v1', JSON.stringify(A.PHASE_LABELS)); } catch(e) {}
   }
   function typeSelect(k, v) {
     return '<select data-k="' + k + '">' + TYPES.map(function(t){
@@ -6224,6 +6299,25 @@ body[data-coa="coa2"] .coa-context-tag {
     var resB = document.getElementById('ed-reset-bldgs');
     if (resB) resB.addEventListener('click', function(){
       if (confirm('Reset buildings table to currently saved state?')) { renderEditor(); A.toast('Reset'); }
+    });
+    var saveP = document.getElementById('ed-save-phases');
+    if (saveP) saveP.addEventListener('click', function(){
+      commitPhaseEditor();
+      // Re-render every surface that consumes phase labels
+      if (A.renderGantt) A.renderGantt();
+      if (typeof window.__APEX_resetMapForCoa === 'function') window.__APEX_resetMapForCoa();
+      A.toast('Phase labels saved', 'success');
+    });
+    var resP = document.getElementById('ed-reset-phases');
+    if (resP) resP.addEventListener('click', function(){
+      if (!confirm('Reset all phase labels to factory defaults? This wipes any custom phrasing.')) return;
+      A.PHASE_LABELS.length = 0;
+      DEFAULT_PHASE_LABELS.forEach(function(r){ A.PHASE_LABELS.push({ status:r.status, label:r.label, sub:r.sub }); });
+      try { localStorage.removeItem('4thMAR_phase_labels_v1'); } catch(e){}
+      renderPhaseEditor();
+      if (A.renderGantt) A.renderGantt();
+      if (typeof window.__APEX_resetMapForCoa === 'function') window.__APEX_resetMapForCoa();
+      A.toast('Phase labels reset to defaults', 'success');
     });
     var expAll = document.getElementById('ed-export-all');
     if (expAll) expAll.addEventListener('click', function(){ exportJSON('all'); });

@@ -1410,9 +1410,9 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
 .chart-legend-dot { width: 10px; height: 10px; border-radius: 2px; }
 
 /* Building Lifecycle Swim-Lane */
-.swim { display: grid; grid-template-columns: 170px repeat(5, 1fr);
+.swim { display: grid; grid-template-columns: 170px repeat(8, minmax(86px, 1fr));
   gap: 2px; background: var(--border-light); padding: 2px; border-radius: 6px;
-  font-size: 10.5px; }
+  font-size: 10.5px; overflow-x: auto; }
 .swim-hdr { background: var(--bg-section); padding: 8px 10px;
   font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--text-muted); font-size: 9.5px; text-align: center;
@@ -5082,13 +5082,19 @@ body[data-coa="coa2"] .coa-context-tag {
       return String(a.num).localeCompare(String(b.num));
     });
 
-    // Phase headers
+    // Phase headers - extended through FY32 to cover post-FRF DPRI work
+    // (per Construction Timeline slide). Phases 5-7 are COA-2-family
+    // specific (in COA 1, post-FRF activity is minimal: HN-funded FRF
+    // demos still happen, but no SCH-3235 HVAC or SCH-3237 DPRI prep).
     var phaseHdrs = [
       { label:'Phase 0',  sub:'Initial Posture (Pre-FY26)' },
       { label:'Phase 1',  sub:'FY26 Swing' },
       { label:'Phase 2',  sub:'FY27 Moves' },
       { label:'Phase 3',  sub:'FY28 Consolidation' },
-      { label:'Phase 4',  sub:'Post-FRF (1 Jun 2028)' }
+      { label:'Phase 4',  sub:'Post-FRF (1 Jun 2028)' },
+      { label:'Phase 5',  sub:'FY29-30 SCH-3235 HVAC + Swing' },
+      { label:'Phase 6',  sub:'FY31 SCH-3410 / 3413 Demo' },
+      { label:'Phase 7',  sub:'FY32-33 SCH-3237 DPRI Renovation' }
     ];
     var html = '<div class="swim-hdr bldg">Building</div>';
     phaseHdrs.forEach(function(h){
@@ -5126,6 +5132,24 @@ body[data-coa="coa2"] .coa-context-tag {
     }
 
     function stateFor(b, phase) {
+      // Post-FRF DPRI states (Phase 5-7) per Construction Timeline slide.
+      // SCH-3410 / 3413 are HN-funded FRF DEMO regardless of COA, so demo
+      // applies to all variants in Phase 6. SCH-3235 HVAC and SCH-3237
+      // DPRI renovation are only scoped in COA 2 / 2A, so swing/construction
+      // states for those buildings are gated on the active COA family.
+      if (phase >= 5) {
+        if (b.id === 'b-3410' && phase >= 6) return 'demolished';
+        if (b.id === 'b-3413' && phase >= 6) return 'demolished';
+        if (inCoa2) {
+          if (b.id === 'b-3235' && phase === 5) return 'swing';   // HVAC construction window
+          if (b.id === 'b-3235' && phase >= 6)  return 'final';   // back to final post-HVAC
+          if (b.id === 'b-3410' && phase === 5) return 'swing';   // accepts displaced 4th MAR Regt tenants
+          if (b.id === 'b-3413' && phase === 5) return 'swing';   // accepts displaced CLB-4 tenants
+          if (b.id === 'b-3237' && phase >= 7)  return 'swing';   // DPRI renovation 2033 (UNRESOLVED swing space)
+        }
+        // Default for everything else post-FRF: stays 'final' if it was final,
+        // 'demolished' if FRF, otherwise active.
+      }
       // Determine state (active/final/swing/vacated/demolished/pending/none)
       var isPending = b.status === 'Pending';
       if (isPending) return 'pending';
@@ -5174,7 +5198,7 @@ body[data-coa="coa2"] .coa-context-tag {
         '<span class="sw-num">' + A.esc(b.num) + '</span>' +
         '<span>' + A.esc(b.label) + '</span>' +
         '<span class="sw-zone">' + A.esc(b.zone) + '</span></div>';
-      for (var ph = 0; ph <= 4; ph++) {
+      for (var ph = 0; ph <= 7; ph++) {
         var st = stateFor(b, ph);
         var occ = unitsAt(b.num, ph);
         var stLabel = { active:'Active', final:'Final', swing:'Swing', vacated:'Vacated', demolished:'Demo', pending:'Pending' }[st] || '-';

@@ -1571,9 +1571,14 @@ body.edit-mode .cmd-overlay { top: calc(var(--class-bar-h) + 38px); }
   background: var(--swing-amber); color: #1A1108; border-color: var(--swing-amber);
   box-shadow: 0 0 0 1px rgba(255,193,7,0.3);
 }
+.coa-btn.active[data-coa-btn="coa2a"] {
+  background: #C45E12; color: #FFF3E0; border-color: #C45E12;
+  box-shadow: 0 0 0 1px rgba(196,94,18,0.35);
+}
 
 /* Body data-coa attribute drives subtle color cues across COA-aware regions */
 body[data-coa="coa2"] .coa-toggle { border-color: var(--swing-amber); }
+body[data-coa="coa2a"] .coa-toggle { border-color: #C45E12; }
 
 /* ============================================================
    PROJECTS hero card + COA-aware row styling
@@ -2021,8 +2026,9 @@ body[data-coa="coa2"] .coa-context-tag {
     <div style="margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
       <div class="coa-toggle" role="group" aria-label="Course of Action selector" title="Switch between COA 1 (Primary) and COA 2 (Alternate)">
         <span class="coa-toggle-lbl">COA</span>
-        <button class="coa-btn active" data-coa-btn="coa1" type="button" aria-label="COA 1 Primary">1</button>
-        <button class="coa-btn" data-coa-btn="coa2" type="button" aria-label="COA 2 Alternate">2</button>
+        <button class="coa-btn active" data-coa-btn="coa1" type="button" aria-label="COA 1 Primary" title="COA 1 - Primary scope (3237 in scope)">1</button>
+        <button class="coa-btn" data-coa-btn="coa2" type="button" aria-label="COA 2 Alternate A" title="COA 2 - Remove 3237; convert 20 barracks rooms above the Armory to Admin spaces">2</button>
+        <button class="coa-btn" data-coa-btn="coa2a" type="button" aria-label="COA 2A Alternate B" title="COA 2A - Same scope as COA 2; convert 16 barracks rooms + Weapons-Cleaning area to Admin (Bldg 144 untouched)">2A</button>
       </div>
       <button class="hdr-btn" id="btn-theme" type="button" aria-label="Toggle theme" title="Toggle theme (T)">&#9681; Theme</button>
       <button class="hdr-btn" id="btn-cmd" type="button" aria-label="Open command palette" title="Command palette (Ctrl+K)">&#8984; Commands</button>
@@ -3430,9 +3436,15 @@ body[data-coa="coa2"] .coa-context-tag {
     't-reg':     { top: 280, left: 344 }  // 1024 2nd floor, below the armory tile
   };
   function activeCoa() {
-    try { return localStorage.getItem('4thMAR_active_coa') === 'coa2' ? 'coa2' : 'coa1'; }
-    catch(e) { return 'coa1'; }
+    try {
+      var v = localStorage.getItem('4thMAR_active_coa');
+      if (v === 'coa2' || v === 'coa2a') return v;
+      return 'coa1';
+    } catch(e) { return 'coa1'; }
   }
+  // Helper: returns true for any COA-2 variant (currently coa2 + coa2a).
+  // Use this in map / movement logic where 2A inherits 2's destinations.
+  function isCoa2Variant() { var c = activeCoa(); return c === 'coa2' || c === 'coa2a'; }
   // Expose so the COA toggle in the toolbar can ask the map to re-render
   window.__APEX_resetMapForCoa = function(){
     if (typeof resetMap === 'function') resetMap();
@@ -3550,7 +3562,7 @@ body[data-coa="coa2"] .coa-context-tag {
       // COA 2 only: CLB-4 Supply moves out of 3237 into 3213 (DOD WHSE).
       // Tile is initially placed at 3237 in resetMap (when COA 2 is active);
       // here it animates to its 3213 destination.
-      if (activeCoa() === 'coa2' && COA2_PHASE2['t-clb-sup']) {
+      if (isCoa2Variant() && COA2_PHASE2['t-clb-sup']) {
         var p = COA2_PHASE2['t-clb-sup'];
         move('t-clb-sup', p.top, p.left);
         // Show a fy-tag if present, otherwise create one
@@ -3621,7 +3633,7 @@ body[data-coa="coa2"] .coa-context-tag {
       //   COA 1 (Primary)   -> 3314 2nd deck (top:170, left:834)
       //   COA 2 (Alternate) -> 1024 2nd floor (top:280, left:344) because
       //                        SCH-3314 is not expected to be ready in time.
-      var regDest = (activeCoa() === 'coa2' && COA2_PHASE4['t-reg'])
+      var regDest = (isCoa2Variant() && COA2_PHASE4['t-reg'])
         ? COA2_PHASE4['t-reg']
         : { top: 170, left: 834 };
       move('t-reg', regDest.top, regDest.left);
@@ -4507,8 +4519,9 @@ body[data-coa="coa2"] .coa-context-tag {
     { id:'tab-editor',    cat:'Navigate', label:'Go to Data Editor',       key:'9', run:function(){ A.switchTab('editor'); } },
     { id:'tab-compare',   cat:'Navigate', label:'Go to COA Comparison',           run:function(){ A.switchTab('compare'); } },
     { id:'tab-help',      cat:'Navigate', label:'Go to Help',                     run:function(){ A.switchTab('help'); } },
-    { id:'coa-1',         cat:'COA',      label:'Switch to COA 1 (Primary)',      run:function(){ if (A.setActiveCoa) A.setActiveCoa('coa1'); } },
-    { id:'coa-2',         cat:'COA',      label:'Switch to COA 2 (Alternate)',    run:function(){ if (A.setActiveCoa) A.setActiveCoa('coa2'); } },
+    { id:'coa-1',         cat:'COA',      label:'Switch to COA 1 (Primary)',                  run:function(){ if (A.setActiveCoa) A.setActiveCoa('coa1'); } },
+    { id:'coa-2',         cat:'COA',      label:'Switch to COA 2 (Alternate A - 20 barracks->admin)', run:function(){ if (A.setActiveCoa) A.setActiveCoa('coa2'); } },
+    { id:'coa-2a',        cat:'COA',      label:'Switch to COA 2A (Alternate B - 16 barracks + Wpns Cleaning->admin)', run:function(){ if (A.setActiveCoa) A.setActiveCoa('coa2a'); } },
     { id:'csv-projects',  cat:'Export',   label:'Export Projects & Cost CSV',     run:function(){ var b=document.getElementById('pj-export-csv'); if (b) b.click(); } },
     { id:'theme',         cat:'View',     label:'Toggle Theme (Dark/Light)', key:'T', run:function(){ A.toggleTheme(); } },
     { id:'sidebar',       cat:'View',     label:'Collapse Sidebar',      key:'K', run:function(){ A.toggleSidebar(); } },
@@ -4931,18 +4944,21 @@ body[data-coa="coa2"] .coa-context-tag {
   function renderRoster() {
     var body = document.getElementById('tbody-roster'); if (!body) return;
     var coa = (A.getActiveCoa && A.getActiveCoa()) || 'coa1';
+    // COA 2A inherits all COA 2 movement / alt fields; only the SCH-1024
+    // scope text differs (handled in PROJECTS / drawer rationale).
+    var inCoa2 = (coa === 'coa2' || coa === 'coa2a');
     var rows = A.sortRows(A.filterUnits(), A.sortState.roster.key, A.sortState.roster.dir);
     var html = rows.map(function(u){
       // Pick the active-COA fields with fallback
-      var endB   = (coa === 'coa2' && u.altEndBldg) ? u.altEndBldg : u.endBldg;
-      var ph     = (coa === 'coa2' && u.altPhase != null) ? u.altPhase : u.phase;
-      var dt     = (coa === 'coa2' && u.altDate) ? u.altDate : u.date;
-      var st     = (coa === 'coa2' && u.altStatus) ? u.altStatus : u.status;
-      var diffEnd = coa === 'coa2' && u.altEndBldg && u.altEndBldg !== u.endBldg;
-      var diffPh  = coa === 'coa2' && u.altPhase != null && u.altPhase !== u.phase;
-      var diffDt  = coa === 'coa2' && u.altDate && u.altDate !== u.date;
-      var diffSt  = coa === 'coa2' && u.altStatus && u.altStatus !== u.status;
-      var unresolved = coa === 'coa2' && u.altUnresolved;
+      var endB   = (inCoa2 && u.altEndBldg) ? u.altEndBldg : u.endBldg;
+      var ph     = (inCoa2 && u.altPhase != null) ? u.altPhase : u.phase;
+      var dt     = (inCoa2 && u.altDate) ? u.altDate : u.date;
+      var st     = (inCoa2 && u.altStatus) ? u.altStatus : u.status;
+      var diffEnd = inCoa2 && u.altEndBldg && u.altEndBldg !== u.endBldg;
+      var diffPh  = inCoa2 && u.altPhase != null && u.altPhase !== u.phase;
+      var diffDt  = inCoa2 && u.altDate && u.altDate !== u.date;
+      var diffSt  = inCoa2 && u.altStatus && u.altStatus !== u.status;
+      var unresolved = inCoa2 && u.altUnresolved;
       var deltaTag = function(d){ return d ? ' <span class="dp-delta" style="font-size:8.5px;padding:0 4px;">&Delta;</span>' : ''; };
       return '<tr class="row-click' + (unresolved ? ' row-unresolved' : '') + '" data-unit="' + A.esc(u.id) + '">' +
         '<td><code>' + A.esc(u.id) + '</code></td>' +
@@ -4963,14 +4979,17 @@ body[data-coa="coa2"] .coa-context-tag {
     var body = document.getElementById('tbody-buildings'); if (!body) return;
     var rows = A.sortRows(A.filterBuildings(), A.sortState.buildings.key, A.sortState.buildings.dir);
     var coa = (A.getActiveCoa && A.getActiveCoa()) || 'coa1';
+    var inCoa2 = (coa === 'coa2' || coa === 'coa2a');
     var html = rows.map(function(b){
-      var occList = (coa === 'coa2' && b.altOccupants) ? b.altOccupants : (b.occupants || []);
-      var diffOcc = coa === 'coa2' && b.altOccupants;
+      var occList = (inCoa2 && b.altOccupants) ? b.altOccupants : (b.occupants || []);
+      var diffOcc = inCoa2 && b.altOccupants;
       var occ = occList.map(function(uid){
         var u = A.UNITS.filter(function(x){return x.id===uid;})[0];
         return u ? u.name : uid;
       }).join(', ') || '<em style="color:var(--text-muted);">None</em>';
-      var coa2Badge = (coa === 'coa2' && b.coa2Note) ? ' <span class="dp-delta" style="font-size:8.5px;padding:0 4px;" title="' + A.esc(b.coa2Note) + '">&Delta;</span>' : '';
+      // Building-level COA note: in 2A, prefer the 2A-specific note when present (chunk 3 adds these)
+      var note = (coa === 'coa2a' && b.coa2aNote) ? b.coa2aNote : (inCoa2 ? b.coa2Note : '');
+      var coa2Badge = note ? ' <span class="dp-delta" style="font-size:8.5px;padding:0 4px;" title="' + A.esc(note) + '">&Delta;</span>' : '';
       return '<tr class="row-click" data-bldg="' + A.esc(b.id) + '">' +
         '<td><strong>' + A.esc(b.num) + '</strong>' + coa2Badge + '</td>' +
         '<td>' + A.esc(b.label) + '</td>' +
@@ -5070,8 +5089,9 @@ body[data-coa="coa2"] .coa-context-tag {
     });
 
     var coaActive = (A.getActiveCoa && A.getActiveCoa()) || 'coa1';
-    function endFor(u)   { return (coaActive === 'coa2' && u.altEndBldg) ? u.altEndBldg : u.endBldg; }
-    function phaseFor(u) { return (coaActive === 'coa2' && u.altPhase != null) ? u.altPhase : u.phase; }
+    var inCoa2    = (coaActive === 'coa2' || coaActive === 'coa2a');
+    function endFor(u)   { return (inCoa2 && u.altEndBldg) ? u.altEndBldg : u.endBldg; }
+    function phaseFor(u) { return (inCoa2 && u.altPhase != null) ? u.altPhase : u.phase; }
 
     function unitsAt(bldgNum, phase) {
       var out = [];
@@ -5154,8 +5174,8 @@ body[data-coa="coa2"] .coa-context-tag {
         var chips = '';
         var shown = occ.slice(0, 3);
         shown.forEach(function(u){
-          var tbd = (coaActive === 'coa2' && u.altUnresolved) ? ' tbd' : '';
-          var ttl = u.name + (tbd ? ' - UNRESOLVED in COA 2' : '');
+          var tbd = (inCoa2 && u.altUnresolved) ? ' tbd' : '';
+          var ttl = u.name + (tbd ? ' - UNRESOLVED in COA 2 / COA 2A' : '');
           chips += '<span class="swim-chip t-' + u.type + tbd + '" title="' + A.esc(ttl) + '">' + A.esc(shortName(u)) + '</span>';
         });
         if (occ.length > 3) {
@@ -5422,10 +5442,19 @@ body[data-coa="coa2"] .coa-context-tag {
      stays on the COA they were last viewing. */
   var COA_KEY = '4thMAR_active_coa';
   function getActiveCoa() {
-    try { return localStorage.getItem(COA_KEY) === 'coa2' ? 'coa2' : 'coa1'; }
-    catch(e) { return 'coa1'; }
+    try {
+      var v = localStorage.getItem(COA_KEY);
+      if (v === 'coa2' || v === 'coa2a') return v;
+      return 'coa1';
+    } catch(e) { return 'coa1'; }
+  }
+  function coaLabel(v) {
+    if (v === 'coa2')  return 'COA 2 (Alternate A)';
+    if (v === 'coa2a') return 'COA 2A (Alternate B)';
+    return 'COA 1 (Primary)';
   }
   function setActiveCoa(v) {
+    if (v !== 'coa1' && v !== 'coa2' && v !== 'coa2a') v = 'coa1';
     try { localStorage.setItem(COA_KEY, v); } catch(e) {}
     document.body.setAttribute('data-coa', v);
     // Re-render every COA-aware view
@@ -5442,32 +5471,35 @@ body[data-coa="coa2"] .coa-context-tag {
     // Update the map status banner to show which COA is active
     var statusEl = document.getElementById('status');
     if (statusEl) {
-      statusEl.textContent = (v === 'coa2'
-        ? 'COA 2 (Alternate) - Initial Posture - press EXECUTE to advance'
-        : 'COA 1 (Primary) - Initial Posture - Current Configuration');
+      statusEl.textContent = (v === 'coa1')
+        ? 'COA 1 (Primary) - Initial Posture - Current Configuration'
+        : coaLabel(v) + ' - Initial Posture - press EXECUTE to advance';
     }
     var phaseLbl = document.getElementById('phase-label');
-    if (phaseLbl) phaseLbl.textContent = (v === 'coa2' ? 'COA 2 - INITIAL POSTURE' : 'INITIAL POSTURE');
+    if (phaseLbl) phaseLbl.textContent = (v === 'coa1') ? 'INITIAL POSTURE' : (v === 'coa2a' ? 'COA 2A - INITIAL POSTURE' : 'COA 2 - INITIAL POSTURE');
     // Update any context tag that displays the active COA
     var tag = document.getElementById('swim-coa-tag');
-    if (tag) tag.textContent = v === 'coa2' ? 'COA 2 (Alternate)' : 'COA 1 (Primary)';
+    if (tag) tag.textContent = coaLabel(v);
     var mapCoaTag = document.getElementById('map-coa-tag');
-    if (mapCoaTag) mapCoaTag.textContent = v === 'coa2' ? 'COA 2 (Alternate)' : 'COA 1 (Primary)';
+    if (mapCoaTag) mapCoaTag.textContent = coaLabel(v);
     // Sync the toolbar segment buttons
     Array.prototype.forEach.call(document.querySelectorAll('[data-coa-btn]'), function(b){
       b.classList.toggle('active', b.getAttribute('data-coa-btn') === v);
     });
-    if (A.toast) A.toast(v === 'coa2' ? 'Switched to COA 2 (Alternate)' : 'Switched to COA 1 (Primary)', '');
+    if (A.toast) A.toast('Switched to ' + coaLabel(v), '');
   }
   A.getActiveCoa = getActiveCoa;
   A.setActiveCoa = setActiveCoa;
 
   // Cost a row contributes for a given COA. Rows scoped to the other COA
-  // contribute 0. coa2 prefers altCost and falls back to cost.
+  // contribute 0. coa2 / coa2a prefer altCost and fall back to cost.
+  // COA 2A inherits COA 2's project scope (the difference between 2 and 2A is
+  // only the SCH-1024 DD1391 narrative; no project costs differ today).
   function costFor(p, coa) {
-    if (p.coa === 'coa1' && coa === 'coa2') return 0;
+    var inCoa2 = (coa === 'coa2' || coa === 'coa2a');
+    if (p.coa === 'coa1' && inCoa2) return 0;
     if (p.coa === 'coa2' && coa === 'coa1') return 0;
-    if (coa === 'coa2') {
+    if (inCoa2) {
       var c = (p.altCost === null || p.altCost === undefined || p.altCost === '') ? p.cost : p.altCost;
       return Number(c) || 0;
     }
@@ -5494,6 +5526,7 @@ body[data-coa="coa2"] .coa-context-tag {
   function renderProjects() {
     var body = document.getElementById('tbody-projects'); if (!body) return;
     var coa = getActiveCoa();
+    var inCoa2Family = (coa === 'coa2' || coa === 'coa2a');
     var html = PROJECTS.map(function(p, idx){
       var noteTrim = String(p.note || p.frf || '').trim();
       var rowCls = 'pj-row';
@@ -5504,15 +5537,16 @@ body[data-coa="coa2"] .coa-context-tag {
       // Note-based tint (FRF DEMO / Renovation) layers on top
       if (noteTrim === '*' || /FRF.*DEMO/i.test(noteTrim)) rowCls += ' pj-row-frfdemo';
       else if (noteTrim === '**' || /renov/i.test(noteTrim)) rowCls += ' pj-row-frfreno';
-      // Inactive in current COA -> faded
-      var inactive = (coaScope === 'coa1' && coa === 'coa2') || (coaScope === 'coa2' && coa === 'coa1');
+      // Inactive in current COA -> faded.
+      // COA 2 and COA 2A share project scope today.
+      var inactive = (coaScope === 'coa1' && inCoa2Family) || (coaScope === 'coa2' && coa === 'coa1');
       if (inactive) rowCls += ' pj-row-inactive';
 
       // Pick the cost field for the active COA; edits write back to the
-      // matching field. coa2 prefers altCost (falls back to cost when null).
+      // matching field. coa2 / coa2a prefer altCost (falls back to cost when null).
       var displayCost;
       var costFieldKey;
-      if (coa === 'coa2') {
+      if (inCoa2Family) {
         costFieldKey = 'altCost';
         displayCost = (p.altCost === null || p.altCost === undefined || p.altCost === '') ? (p.cost || 0) : p.altCost;
       } else {
@@ -5592,11 +5626,13 @@ body[data-coa="coa2"] .coa-context-tag {
 
   function refreshTotal() {
     var coa = getActiveCoa();
-    var t1 = totalForCoa('coa1');
-    var t2 = totalForCoa('coa2');
-    var active = coa === 'coa2' ? t2 : t1;
+    var t1  = totalForCoa('coa1');
+    var t2  = totalForCoa('coa2');
+    var t2a = totalForCoa('coa2a');
+    var active = (coa === 'coa2') ? t2 : (coa === 'coa2a' ? t2a : t1);
     var s = fmtUSD(active);
-    var delta = t2 - t1;
+    // Delta is shown vs COA 1 baseline regardless of which alternate is active.
+    var delta = active - t1;
     var deltaSign = delta > 0 ? '+' : (delta < 0 ? '-' : '');
     var deltaStr = deltaSign + fmtUSD(Math.abs(delta));
 
@@ -5604,9 +5640,9 @@ body[data-coa="coa2"] .coa-context-tag {
     var hero = document.getElementById('pj-total');
     if (hero) hero.textContent = s;
     var heroLbl = document.getElementById('pj-total-label');
-    if (heroLbl) heroLbl.textContent = (coa === 'coa2' ? 'COA 2 (Alternate)' : 'COA 1 (Primary)') + ' Total Project Cost';
+    if (heroLbl) heroLbl.textContent = coaLabel(coa) + ' Total Project Cost';
 
-    // Comparison sub-line on the hero card (always shows both)
+    // Comparison sub-line on the hero card (always shows all three)
     var heroSub = document.getElementById('pj-total-compare');
     if (heroSub) {
       heroSub.innerHTML =
@@ -5614,18 +5650,20 @@ body[data-coa="coa2"] .coa-context-tag {
         '<span class="pj-cmp-sep">|</span>' +
         '<span class="' + (coa === 'coa2' ? 'pj-cmp-active' : 'pj-cmp') + '">COA 2: ' + fmtUSD(t2) + '</span>' +
         '<span class="pj-cmp-sep">|</span>' +
+        '<span class="' + (coa === 'coa2a' ? 'pj-cmp-active' : 'pj-cmp') + '">COA 2A: ' + fmtUSD(t2a) + '</span>' +
+        '<span class="pj-cmp-sep">|</span>' +
         '<span class="pj-cmp-delta ' + (delta < 0 ? 'savings' : (delta > 0 ? 'addition' : '')) + '">' +
-        '&Delta;: ' + deltaStr + '</span>';
+        '&Delta; vs COA 1: ' + deltaStr + '</span>';
     }
 
     // Footer total cell of the projects table
     var cell = document.getElementById('pj-total-cell');
-    if (cell) cell.textContent = (coa === 'coa2' ? 'COA 2: ' : 'COA 1: ') + s;
+    if (cell) cell.textContent = (coa === 'coa1' ? 'COA 1: ' : (coa === 'coa2a' ? 'COA 2A: ' : 'COA 2: ')) + s;
 
     // Overview total-cost card (mirrors active COA)
     var ov = document.getElementById('ov-total-cost'); if (ov) ov.textContent = s;
     var ovLbl = document.getElementById('ov-total-cost-label');
-    if (ovLbl) ovLbl.textContent = (coa === 'coa2' ? 'COA 2 (Alternate)' : 'COA 1 (Primary)') + ' Total';
+    if (ovLbl) ovLbl.textContent = coaLabel(coa) + ' Total';
 
     // KPI if tagged
     var kpi = document.querySelector('[data-kpi="total-cost"]');

@@ -2541,7 +2541,7 @@ body[data-coa="coa2"] .coa-context-tag {
       3413<span>Safety/Fire/Env</span>
     </div>
     <div id="b-3213" class="m-bldg final-dest" data-editable-bldg="true" style="top:315px;left:28px;width:200px;height:150px;"
-         title="Bldg 3213 - CLB-4 HQ destination after renovation. COA 2 / 2A: ALSO houses CLB-4 Supply (re-routed from SCH-3237) using EOD/DOD WHSE space, CCN 21730; 2,045 sq ft. CCN reassigned from 21730 FLD MAINT SHOP to STG A/RUGD ORG UTS WARGOR.">
+         title="Bldg 3213 - CLB-4 HQ destination after renovation (PAX 387624, completion Q2 FY28 per Portfolio slide). COA 2 / 2A: the Supply Warehouse portion (CCN 21730 -> CCN 44112, 2,045 sq ft) is marked &quot;No Work Required&quot; on the floor-plan slide, so CLB-4 Supply moves in early (Q2 FY27) while the rest of 3213 is still being renovated. The full building reaches final occupancy at CLB-4 HQ move-in.">
       3213<span>CLB-4 HQ (Dest)</span>
     </div>
 
@@ -3184,7 +3184,7 @@ body[data-coa="coa2"] .coa-context-tag {
     { id:'t-4th-sup',name:'4th MAR Supply',        type:'div', startBldg:'3237', endBldg:'3237', phase:0, date:'Resident', status:'Resident', note:'Resident in Bldg 3237, remains throughout all phases.',
       altEndBldg:'3237', altStatus:'Resident', altUnresolved:true, altNote:'COA 2 / 2A: Stays at SCH-3237. UNRESOLVED - no swing space plan for 4th MAR Regt Supply during the 2-yr SCH-3237 DPRI renovation (FY32-33).' },
     { id:'t-clb-sup',name:'CLB-4 Supply',          type:'mlg', startBldg:'3237', endBldg:'3237', phase:0, date:'Resident', status:'Resident', note:'Resident in Bldg 3237, remains throughout all phases.',
-      altEndBldg:'3213', altPhase:2, altDate:'Q2 FY27', altStatus:'Permanent Move', altNote:'COA 2: CLB-4 Supply moves to SCH-3213 (DOD/EOD WHSE space, CCN 21730; 2,045 sq ft). Removes requirement to re-partition SCH-3237.' },
+      altEndBldg:'3213', altPhase:2, altDate:'Q2 FY27', altStatus:'Permanent Move', altNote:'COA 2 / 2A: CLB-4 Supply moves to SCH-3213 Supply Warehouse (DOD/EOD WHSE space, CCN 21730; 2,045 sq ft). Per the SCH-3213 floor-plan slide, the Supply Warehouse portion has "No Work Required" so CLB-4 Supply can move in early while the rest of SCH-3213 is still under renovation. Removes the requirement to re-partition SCH-3237.' },
     { id:'t-4th-com',name:'4th MAR COMM',          type:'div', startBldg:'3235', endBldg:'3235', phase:0, date:'Resident', status:'Resident', note:'Resident in Bldg 3235, remains throughout all phases.' },
     { id:'t-arm',    name:'Consolidated Armory',   type:'arm', startBldg:'3509', endBldg:'1024', phase:3, date:'Q3 FY28', status:'Permanent Move', note:'Consolidated Armory (4th MAR Regt / CLB-4) occupies renovated 1st floor of Bldg 1024.' },
     { id:'t-reg',    name:'4th MAR Regimental HQ', type:'reg', startBldg:'3509', endBldg:'3314', phase:4, date:'Q3 FY28', status:'FRF Action', note:'Occupies renovated 2nd Deck of Bldg 3314. 1st Deck: 1st Bn, 4th MAR (UDP). Frees 3509 for demolition.',
@@ -3203,7 +3203,7 @@ body[data-coa="coa2"] .coa-context-tag {
     { id:'b-3413', num:'3413', label:'Safety/Fire/Env -> CLB-4 A&B CO', zone:'Source', status:'Converted', phaseIn:0, phaseOut:2, occupants:['t-saf','t-clb-ab'],
       coa2Note:'COA 2 / 2A: Continue as planned DOW project. Designated swing space for CLB-4 (HQ, A, B, GS Cos) displaced during the SCH-3235 HVAC project (Phase 5, FY29-30). DEMO Phase 6 (FY31, HN-funded FRF).' },
     { id:'b-3213', num:'3213', label:'CLB-4 HQ (dest)',            zone:'Source', status:'Active',    phaseIn:3, phaseOut:0, occupants:['t-lar','t-clb-com','t-clb-hq'],
-      coa2Note:'COA 2: ALSO houses CLB-4 Supply (re-routed from SCH-3237). Uses EOD/DOD WHSE space, CCN 21730; 2,045 sq ft.', altOccupants:['t-lar','t-clb-com','t-clb-hq','t-clb-sup'] },
+      coa2Note:'COA 2 / 2A: ALSO houses CLB-4 Supply (re-routed from SCH-3237). Uses the Supply Warehouse portion (EOD/DOD WHSE, CCN 21730; 2,045 sq ft) which the floor-plan slide marks "No Work Required" - CLB-4 Supply moves in early (Q2 FY27) while the rest of SCH-3213 is still being renovated. CCN reassigned from 21730 FLD MAINT SHOP (ELEC/COMMS) to STG A/RUGD ORG UTS WARGOR (CCN 44112).', altOccupants:['t-lar','t-clb-com','t-clb-hq','t-clb-sup'] },
     { id:'b-3335', num:'3335', label:'Theater -> Safety/Fire/Env', zone:'Final',  status:'Active',    phaseIn:1, phaseOut:0, occupants:['t-saf'] },
     { id:'b-1024', num:'1024', label:'BEQ / SWING -> Armory',      zone:'Swing',  status:'Swing',     phaseIn:1, phaseOut:0, occupants:['t-clb-com','t-arm'],
       coa2Note:'COA 2 (Alt-A): Convert 20x 2nd-floor barracks rooms (above the 4th MAR Regt Armory) to Admin spaces (A & B Co + HQ Co), and construct an MCEN-capable Telecomm Room. 4th MAR Regt HQ + 1st Bn 4th MAR (UDP) land on the 2nd floor because SCH-3314 will not be complete in time.',

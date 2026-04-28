@@ -1770,10 +1770,12 @@ body[data-coa="coa2"] .coa-context-tag {
 @media (max-width: 1200px) { .cmp-grid { grid-template-columns: 1fr; } }
 
 .cmp-card {
-  display: grid; grid-template-columns: 110px 1fr 1fr;
+  display: grid; grid-template-columns: 110px 1fr 1fr 1fr;
   gap: 0; background: var(--bg-card); border: 1px solid var(--border);
   border-radius: 6px; overflow: hidden;
 }
+@media (max-width: 1400px) { .cmp-card { grid-template-columns: 110px 1fr 1fr; }
+  .cmp-card .cmp-card-side.coa2a { display: none; } }
 .cmp-card-key {
   background: var(--bg-section); padding: 12px;
   font-weight: 800; font-size: 13px; color: var(--text);
@@ -1786,14 +1788,16 @@ body[data-coa="coa2"] .coa-context-tag {
   display: flex; flex-direction: column; gap: 4px;
   border-left: 3px solid transparent;
 }
-.cmp-card-side.coa1 { border-left-color: var(--accent); background: rgba(46,155,181,0.04); }
-.cmp-card-side.coa2 { border-left-color: var(--swing-amber); background: rgba(212,144,10,0.05); }
+.cmp-card-side.coa1  { border-left-color: var(--accent);      background: rgba(46,155,181,0.04); }
+.cmp-card-side.coa2  { border-left-color: var(--swing-amber); background: rgba(212,144,10,0.05); }
+.cmp-card-side.coa2a { border-left-color: #C45E12;            background: rgba(196,94,18,0.06);  }
 .cmp-card-side .cmp-side-lbl {
   font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em;
   font-weight: 800; color: var(--text-muted); margin-bottom: 2px;
 }
-.cmp-card-side.coa1 .cmp-side-lbl { color: var(--accent-bright); }
-.cmp-card-side.coa2 .cmp-side-lbl { color: var(--swing-amber); }
+.cmp-card-side.coa1  .cmp-side-lbl { color: var(--accent-bright); }
+.cmp-card-side.coa2  .cmp-side-lbl { color: var(--swing-amber); }
+.cmp-card-side.coa2a .cmp-side-lbl { color: #E08846; }
 .cmp-card-side .cmp-row {
   display: flex; justify-content: space-between; gap: 10px;
   font-size: 11px; color: var(--text); padding: 1px 0;
@@ -1833,20 +1837,30 @@ body[data-coa="coa2"] .coa-context-tag {
 .cmp-mode-btn.active { background: var(--accent); color: #fff; }
 .cmp-mode-btn[data-cmp-view="coa2"].active,
 .cmp-mode-btn[data-cmp-all="coa2"].active { background: var(--swing-amber); color: #1A1108; }
+.cmp-mode-btn[data-cmp-view="coa2a"].active,
+.cmp-mode-btn[data-cmp-all="coa2a"].active { background: #C45E12; color: #FFF3E0; }
 
 /* Hide one column when section view is single-COA */
 .cmp-section[data-view="coa1"] .cmp-card { grid-template-columns: 110px 1fr; }
-.cmp-section[data-view="coa1"] .cmp-card-side.coa2 { display: none; }
+.cmp-section[data-view="coa1"] .cmp-card-side.coa2,
+.cmp-section[data-view="coa1"] .cmp-card-side.coa2a { display: none; }
 .cmp-section[data-view="coa1"] .cmp-card-side.coa1 { background: rgba(46,155,181,0.07); }
 
 .cmp-section[data-view="coa2"] .cmp-card { grid-template-columns: 110px 1fr; }
-.cmp-section[data-view="coa2"] .cmp-card-side.coa1 { display: none; }
+.cmp-section[data-view="coa2"] .cmp-card-side.coa1,
+.cmp-section[data-view="coa2"] .cmp-card-side.coa2a { display: none; }
 .cmp-section[data-view="coa2"] .cmp-card-side.coa2 { background: rgba(212,144,10,0.09); }
+
+.cmp-section[data-view="coa2a"] .cmp-card { grid-template-columns: 110px 1fr; }
+.cmp-section[data-view="coa2a"] .cmp-card-side.coa1,
+.cmp-section[data-view="coa2a"] .cmp-card-side.coa2 { display: none; }
+.cmp-section[data-view="coa2a"] .cmp-card-side.coa2a { background: rgba(196,94,18,0.10); }
 
 /* When single-COA view is active, the section's cards stack 1-up
    (no need for 2-column grid since cards are wider) */
 .cmp-section[data-view="coa1"] .cmp-grid,
-.cmp-section[data-view="coa2"] .cmp-grid { grid-template-columns: 1fr; }
+.cmp-section[data-view="coa2"] .cmp-grid,
+.cmp-section[data-view="coa2a"] .cmp-grid { grid-template-columns: 1fr; }
 
 </style>
 </head>
@@ -2962,6 +2976,7 @@ body[data-coa="coa2"] .coa-context-tag {
             <button class="cmp-mode-btn active" data-cmp-all="both"  type="button">Both</button>
             <button class="cmp-mode-btn"        data-cmp-all="coa1"  type="button">COA 1</button>
             <button class="cmp-mode-btn"        data-cmp-all="coa2"  type="button">COA 2</button>
+            <button class="cmp-mode-btn"        data-cmp-all="coa2a" type="button">COA 2A</button>
           </div>
         </span>
       </h3>
@@ -2974,6 +2989,7 @@ body[data-coa="coa2"] .coa-context-tag {
             <button class="cmp-mode-btn active" data-cmp-view="both" type="button" title="Side-by-side">&#8644; Both</button>
             <button class="cmp-mode-btn"        data-cmp-view="coa1" type="button" title="COA 1 only">&#9664; COA 1</button>
             <button class="cmp-mode-btn"        data-cmp-view="coa2" type="button" title="COA 2 only">COA 2 &#9654;</button>
+            <button class="cmp-mode-btn"        data-cmp-view="coa2a" type="button" title="COA 2A only">COA 2A &#9654;</button>
           </div>
         </div>
         <div id="cmp-cost"></div>
@@ -2986,6 +3002,7 @@ body[data-coa="coa2"] .coa-context-tag {
             <button class="cmp-mode-btn active" data-cmp-view="both" type="button">&#8644; Both</button>
             <button class="cmp-mode-btn"        data-cmp-view="coa1" type="button">&#9664; COA 1</button>
             <button class="cmp-mode-btn"        data-cmp-view="coa2" type="button">COA 2 &#9654;</button>
+            <button class="cmp-mode-btn"        data-cmp-view="coa2a" type="button">COA 2A &#9654;</button>
           </div>
         </div>
         <div id="cmp-projects" class="cmp-grid"></div>
@@ -2998,6 +3015,7 @@ body[data-coa="coa2"] .coa-context-tag {
             <button class="cmp-mode-btn active" data-cmp-view="both" type="button">&#8644; Both</button>
             <button class="cmp-mode-btn"        data-cmp-view="coa1" type="button">&#9664; COA 1</button>
             <button class="cmp-mode-btn"        data-cmp-view="coa2" type="button">COA 2 &#9654;</button>
+            <button class="cmp-mode-btn"        data-cmp-view="coa2a" type="button">COA 2A &#9654;</button>
           </div>
         </div>
         <div id="cmp-units" class="cmp-grid"></div>
@@ -3010,6 +3028,7 @@ body[data-coa="coa2"] .coa-context-tag {
             <button class="cmp-mode-btn active" data-cmp-view="both" type="button">&#8644; Both</button>
             <button class="cmp-mode-btn"        data-cmp-view="coa1" type="button">&#9664; COA 1</button>
             <button class="cmp-mode-btn"        data-cmp-view="coa2" type="button">COA 2 &#9654;</button>
+            <button class="cmp-mode-btn"        data-cmp-view="coa2a" type="button">COA 2A &#9654;</button>
           </div>
         </div>
         <div id="cmp-buildings" class="cmp-grid"></div>
@@ -6260,12 +6279,14 @@ body[data-coa="coa2"] .coa-context-tag {
         costEl.innerHTML = '<div class="cmp-empty">No project cost differences between COAs.</div>';
       } else {
         costEl.innerHTML = changes.map(function(p){
-          var c1 = (p.coa === 'coa2') ? '<em>not in COA 1</em>' : fmtUSD(p.cost);
-          var c2 = (p.coa === 'coa1') ? '<em>removed in COA 2</em>' : fmtUSD(p.altCost != null ? p.altCost : p.cost);
+          var c1  = (p.coa === 'coa2') ? '<em>not in COA 1</em>' : fmtUSD(p.cost);
+          var c2  = (p.coa === 'coa1') ? '<em>removed in COA 2</em>' : fmtUSD(p.altCost != null ? p.altCost : p.cost);
+          var c2a = c2; // COA 2 and COA 2A share project costs today
           return '<div class="cmp-card">' +
             '<div class="cmp-card-key">' + A.esc(p.bldg) + '<span class="cmp-card-id">' + A.esc(p.paxId || 'N/A') + '</span></div>' +
             '<div class="cmp-card-side coa1"><div class="cmp-side-lbl">COA 1</div><div class="cmp-row"><span class="k">Cost</span><span class="v">' + c1 + '</span></div></div>' +
-            '<div class="cmp-card-side coa2"><div class="cmp-side-lbl">COA 2</div><div class="cmp-row"><span class="k">Cost</span><span class="v">' + c2 + '</span></div></div>' +
+            '<div class="cmp-card-side coa2"><div class="cmp-side-lbl">COA 2 (Alt-A)</div><div class="cmp-row"><span class="k">Cost</span><span class="v">' + c2 + '</span></div></div>' +
+            '<div class="cmp-card-side coa2a"><div class="cmp-side-lbl">COA 2A (Alt-B)</div><div class="cmp-row"><span class="k">Cost</span><span class="v">' + c2a + '</span></div></div>' +
             (p.scope ? '<div class="cmp-card-note">' + A.esc(p.scope) + '</div>' : '') +
             '</div>';
         }).join('');
@@ -6281,15 +6302,18 @@ body[data-coa="coa2"] .coa-context-tag {
       } else {
         prjEl.innerHTML = scoped.map(function(p){
           var inCoa1 = p.coa !== 'coa2';
-          var inCoa2 = p.coa !== 'coa1';
+          var inCoa2 = p.coa !== 'coa1'; // COA 2A inherits COA 2 project scope today
+          var coaLine = function(inIt, cost){
+            return inIt
+              ? '<div class="cmp-row"><span class="k">In scope</span><span class="v">YES</span></div><div class="cmp-row"><span class="k">Cost</span><span class="v">' + fmtUSD(cost) + '</span></div>'
+              : '<div class="cmp-row"><span class="k">In scope</span><span class="v" style="color:var(--text-light);">' + (p.coa === 'coa2' ? 'NO' : 'REMOVED') + '</span></div>';
+          };
+          var altCost = (p.altCost != null) ? p.altCost : p.cost;
           return '<div class="cmp-card">' +
             '<div class="cmp-card-key">' + A.esc(p.bldg) + '<span class="cmp-card-id">' + A.esc(p.paxId || 'N/A') + '</span></div>' +
-            '<div class="cmp-card-side coa1"><div class="cmp-side-lbl">COA 1</div>' +
-              (inCoa1 ? '<div class="cmp-row"><span class="k">In scope</span><span class="v">YES</span></div><div class="cmp-row"><span class="k">Cost</span><span class="v">' + fmtUSD(p.cost) + '</span></div>' : '<div class="cmp-row"><span class="k">In scope</span><span class="v" style="color:var(--text-light);">NO</span></div>') +
-            '</div>' +
-            '<div class="cmp-card-side coa2"><div class="cmp-side-lbl">COA 2</div>' +
-              (inCoa2 ? '<div class="cmp-row"><span class="k">In scope</span><span class="v">YES</span></div><div class="cmp-row"><span class="k">Cost</span><span class="v">' + fmtUSD(p.altCost != null ? p.altCost : p.cost) + '</span></div>' : '<div class="cmp-row"><span class="k">In scope</span><span class="v" style="color:var(--text-light);">REMOVED</span></div>') +
-            '</div>' +
+            '<div class="cmp-card-side coa1"><div class="cmp-side-lbl">COA 1</div>' + coaLine(inCoa1, p.cost) + '</div>' +
+            '<div class="cmp-card-side coa2"><div class="cmp-side-lbl">COA 2 (Alt-A)</div>' + coaLine(inCoa2, altCost) + '</div>' +
+            '<div class="cmp-card-side coa2a"><div class="cmp-side-lbl">COA 2A (Alt-B)</div>' + coaLine(inCoa2, altCost) + '</div>' +
             '<div class="cmp-card-note">' + A.esc(p.scope) + '</div>' +
             '</div>';
         }).join('');
@@ -6322,11 +6346,15 @@ body[data-coa="coa2"] .coa-context-tag {
             '<div class="cmp-row"><span class="k">Status</span><span class="v">' + A.esc(altSt) + '</span></div>';
           var noteCls = u.altUnresolved ? 'unresolved' : '';
           var noteTxt = u.altNote || '';
-          if (u.altUnresolved) noteTxt = '<strong>UNRESOLVED in COA 2:</strong> ' + (noteTxt || 'No alt destination resolved.');
+          if (u.altUnresolved) noteTxt = '<strong>UNRESOLVED in COA 2 / 2A:</strong> ' + (noteTxt || 'No alt destination resolved.');
+          // COA 2 and COA 2A share unit movements; only narrative diverges.
+          // Show identical rows in both alt sides; the SCH-1024 narrative
+          // difference is captured on the Building card (b-1024) and in t-reg.altNote.
           return '<div class="cmp-card">' +
             '<div class="cmp-card-key">' + A.esc(u.name) + '<span class="cmp-card-id">' + A.esc(u.id) + '</span></div>' +
             '<div class="cmp-card-side coa1"><div class="cmp-side-lbl">COA 1</div>' + rows1 + '</div>' +
-            '<div class="cmp-card-side coa2"><div class="cmp-side-lbl">COA 2</div>' + rows2 + '</div>' +
+            '<div class="cmp-card-side coa2"><div class="cmp-side-lbl">COA 2 (Alt-A)</div>' + rows2 + '</div>' +
+            '<div class="cmp-card-side coa2a"><div class="cmp-side-lbl">COA 2A (Alt-B)</div>' + rows2 + '</div>' +
             (noteTxt ? '<div class="cmp-card-note ' + noteCls + '">' + (u.altUnresolved ? noteTxt : A.esc(noteTxt)) + '</div>' : '') +
             '</div>';
         }).join('');
@@ -6337,7 +6365,7 @@ body[data-coa="coa2"] .coa-context-tag {
     var bEl = document.getElementById('cmp-buildings');
     if (bEl) {
       var changedB = (A.BUILDINGS || []).filter(function(b){
-        return b.coa2Note || b.altOccupants;
+        return b.coa2Note || b.coa2aNote || b.altOccupants;
       });
       if (!changedB.length) {
         bEl.innerHTML = '<div class="cmp-empty">No building role changes between COAs.</div>';
@@ -6347,13 +6375,25 @@ body[data-coa="coa2"] .coa-context-tag {
           return u ? u.name : uid;
         };
         bEl.innerHTML = changedB.map(function(b){
-          var occ1 = (b.occupants || []).map(nameOf).join(', ') || '-';
-          var occ2 = b.altOccupants ? ((b.altOccupants.map(nameOf).join(', ')) || '<em>building empty in COA 2</em>') : occ1;
+          var occ1   = (b.occupants    || []).map(nameOf).join(', ') || '-';
+          var occ2   = b.altOccupants ? ((b.altOccupants.map(nameOf).join(', ')) || '<em>building empty in COA 2</em>') : occ1;
+          var occ2a  = occ2; // alt occupants are shared between COA 2 and COA 2A today
+          var note2  = b.coa2Note  || '';
+          var note2a = b.coa2aNote || b.coa2Note || '';
+          var notesDiffer = !!(b.coa2Note && b.coa2aNote && b.coa2Note !== b.coa2aNote);
           return '<div class="cmp-card">' +
             '<div class="cmp-card-key">Bldg ' + A.esc(b.num) + '<span class="cmp-card-id">' + A.esc(b.label) + '</span></div>' +
-            '<div class="cmp-card-side coa1"><div class="cmp-side-lbl">COA 1</div><div class="cmp-row"><span class="k">Occupants</span><span class="v" style="text-align:right;font-family:inherit;">' + occ1 + '</span></div></div>' +
-            '<div class="cmp-card-side coa2"><div class="cmp-side-lbl">COA 2</div><div class="cmp-row"><span class="k">Occupants</span><span class="v" style="text-align:right;font-family:inherit;">' + occ2 + '</span></div></div>' +
-            (b.coa2Note ? '<div class="cmp-card-note">' + A.esc(b.coa2Note) + '</div>' : '') +
+            '<div class="cmp-card-side coa1"><div class="cmp-side-lbl">COA 1</div>' +
+              '<div class="cmp-row"><span class="k">Occupants</span><span class="v" style="text-align:right;font-family:inherit;">' + occ1 + '</span></div>' +
+            '</div>' +
+            '<div class="cmp-card-side coa2"><div class="cmp-side-lbl">COA 2 (Alt-A)</div>' +
+              '<div class="cmp-row"><span class="k">Occupants</span><span class="v" style="text-align:right;font-family:inherit;">' + occ2 + '</span></div>' +
+              (note2 ? '<div style="font-size:10.5px;color:var(--text);line-height:1.5;margin-top:6px;">' + A.esc(note2) + '</div>' : '') +
+            '</div>' +
+            '<div class="cmp-card-side coa2a"><div class="cmp-side-lbl">COA 2A (Alt-B)</div>' +
+              '<div class="cmp-row"><span class="k">Occupants</span><span class="v" style="text-align:right;font-family:inherit;">' + occ2a + '</span></div>' +
+              (note2a ? '<div style="font-size:10.5px;color:var(--text);line-height:1.5;margin-top:6px;">' + A.esc(note2a) + (notesDiffer ? '' : ' <em style="color:var(--text-muted);">(same as Alt-A)</em>') + '</div>' : '') +
+            '</div>' +
             '</div>';
         }).join('');
       }

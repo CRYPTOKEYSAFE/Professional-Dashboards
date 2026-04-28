@@ -2955,9 +2955,13 @@ body[data-coa="coa2"] .coa-context-tag {
   'use strict';
 
   /* --- DATA MODEL --- */
-  // alt* fields = the Alternate (COA 2) plan from the PROPOSAL: Amend Scope
-  // of 4th Marines Project slide. When the COA toggle is set to coa2,
-  // renderers prefer alt* fields (with fallback to the primary field).
+  // alt* fields = the Alternate plan (COA 2 family) from the PROPOSAL: Amend
+  // Scope of 4th Marines Project slides. COA 2 (Alt-A) and COA 2A (Alt-B)
+  // share unit movements; the only divergence is the SCH-1024 DD1391
+  // narrative (20 barracks rooms vs. 16 + Weapons-Cleaning area), captured
+  // in BUILDINGS[b-1024].coa2Note / coa2aNote and in t-reg.altNote.
+  // When the COA toggle is set to coa2 OR coa2a, renderers prefer alt*
+  // fields (with fallback to the primary field).
   // altUnresolved = true means the Alternate plan has a known gap for this
   // unit (e.g. swing space TBD). Renders as an amber TBD indicator.
   var UNITS = [
@@ -2976,15 +2980,16 @@ body[data-coa="coa2"] .coa-context-tag {
     { id:'t-4th-com',name:'4th MAR COMM',          type:'div', startBldg:'3235', endBldg:'3235', phase:0, date:'Resident', status:'Resident', note:'Resident in Bldg 3235, remains throughout all phases.' },
     { id:'t-arm',    name:'Consolidated Armory',   type:'arm', startBldg:'3509', endBldg:'1024', phase:3, date:'Q3 FY28', status:'Permanent Move', note:'Consolidated Armory (4th MAR Regt / CLB-4) occupies renovated 1st floor of Bldg 1024.' },
     { id:'t-reg',    name:'4th MAR Regimental HQ', type:'reg', startBldg:'3509', endBldg:'3314', phase:4, date:'Q3 FY28', status:'FRF Action', note:'Occupies renovated 2nd Deck of Bldg 3314. 1st Deck: 1st Bn, 4th MAR (UDP). Frees 3509 for demolition.',
-      altEndBldg:'1024', altPhase:4, altDate:'Q3 FY28', altStatus:'FRF Action', altNote:'COA 2: SCH-3314 not expected to be complete in time. 4th MAR Regt HQ + 1st Bn 4th MAR (UDP) re-route to SCH-1024 2nd floor (Admin space converted from barracks rooms above the Armory; lose 16x barracks, gain 8x Co HQ spaces).' },
+      altEndBldg:'1024', altPhase:4, altDate:'Q3 FY28', altStatus:'FRF Action', altNote:'COA 2 / 2A: SCH-3314 will not be complete in time. 4th MAR Regt HQ + 1st Bn 4th MAR (UDP) re-route to SCH-1024 2nd floor. COA 2: convert 20x barracks rooms above the Armory to Admin (A & B Co + HQ Co) + new MCEN Telecomm Room. COA 2A: convert 16x barracks rooms (8 Admin spaces, A & B Co) + the Weapons-Cleaning area to Admin (4th MAR Regt) - retains more barracks intact.' },
     { id:'t-med',    name:'Med / ATC',             type:'med', startBldg:'3510', endBldg:'3510', phase:0, date:'Pending GOJ', status:'Pending', note:'Remains at Bldg 3510 pending GOJ replacement Medical/Dental clinic.' },
     { id:'t-4th-mtr',name:'4th MAR Motor T',       type:'mtr', startBldg:'3270', endBldg:'3270', phase:0, date:'Resident', status:'Resident', note:'Resident at Bldg 3270 Motor Pool, remains in place throughout all phases.' },
     { id:'t-clb-mtr',name:'CLB-4 Motor T',         type:'mtr', startBldg:'3270', endBldg:'3270', phase:0, date:'Resident', status:'Resident', note:'Resident at Bldg 3270 Motor Pool, remains in place throughout all phases.' }
   ];
 
-  // coa2Note documents how each building's role differs in COA 2.
-  // altOccupants lists the COA 2 occupant roster (when it differs from the
-  // primary). When omitted, the COA 2 occupants equal the primary occupants.
+  // coa2Note   = how each building's role differs in COA 2  (Alt-A).
+  // coa2aNote  = optional override for COA 2A (Alt-B); when absent, coa2Note is reused.
+  // altOccupants lists the COA 2 / 2A occupant roster (when it differs from the
+  // primary). When omitted, occupants equal the primary occupants.
   var BUILDINGS = [
     { id:'b-3446', num:'3446', label:'UDP-W Supply (starts on FRF demo line)', zone:'FRF', status:'Demolish', phaseIn:0, phaseOut:2, occupants:['t-udp-sup'] },
     { id:'b-3413', num:'3413', label:'Safety/Fire/Env -> CLB-4 A&B CO', zone:'Source', status:'Converted', phaseIn:0, phaseOut:2, occupants:['t-saf','t-clb-ab'],
@@ -2993,7 +2998,9 @@ body[data-coa="coa2"] .coa-context-tag {
       coa2Note:'COA 2: ALSO houses CLB-4 Supply (re-routed from SCH-3237). Uses EOD/DOD WHSE space, CCN 21730; 2,045 sq ft.', altOccupants:['t-lar','t-clb-com','t-clb-hq','t-clb-sup'] },
     { id:'b-3335', num:'3335', label:'Theater -> Safety/Fire/Env', zone:'Final',  status:'Active',    phaseIn:1, phaseOut:0, occupants:['t-saf'] },
     { id:'b-1024', num:'1024', label:'BEQ / SWING -> Armory',      zone:'Swing',  status:'Swing',     phaseIn:1, phaseOut:0, occupants:['t-clb-com','t-arm'],
-      coa2Note:'COA 2: Adds 8x Co HQ spaces on 2nd floor (Admin conversion from barracks rooms, above the Armory). 4th MAR Regt HQ + 1st Bn 4th MAR (UDP) land here because SCH-3314 not expected ready in time.', altOccupants:['t-clb-com','t-arm','t-reg'] },
+      coa2Note:'COA 2 (Alt-A): Convert 20x 2nd-floor barracks rooms (above the 4th MAR Regt Armory) to Admin spaces (A & B Co + HQ Co), and construct an MCEN-capable Telecomm Room. 4th MAR Regt HQ + 1st Bn 4th MAR (UDP) land on the 2nd floor because SCH-3314 will not be complete in time.',
+      coa2aNote:'COA 2A (Alt-B): Convert 16x 2nd-floor barracks rooms to 8 Admin spaces (A & B Co), AND convert the existing Weapons-Cleaning area to Admin space (4th MAR Regt) - retains more barracks rooms intact. Bldg 144 (Ammo Co) untouched. MCEN Telecomm Room still constructed. 4th MAR Regt HQ + 1st Bn 4th MAR (UDP) land on the 2nd floor.',
+      altOccupants:['t-clb-com','t-arm','t-reg'] },
     { id:'b-3410', num:'3410', label:'HQ CO, 4th MAR Regt',        zone:'Final',  status:'Active',    phaseIn:2, phaseOut:0, occupants:['t-hq-co'],
       coa2Note:'COA 2: Continue as planned DOW project. Designated swing space for 4th MAR Regt (HQ, ACV, LAR Cos) displaced during future SCH-3235 DPRI renovation.' },
     { id:'b-3237', num:'3237', label:'Consol Supply',              zone:'Final',  status:'Active',    phaseIn:0, phaseOut:0, occupants:['t-4th-sup','t-clb-sup','t-udp-sup'],
